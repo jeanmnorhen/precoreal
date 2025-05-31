@@ -1,3 +1,4 @@
+
 {
   "appTitle": "RealPrice Finder",
   "appDescription": "Find the best local prices for products and services.",
@@ -215,6 +216,14 @@
     "categoryLabel": "Product Category",
     "categoryPlaceholder": "Select product category",
     "categoryRequiredError": "Please select a product category.",
+    "categoryNames": {
+      "electronics": "Electronics",
+      "clothing": "Clothing",
+      "home-kitchen": "Home & Kitchen",
+      "books": "Books",
+      "groceries": "Groceries",
+      "other": "Other"
+    },
     "imageUrlLabel": "Product Image URL (Optional)",
     "imageUrlHint": "Link to an image of your product. Use https://placehold.co for placeholders.",
     "imageUrlInvalidError": "Please enter a valid image URL.",
@@ -258,5 +267,3 @@
     "noDataForProduct": "No price history data available for the selected product."
   }
 }
-
-    

@@ -37,6 +37,15 @@ export default function SignInForm({ lang, dictionary }: SignInFormProps) {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
 
+  if (!dictionary) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <LoadingSpinner size={32} />
+        <p className="ml-2">Form loading...</p>
+      </div>
+    );
+  }
+
   const signInSchema = z.object({
     email: z.string().email({ message: dictionary.emailInvalidError }),
     password: z.string().min(1, { message: dictionary.passwordRequiredError }),

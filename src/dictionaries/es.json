@@ -1,3 +1,4 @@
+
 {
   "appTitle": "Precio Real",
   "appDescription": "Encuentra los mejores precios locales para productos y servicios.",
@@ -215,6 +216,14 @@
     "categoryLabel": "Categoría del Producto",
     "categoryPlaceholder": "Selecciona la categoría del producto",
     "categoryRequiredError": "Por favor, selecciona una categoría para el producto.",
+    "categoryNames": {
+      "electronics": "Electrónicos",
+      "clothing": "Ropa",
+      "home-kitchen": "Hogar y Cocina",
+      "books": "Libros",
+      "groceries": "Alimentos",
+      "other": "Otros"
+    },
     "imageUrlLabel": "URL de la Imagen del Producto (Opcional)",
     "imageUrlHint": "Enlace a una imagen de tu producto. Usa https://placehold.co para placeholders.",
     "imageUrlInvalidError": "Por favor, introduce una URL de imagen válida.",
@@ -258,5 +267,3 @@
     "noDataForProduct": "No hay datos de historial de precios disponibles para el producto seleccionado."
   }
 }
-
-    

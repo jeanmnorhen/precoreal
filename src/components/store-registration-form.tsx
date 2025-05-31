@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase, Globe2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { productCategories } from '@/lib/mock-data';
+import { productCategories } from '@/lib/mock-data'; // Ensure this is consistent with category needs
 import { db } from '@/lib/firebase';
 import { ref, push, set } from 'firebase/database';
 import type { Store } from '@/types';
@@ -30,7 +30,7 @@ import LoadingSpinner from './loading-spinner';
 import { useState } from 'react';
 
 interface StoreRegistrationFormProps {
-  userId: string; // Firebase Auth User UID
+  userId: string;
   dictionary: Dictionary['storeRegistrationForm'];
   lang: Locale;
 }
@@ -38,6 +38,15 @@ interface StoreRegistrationFormProps {
 export default function StoreRegistrationForm({ userId, dictionary, lang }: StoreRegistrationFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (!dictionary) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <LoadingSpinner size={32} />
+        <p className="ml-2">Form loading...</p>
+      </div>
+    );
+  }
 
   const storeRegistrationSchema = z.object({
     storeName: z.string().min(2, { message: dictionary.storeNameMinLengthError.replace('{length}', '2') }),
@@ -52,7 +61,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
     latitude: z.coerce.number().min(-90, {message: dictionary.latitudeInvalidError}).max(90, {message: dictionary.latitudeInvalidError}).optional(),
     longitude: z.coerce.number().min(-180, {message: dictionary.longitudeInvalidError}).max(180, {message: dictionary.longitudeInvalidError}).optional(),
   });
-  
+
   type StoreRegistrationFormValues = z.infer<typeof storeRegistrationSchema>;
 
   const form = useForm<StoreRegistrationFormValues>({
@@ -79,11 +88,11 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
       const newStoreId = newStoreRef.key;
 
       if (!newStoreId) {
-        throw new Error(dictionary.genericError); 
+        throw new Error(dictionary.genericError);
       }
 
       const storeData: Omit<Store, 'id'> = {
-        ownerId: userId, 
+        ownerId: userId,
         name: data.storeName,
         address: data.address,
         city: data.city,
@@ -147,7 +156,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                 </FormItem>
               )}
             />
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -231,7 +240,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                 )}
               />
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -240,7 +249,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                   <FormItem>
                     <FormLabel className="flex items-center"><Globe2 className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.latitudeLabel}</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder={dictionary.latitudePlaceholder} {...field} step="any" />
+                      <Input type="number" placeholder={dictionary.latitudePlaceholder} {...field} step="any" onChange={e => field.onChange(parseFloat(e.target.value))} />
                     </FormControl>
                     <FormDescription>{dictionary.coordinatesHint}</FormDescription>
                     <FormMessage />
@@ -254,7 +263,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                   <FormItem>
                     <FormLabel className="flex items-center"><Globe2 className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.longitudeLabel}</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder={dictionary.longitudePlaceholder} {...field} step="any" />
+                      <Input type="number" placeholder={dictionary.longitudePlaceholder} {...field} step="any" onChange={e => field.onChange(parseFloat(e.target.value))} />
                     </FormControl>
                      <FormDescription>{dictionary.coordinatesHint}</FormDescription>
                     <FormMessage />
@@ -277,12 +286,6 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {productCategories.map(category => (
-                        <SelectItem key={category.id} value={category.name}>
-                          {category.icon && <category.icon className="mr-2 h-4 w-4 inline-block" />}
-                          {category.name}
-                        </SelectItem>
-                      ))}
                        <SelectItem value="Restaurant">{dictionary.categoryOptions.Restaurant}</SelectItem>
                        <SelectItem value="Retail">{dictionary.categoryOptions.Retail}</SelectItem>
                        <SelectItem value="Services">{dictionary.categoryOptions.Services}</SelectItem>

@@ -36,6 +36,15 @@ export default function SignUpForm({ lang, dictionary }: SignUpFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
+  if (!dictionary) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <LoadingSpinner size={32} />
+        <p className="ml-2">Form loading...</p>
+      </div>
+    );
+  }
+
   const signUpSchema = z.object({
     email: z.string().email({ message: dictionary.emailInvalidError }),
     password: z.string().min(6, { message: dictionary.passwordMinLengthError.replace('{length}', '6') }),

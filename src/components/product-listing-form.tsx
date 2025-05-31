@@ -30,7 +30,7 @@ import LoadingSpinner from './loading-spinner';
 import { useState } from 'react';
 
 interface ProductListingFormProps {
-  storeId: string; 
+  storeId: string;
   dictionary: Dictionary['productListingForm'];
   lang: Locale;
 }
@@ -38,6 +38,16 @@ interface ProductListingFormProps {
 export default function ProductListingForm({ storeId, dictionary, lang }: ProductListingFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (!dictionary) {
+    // Safeguard for prerendering or if dictionary is not passed correctly
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <LoadingSpinner size={32} />
+        <p className="ml-2">Form loading...</p>
+      </div>
+    );
+  }
 
   const productListingSchema = z.object({
     productName: z.string().min(3, { message: dictionary.productNameMinLengthError.replace('{length}', '3') }),
@@ -61,8 +71,8 @@ export default function ProductListingForm({ storeId, dictionary, lang }: Produc
       price: undefined,
       imageUrl: '',
       dataAiHint: '',
-      stock: undefined, 
-      validityDurationDays: 7, 
+      stock: undefined,
+      validityDurationDays: 7,
     },
   });
 
@@ -70,9 +80,9 @@ export default function ProductListingForm({ storeId, dictionary, lang }: Produc
     setIsSubmitting(true);
     const { validityDurationDays, ...productData } = data;
     const createdAt = Date.now();
-    const validUntil = createdAt + validityDurationDays * 24 * 60 * 60 * 1000; 
+    const validUntil = createdAt + validityDurationDays * 24 * 60 * 60 * 1000;
 
-    const advertisementPayload: Omit<ListedProduct, 'id'> = {
+    const advertisementPayload: Omit<ListedProduct, 'id' | 'archived'> = {
       storeId: storeId,
       name: productData.productName,
       description: productData.description || '',
@@ -80,6 +90,7 @@ export default function ProductListingForm({ storeId, dictionary, lang }: Produc
       category: productData.category,
       createdAt,
       validUntil,
+      // archived will be false by default (not explicitly set here)
     };
 
     if (productData.imageUrl) {
@@ -91,10 +102,10 @@ export default function ProductListingForm({ storeId, dictionary, lang }: Produc
     if (productData.stock !== undefined && productData.stock !== null) {
       advertisementPayload.stock = productData.stock;
     }
-    
+
     try {
       const advertisementsRef = ref(db, 'advertisements');
-      const newAdvertisementRef = push(advertisementsRef); 
+      const newAdvertisementRef = push(advertisementsRef);
       await set(newAdvertisementRef, advertisementPayload);
 
       toast({
@@ -186,7 +197,7 @@ export default function ProductListingForm({ storeId, dictionary, lang }: Produc
                         {productCategories.map(category => (
                            <SelectItem key={category.id} value={category.name}>
                              {category.icon && <category.icon className="mr-2 h-4 w-4 inline-block" />}
-                             {category.name} {/* TODO: Internationalize category names */}
+                             {dictionary.categoryNames[category.id as keyof typeof dictionary.categoryNames] || category.name}
                            </SelectItem>
                         ))}
                       </SelectContent>
@@ -196,7 +207,7 @@ export default function ProductListingForm({ storeId, dictionary, lang }: Produc
                 )}
               />
             </div>
-            
+
             <FormField
               control={form.control}
               name="imageUrl"
@@ -268,7 +279,7 @@ export default function ProductListingForm({ storeId, dictionary, lang }: Produc
                 )}
               />
             </div>
-            
+
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={isSubmitting}>
               {isSubmitting ? <LoadingSpinner size={20} className="mr-2"/> : null}
               {isSubmitting ? dictionary.submittingButton : dictionary.submitButton}
