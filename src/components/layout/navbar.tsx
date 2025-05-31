@@ -8,9 +8,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import React from 'react';
 
 const navItems = [
-  { href: '/', label: 'Offers', icon: Home },
-  { href: '/analyze', label: 'Analyze Image', icon: Camera },
-  { href: '/stores/register', label: 'For Stores', icon: Store },
+  { href: '/', label: 'Ofertas', icon: Home },
+  { href: '/analyze', label: 'Analisar Imagem', icon: Camera },
+  { href: '/stores/register', label: 'Para Lojas', icon: Store },
 ];
 
 export default function Navbar() {
@@ -44,7 +44,7 @@ export default function Navbar() {
             <path d="M30 50 Q50 70 70 50" stroke="currentColor" strokeWidth="8" fill="none" />
             <circle cx="50" cy="50" r="10" fill="currentColor" />
           </svg>
-          <span className="font-headline text-xl font-bold">RealPrice Finder</span>
+          <span className="font-headline text-xl font-bold">Preço Real</span>
         </Link>
 
         {!isMobile && (

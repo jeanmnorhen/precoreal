@@ -7,8 +7,8 @@ import BottomNavbar from '@/components/layout/bottom-navbar';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'RealPrice Finder',
-  description: 'Find the best local prices for products and services.',
+  title: 'Preço Real',
+  description: 'Encontre os melhores preços locais para produtos e serviços.',
 };
 
 export default function RootLayout({
