@@ -18,7 +18,7 @@ export interface Offer {
 }
 
 export interface Store {
-  id: string;
+  id: string; // Firebase key for the store
   name: string;
   address: string;
   city: string;
@@ -26,20 +26,23 @@ export interface Store {
   zipCode: string;
   email: string;
   phone: string;
-  category: string; // Type of store
+  category: string; // Type of store (e.g., "Restaurant", "Retail")
   description?: string;
+  // Geolocation is important for proximity features
+  latitude?: number; 
+  longitude?: number;
 }
 
 export interface ListedProduct {
-  id: string; // Firebase key
-  storeId: string;
+  id: string; // Firebase key for the advertisement
+  storeId: string; // ID of the store that listed this product
   name: string;
   description: string;
   price: number;
-  category: string; // Category name
+  category: string; // Category name of the product
   imageUrl?: string;
-  stock?: number;
-  createdAt: number; // Timestamp
-  validUntil: number; // Timestamp
-  dataAiHint?: string; // Optional, not in form yet
+  stock?: number; // Optional stock quantity
+  createdAt: number; // Timestamp of when the ad was created
+  validUntil: number; // Timestamp of when the ad expires
+  dataAiHint?: string; // Optional, for image search services if image URL is a placeholder
 }

@@ -18,9 +18,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store as StoreIcon, Building, Mail, Phone, MapPin } from 'lucide-react'; // Renamed Store import
+import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase } from 'lucide-react'; // Renamed Store import
 import { useToast } from '@/hooks/use-toast';
-import { productCategories } from '@/lib/mock-data';
+import { productCategories } from '@/lib/mock-data'; // Assuming store categories can reuse productCategories for now
 import { db } from '@/lib/firebase';
 import { ref, push, set } from 'firebase/database';
 import type { Store } from '@/types';
@@ -30,11 +30,12 @@ const storeRegistrationSchema = z.object({
   address: z.string().min(5, { message: 'Address must be at least 5 characters.' }),
   city: z.string().min(2, { message: 'City must be at least 2 characters.' }),
   state: z.string().min(2, { message: 'State must be at least 2 characters.' }),
-  zipCode: z.string().min(5, { message: 'Zip code must be 5 digits.' }).max(5),
+  zipCode: z.string().min(5, { message: 'Zip code must be at least 5 digits.' }).max(10), // Allow for zip+4
   email: z.string().email({ message: 'Invalid email address.' }),
   phone: z.string().min(10, { message: 'Phone number must be at least 10 digits.' }),
   storeCategory: z.string({ required_error: "Please select a store category." }),
   description: z.string().optional(),
+  // TODO: Add latitude/longitude fields, ideally auto-filled from address or map picker
 });
 
 type StoreRegistrationFormValues = z.infer<typeof storeRegistrationSchema>;
@@ -58,14 +59,14 @@ export default function StoreRegistrationForm() {
   async function onSubmit(data: StoreRegistrationFormValues) {
     try {
       const storesRef = ref(db, 'stores');
-      const newStoreRef = push(storesRef);
+      const newStoreRef = push(storesRef); // Generates a unique ID
       const newStoreId = newStoreRef.key;
 
       if (!newStoreId) {
         throw new Error('Failed to generate store ID.');
       }
 
-      const storeData: Omit<Store, 'id'> = {
+      const storeData: Omit<Store, 'id'> = { // id will be the Firebase key
         name: data.storeName,
         address: data.address,
         city: data.city,
@@ -75,9 +76,12 @@ export default function StoreRegistrationForm() {
         phone: data.phone,
         category: data.storeCategory,
         description: data.description || '',
+        // In a real app, you'd get lat/lng here, possibly from a geocoding service
+        // latitude: 0, // Placeholder
+        // longitude: 0, // Placeholder
       };
 
-      await set(ref(db, 'stores/' + newStoreId), storeData);
+      await set(newStoreRef, storeData);
 
       toast({
         title: 'Registration Submitted!',
@@ -98,7 +102,7 @@ export default function StoreRegistrationForm() {
     <Card className="w-full max-w-2xl mx-auto shadow-xl">
       <CardHeader>
         <CardTitle className="flex items-center text-2xl font-headline">
-          <StoreIcon className="mr-2 h-7 w-7 text-primary" />
+          <StoreIconLucide className="mr-2 h-7 w-7 text-primary" />
           Register Your Store
         </CardTitle>
         <CardDescription>
@@ -211,7 +215,7 @@ export default function StoreRegistrationForm() {
               name="storeCategory"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Store Category</FormLabel>
+                  <FormLabel className="flex items-center"><Briefcase className="mr-2 h-4 w-4 text-muted-foreground" />Store Category</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -219,12 +223,17 @@ export default function StoreRegistrationForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      {/* Using productCategories for store types, consider a separate list for actual store types */}
                       {productCategories.map(category => (
                         <SelectItem key={category.id} value={category.name}>
                           {category.icon && <category.icon className="mr-2 h-4 w-4 inline-block" />}
                           {category.name}
                         </SelectItem>
                       ))}
+                       <SelectItem value="Restaurant">Restaurant</SelectItem>
+                       <SelectItem value="Retail">Retail</SelectItem>
+                       <SelectItem value="Services">Services</SelectItem>
+                       <SelectItem value="Other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

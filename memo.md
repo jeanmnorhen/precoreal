@@ -44,9 +44,9 @@ Integrar com Firebase Realtime Database para:
 
 Manter um catálogo de produtos canônicos (para referência.)
 
-Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis.
+Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Em progresso, forma salva em /stores)
 
-Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, validade e localização.
+Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, validade e localização. (UC4 - Em progresso, forma salva em /advertisements)
 
 Rastrear o histórico de preços dos produtos, alimentado pelos anúncios expirados.
 
@@ -68,7 +68,7 @@ O usuário (consumidor) abre o aplicativo Preço Real.
 
 O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil.
 
-O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário.
+O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Atualmente usa mock data, precisa buscar de /advertisements)
 
 Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância (calculada se localizações disponíveis).
 
@@ -88,20 +88,20 @@ UC3 (Lojista): Cadastro e Gerenciamento de Perfil de Loja:
 
 Um proprietário de loja se cadastra no Preço Real como "lojista".
 
-O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica.
+O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica. (Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}`)
 
 UC4 (Lojista): Publicação de Anúncios/Ofertas:
 
 O lojista autenticado acessa a interface para criar um novo anúncio. 
 
-Ele informa o nome do produto, preço, categoria, opcionalmente uma descrição e imagem.
+Ele informa o nome do produto, preço, categoria, opcionalmente uma descrição e imagem. (Formulário de listagem de produto implementado, salvando em Firebase RTDB em `/advertisements/{advertisementId}`)
 
 
 O anúncio publicado aparece no feed de usuários próximos que se encaixam na categoria do produto.
 
 UC5 (Sistema): Gerenciamento de Anúncios e Histórico de Preços:
 
-Anúncios publicados têm um tempo de vida limitado de entre 1 a 7 dias.
+Anúncios publicados têm um tempo de vida limitado de entre 1 a 7 dias. (Implementado no formulário de listagem, `validUntil` é calculado)
 
 Após a expiração, o anúncio desaparece do feed ativo dos usuários. 
 
@@ -115,7 +115,7 @@ Ele abre o app Preço Real, que atualiza o feed de ofertas locais.
 
 O usuário pode opcionalmente tocar no ícone da câmera, tirar uma foto de um hot dog (ou selecionar uma imagem do seu dispositivo). 
 
-O sistema identifica "hot dog" na imagem. 
+O sistema identifica "hot dog" na imagem. (Fluxo Genkit `analyzeImageOffers` implementado para identificação)
 
 O sistema então busca e exibe uma lista de todas as lojas que vendem "hot dogs", ordenadas por proximidade (esta busca de lojas ainda precisa ser adaptada para usar o feed de anúncios /advertisements em vez do antigo productAvailability). (BUSCA DE LOJAS USA findProductStoresFlow QUE CONSULTA productAvailability).
 
@@ -145,7 +145,7 @@ Usuários consumidores autenticados poderão salvar preferências, locais freque
 
 Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. 
 
-UC12: Definição de Idioma da Interface:
+UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
 O sistema permite ao usuário alternar o idioma da interface (ex: Português, Inglês, Espanhol) através de um seletor.
 As rotas incluirão o código do idioma (ex: /pt/ofertas, /en/offers).
@@ -181,20 +181,28 @@ A imagem capturada é usada para identificar o objeto ("hot dog").
 O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas por proximidade. 
 
 3. Plano para versão atual 
+- Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Em progresso)
+- Atualizar feed de ofertas para buscar dados do Firebase.
+- Implementar funcionalidade de câmera para análise de imagem.
 
 4. Estado Atual
+- Estrutura básica do Next.js com internacionalização (i18n) configurada.
+- Layout responsivo com navegação superior para desktop e inferior para mobile.
+- Página de feed de ofertas (UC1) com dados mockados e filtros básicos.
+- Página de análise de imagem (UC6) com upload de arquivo e integração com Genkit para identificação do produto (sem busca de ofertas ainda).
+- Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) criados e agora salvando no Firebase RTDB.
+- Paleta de cores atualizada conforme PRD.
 
 5. Planejamento para próximas versões
+- Implementar busca de ofertas usando dados do Firebase.
+- Adicionar funcionalidade de câmera para a análise de imagem.
+- Implementar autenticação para lojistas.
+- Desenvolver histórico de preços.
+- Adicionar localização GPS e ordenação por proximidade.
+- Criar página de monitoramento.
 
 6. Rotinas de manutenção 
 
 Sempre que receber um prompt que contenha ponto final “.” Revise o arquivo memo.md.
 
 Sempre que receber um prompt que contenha dois pontos finais “..” Revise o arquivo memo.md. e continue implementando.
-
-
-
-
-
-
-

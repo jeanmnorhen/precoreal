@@ -27,7 +27,7 @@ import type { ListedProduct } from '@/types';
 
 const productListingSchema = z.object({
   productName: z.string().min(3, { message: 'Product name must be at least 3 characters.' }),
-  description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
+  description: z.string().min(10, { message: 'Description must be at least 10 characters.' }).optional(),
   price: z.coerce.number().positive({ message: 'Price must be a positive number.' }),
   category: z.string({ required_error: 'Please select a product category.' }),
   imageUrl: z.string().url({ message: 'Please enter a valid image URL.' }).optional().or(z.literal('')),
@@ -38,7 +38,7 @@ const productListingSchema = z.object({
 type ProductListingFormValues = z.infer<typeof productListingSchema>;
 
 interface ProductListingFormProps {
-  storeId: string;
+  storeId: string; // ID of the store listing this product
 }
 
 export default function ProductListingForm({ storeId }: ProductListingFormProps) {
@@ -50,7 +50,7 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
       description: '',
       price: 0,
       imageUrl: '',
-      stock: 0,
+      stock: undefined, // Optional, so undefined is better than 0 if not provided
       validityDurationDays: 7, // Default to 7 days
     },
   });
@@ -63,11 +63,12 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
     const advertisementPayload: Omit<ListedProduct, 'id'> = {
       storeId: storeId,
       name: productData.productName,
-      description: productData.description,
+      description: productData.description || '',
       price: productData.price,
       category: productData.category,
       createdAt,
       validUntil,
+      // dataAiHint is not collected in this form yet
     };
 
     if (productData.imageUrl) {
@@ -76,11 +77,11 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
     if (productData.stock !== undefined && productData.stock !== null) {
       advertisementPayload.stock = productData.stock;
     }
-    // dataAiHint is not collected in this form yet
+    
 
     try {
       const advertisementsRef = ref(db, 'advertisements');
-      const newAdvertisementRef = push(advertisementsRef);
+      const newAdvertisementRef = push(advertisementsRef); // Generates a unique ID for the advertisement
       await set(newAdvertisementRef, advertisementPayload);
 
       toast({
@@ -131,9 +132,9 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Product Description</FormLabel>
+                  <FormLabel>Product Description (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Describe your product in detail..." {...field} rows={4} />
+                    <Textarea placeholder="Describe your product in detail..." {...field} rows={3} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -168,7 +169,7 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
                       </FormControl>
                       <SelectContent>
                         {productCategories.map(category => (
-                           <SelectItem key={category.id} value={category.name}>
+                           <SelectItem key={category.id} value={category.name}> {/* Saving category name for now */}
                              {category.icon && <category.icon className="mr-2 h-4 w-4 inline-block" />}
                              {category.name}
                            </SelectItem>
@@ -188,9 +189,9 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
                 <FormItem>
                   <FormLabel className="flex items-center"><ImageIcon className="mr-2 h-4 w-4 text-muted-foreground" />Product Image URL (Optional)</FormLabel>
                   <FormControl>
-                    <Input type="url" placeholder="https://example.com/image.png" {...field} />
+                    <Input type="url" placeholder="https://placehold.co/600x400.png" {...field} />
                   </FormControl>
-                  <FormDescription>Link to an image of your product.</FormDescription>
+                  <FormDescription>Link to an image of your product. Use https://placehold.co for placeholders.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -204,7 +205,8 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
                   <FormItem>
                     <FormLabel>Stock Quantity (Optional)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="0" {...field} />
+                      {/* Ensure field.value is correctly handled if it's undefined */}
+                      <Input type="number" placeholder="Leave blank if not tracking" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormDescription>Number of items currently in stock.</FormDescription>
                     <FormMessage />
