@@ -35,6 +35,7 @@ Os dados dos anúncios expirados serão registrados para compor um histórico de
 Utilizar a localização GPS do usuário (com consentimento) para otimizar a busca por ofertas e lojas.
 
 Oferecer uma interface de usuário intuitiva e responsiva.
+    - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Para Lojas) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade.
 
 Funcionalidade Secundária: Permitir que os usuários façam upload de imagens ou tirem fotos com a câmera do dispositivo para análise (identificar objetos). Essa funcionalidade pode ser usada para ajudar o usuário a identificar um item sobre o qual deseja buscar ofertas no feed principal.
 
@@ -188,6 +189,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 Sempre que receber um prompt que contenha ponto final “.” Revise o arquivo memo.md.
 
 Sempre que receber um prompt que contenha dois pontos finais “..” Revise o arquivo memo.md. e continue implementando.
+
 
 
 

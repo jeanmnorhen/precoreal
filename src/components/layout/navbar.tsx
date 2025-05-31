@@ -1,10 +1,9 @@
+
 'use client';
 
 import Link from 'next/link';
-import { Home, Camera, Store, Menu, Search } from 'lucide-react';
+import { Home, Camera, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Input } from '@/components/ui/input';
 import { useIsMobile } from '@/hooks/use-mobile';
 import React from 'react';
 
@@ -16,17 +15,15 @@ const navItems = [
 
 export default function Navbar() {
   const isMobile = useIsMobile();
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  const commonNavLinks = (isMobileView = false) => (
+  const desktopNavLinks = () => (
     <>
       {navItems.map((item) => (
         <Button
           key={item.label}
           variant="ghost"
           asChild
-          className={`justify-start ${isMobileView ? 'w-full text-lg py-3' : 'text-sm'}`}
-          onClick={() => isMobileView && setMobileMenuOpen(false)}
+          className="text-sm"
         >
           <Link href={item.href}>
             <item.icon className="mr-2 h-5 w-5" />
@@ -38,7 +35,7 @@ export default function Navbar() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:z-50">
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="text-primary">
@@ -50,23 +47,9 @@ export default function Navbar() {
           <span className="font-headline text-xl font-bold">RealPrice Finder</span>
         </Link>
 
-        {isMobile ? (
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-full max-w-xs p-6">
-              <nav className="flex flex-col gap-4">
-                {commonNavLinks(true)}
-              </nav>
-            </SheetContent>
-          </Sheet>
-        ) : (
+        {!isMobile && (
           <nav className="flex items-center gap-2">
-            {commonNavLinks()}
+            {desktopNavLinks()}
           </nav>
         )}
       </div>
