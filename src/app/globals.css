@@ -5,96 +5,96 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%; /* Branco Gelo / Off-white */
-    --foreground: 58 22% 26%; /* #535233 - Color 5 */
+    --background: 48 40% 78%; /* #E2D9AF - Pale Beige/Cream */
+    --foreground: 205 96% 15%; /* #01304A - Dark Blue/Navy */
 
     --card: 0 0% 100%; /* White */
-    --card-foreground: 58 22% 26%; /* #535233 - Color 5 */
+    --card-foreground: 205 96% 15%; /* #01304A - Dark Blue/Navy */
 
     --popover: 0 0% 100%; /* White */
-    --popover-foreground: 58 22% 26%; /* #535233 - Color 5 */
+    --popover-foreground: 205 96% 15%; /* #01304A - Dark Blue/Navy */
 
-    --primary: 353 66% 35%; /* #951f2b - Color 1 */
-    --primary-foreground: 0 0% 98%; /* Off-white for contrast */
+    --primary: 202 97% 30%; /* #026296 - Medium Blue */
+    --primary-foreground: 48 40% 95%; /* Very light beige for contrast on blue */
 
-    --secondary: 58 21% 53%; /* #a5a36c - Color 4 */
-    --secondary-foreground: 58 22% 20%; /* Dark olive for contrast on Color 4 */
+    --secondary: 32 100% 47%; /* #F27F00 - Bright Orange */
+    --secondary-foreground: 205 96% 15%; /* #01304A - Dark Blue/Navy for contrast on orange */
 
-    --muted: 58 33% 82%; /* Lighter #e0dfb1 - Color 3 */
-    --muted-foreground: 58 22% 40%; /* Mid-tone olive/brown */
+    --muted: 48 35% 88%; /* Lighter/desaturated version of background */
+    --muted-foreground: 205 70% 35%; /* Slightly lighter blue than main foreground */
 
-    --accent: 58 33% 78%; /* #e0dfb1 - Color 3 */
-    --accent-foreground: 58 22% 26%; /* #535233 - Color 5 */
+    --accent: 40 95% 63%; /* #FBB849 - Light Orange/Gold */
+    --accent-foreground: 205 96% 15%; /* #01304A - Dark Blue/Navy */
     
-    --destructive: 353 66% 45%; /* Brighter red than primary */
+    --destructive: 0 72% 51%; /* Keeping a standard red for destructive actions */
     --destructive-foreground: 0 0% 98%; /* Off-white for contrast */
 
-    --border: 0 0% 88%; /* Neutral light gray border */
-    --input: 0 0% 85%; /* Neutral gray input border */
-    --ring: 353 66% 40%; /* Primary color, slightly brighter for ring */
+    --border: 48 30% 70%; /* Slightly darker than background */
+    --input: 48 30% 70%; /* Same as border */
+    --ring: 202 97% 30%; /* Primary color for ring */
 
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --chart-1: 202 97% 40%; /* Adjusted for new primary */
+    --chart-2: 32 100% 55%;  /* Adjusted for new secondary */
+    --chart-3: 40 95% 70%;   /* Adjusted for new accent */
+    --chart-4: 205 80% 50%;  /* Derived from foreground */
+    --chart-5: 25 90% 50%;   /* #DB5A0B - Darker Orange (from palette) */
     --radius: 0.5rem;
 
     /* Sidebar specific theme variables */
-    --sidebar-background: 0 0% 97%; /* Slightly darker/different off-white for sidebar */
-    --sidebar-foreground: 58 22% 26%; /* #535233 - Color 5 */
-    --sidebar-primary: 353 66% 35%; /* #951f2b - Color 1 */
-    --sidebar-primary-foreground: 0 0% 98%; /* Off-white for contrast */
-    --sidebar-accent: 58 33% 78%; /* #e0dfb1 - Color 3 */
-    --sidebar-accent-foreground: 58 22% 26%; /* #535233 - Color 5 */
-    --sidebar-border: 0 0% 88%; /* Consistent neutral light gray border */
-    --sidebar-ring: 353 66% 40%;
+    --sidebar-background: 48 40% 75%; /* Slightly darker/different beige for sidebar */
+    --sidebar-foreground: 205 96% 15%; /* Dark Blue/Navy */
+    --sidebar-primary: 202 97% 30%; /* Medium Blue */
+    --sidebar-primary-foreground: 48 40% 95%; /* Very light beige for contrast */
+    --sidebar-accent: 40 95% 63%; /* Light Orange/Gold */
+    --sidebar-accent-foreground: 205 96% 15%; /* Dark Blue/Navy */
+    --sidebar-border: 48 30% 65%; /* Consistent border */
+    --sidebar-ring: 202 97% 30%;
   }
 
   .dark {
-    --background: 58 15% 10%; /* Very dark olive/brown, from Color 5 */
-    --foreground: 56 43% 85%; /* Light beige from Color 2 */
+    --background: 205 96% 15%; /* #01304A - Dark Blue/Navy */
+    --foreground: 48 40% 78%; /* #E2D9AF - Pale Beige/Cream */
 
-    --card: 58 15% 15%; /* Slightly lighter than dark background */
-    --card-foreground: 56 43% 85%;
+    --card: 205 80% 20%; /* Slightly lighter dark blue */
+    --card-foreground: 48 40% 78%; /* Pale Beige/Cream */
 
-    --popover: 58 15% 15%;
-    --popover-foreground: 56 43% 85%;
+    --popover: 205 80% 20%; /* Slightly lighter dark blue */
+    --popover-foreground: 48 40% 78%; /* Pale Beige/Cream */
 
-    --primary: 353 70% 55%; /* Brighter red from Color 1 */
-    --primary-foreground: 0 0% 96%; /* Light gray for contrast */
+    --primary: 202 90% 45%; /* Lighter Medium Blue for dark mode */
+    --primary-foreground: 205 96% 10%; /* Very dark blue for contrast */
 
-    --secondary: 58 30% 45%; /* Dark mode version of Color 4 */
-    --secondary-foreground: 56 43% 90%; /* Light text for dark secondary */
+    --secondary: 32 100% 55%; /* Brighter Orange for dark mode */
+    --secondary-foreground: 205 96% 15%; /* Dark Blue/Navy */
 
-    --muted: 58 20% 25%; /* Dark mode version of Color 3 */
-    --muted-foreground: 56 43% 65%; /* Lighter muted text */
+    --muted: 205 60% 25%; /* Darker, desaturated blue */
+    --muted-foreground: 48 30% 65%; /* Lighter beige */
 
-    --accent: 58 30% 60%; /* Dark mode version of Color 3, brighter */
-    --accent-foreground: 58 15% 10%; /* Very dark text on accent */
+    --accent: 40 95% 70%; /* Brighter Light Orange/Gold for dark mode */
+    --accent-foreground: 205 96% 15%; /* Dark Blue/Navy */
 
-    --destructive: 353 75% 60%; /* Brighter destructive red */
-    --destructive-foreground: 0 0% 96%; /* Light gray for contrast */
+    --destructive: 0 70% 60%; /* Brighter red for dark mode */
+    --destructive-foreground: 0 0% 98%; /* Off-white for contrast */
 
-    --border: 58 20% 30%; /* Dark border */
-    --input: 58 20% 35%; /* Dark input */
-    --ring: 353 70% 55%; /* Same as dark primary */
+    --border: 205 50% 30%; /* Medium dark blue */
+    --input: 205 50% 35%; /* Slightly lighter medium dark blue */
+    --ring: 202 90% 45%; /* Primary color (dark mode version) */
     
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --chart-1: 202 90% 55%;
+    --chart-2: 32 100% 65%;
+    --chart-3: 40 95% 75%;
+    --chart-4: 48 40% 70%;
+    --chart-5: 25 90% 60%;
 
     /* Sidebar specific theme variables for dark mode */
-    --sidebar-background: 58 15% 12%; /* Slightly different from main dark bg */
-    --sidebar-foreground: 56 43% 85%;
-    --sidebar-primary: 353 70% 55%;
-    --sidebar-primary-foreground: 0 0% 96%; /* Light gray for contrast */
-    --sidebar-accent: 58 30% 60%;
-    --sidebar-accent-foreground: 58 15% 10%;
-    --sidebar-border: 58 20% 30%;
-    --sidebar-ring: 353 70% 55%;
+    --sidebar-background: 205 90% 18%; /* Slightly different from main dark bg */
+    --sidebar-foreground: 48 40% 78%;
+    --sidebar-primary: 202 90% 45%;
+    --sidebar-primary-foreground: 205 96% 10%;
+    --sidebar-accent: 40 95% 70%;
+    --sidebar-accent-foreground: 205 96% 15%;
+    --sidebar-border: 205 50% 30%;
+    --sidebar-ring: 202 90% 45%;
   }
 }
 
@@ -127,3 +127,4 @@
     @apply bg-primary;
   }
 }
+
