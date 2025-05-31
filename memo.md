@@ -184,6 +184,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído)
 - Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements implementada, filtragem de expirados feita. StoreName e Distance são placeholders)
 - Implementar funcionalidade de câmera para análise de imagem. (Concluído)
+- Nova paleta de cores aplicada conforme solicitação do usuário (Azul Médio Primário, Laranja Brilhante Secundário, Fundo Bege/Creme).
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada.
@@ -191,7 +192,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements`).
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB.
-- Paleta de cores atualizada conforme PRD.
+- Paleta de cores atualizada conforme solicitação do usuário (Azul Médio, Laranja, Bege).
 - `QueryClientProvider` configurado para `react-query`.
 
 5. Planejamento para próximas versões
