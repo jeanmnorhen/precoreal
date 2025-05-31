@@ -34,6 +34,7 @@ Os dados dos anúncios expirados serão registrados para compor um histórico de
 Utilizar a localização GPS do usuário (com consentimento) para otimizar a busca por ofertas e lojas. (Concluído - Usuário pode fornecer localização. Distância real calculada e usada para ordenação.)
 
 Oferecer uma interface de usuário intuitiva e responsiva.
+    - **Prioridade Alta:** Garantir excelente responsividade e usabilidade em dispositivos smartphone.
     - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Monitoramento, Para Lojas/Meus Produtos) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade. (Ajustado para incluir autenticação e Monitoramento)
     - Rodapé removido do aplicativo. (Concluído)
 
@@ -132,7 +133,7 @@ Se uma busca na `HomePage` não encontrar ofertas ativas:
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
 
 Implementada autenticação para lojistas (cadastro, login, logout). As lojas são vinculadas aos UIDs dos lojistas.
-Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar/editar/excluir produtos canônicos a partir de sugestões ou manualmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição de produtos canônicos funcional, exclusão de produtos canônicos funcional. Botão de adicionar manualmente é placeholder.)
+Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar/editar/excluir produtos canônicos a partir de sugestões ou manualmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição e exclusão de produtos canônicos funcional. Botão de adicionar manualmente é placeholder.)
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
@@ -176,6 +177,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
 - Layout responsivo com navegação superior para desktop e inferior para mobile. Rodapé removido. (Concluído)
+- **Responsividade para dispositivos smartphone é uma prioridade.**
 - Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização (com diálogo de confirmação) e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca. Se o produto não estiver no catálogo canônico, uma sugestão é registrada.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude` (com dicas de UX melhoradas). Produtos são listados sob o `storeId` da loja do usuário.
@@ -215,5 +217,7 @@ Sempre que receber um prompt que contenha dois pontos finais “..” Revise o a
 - Foreground: `#01304A` (Dark Blue/Navy)
 - Accent: `#FBB849` (Light Orange/Gold)
 (Estas cores estão implementadas em `src/app/globals.css`)
+
+    
 
     
