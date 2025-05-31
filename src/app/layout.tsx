@@ -13,15 +13,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    // The lang attribute will be set in [lang]/layout.tsx
-    <html suppressHydrationWarning>
-      <head>
-         {/* Font links moved to [lang]/layout.tsx to be within the html tag with lang attribute */}
-      </head>
-      <body>
-        {children}
-      </body>
-    </html>
-  );
+  // Root layout should not render <html> and <body> when using [lang] layout for i18n.
+  // It becomes a pass-through for children, and [lang]/layout.tsx handles the document structure.
+  return <>{children}</>;
 }
