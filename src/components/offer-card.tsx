@@ -1,15 +1,18 @@
+
 import Image from 'next/image';
 import type { Offer } from '@/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, ShoppingCart } from 'lucide-react';
 import { Button } from './ui/button';
+import type { Dictionary } from '@/lib/get-dictionary';
 
 interface OfferCardProps {
   offer: Offer;
+  dictionary: Dictionary['homePage']; // For distance text
 }
 
-export default function OfferCard({ offer }: OfferCardProps) {
+export default function OfferCard({ offer, dictionary }: OfferCardProps) {
   return (
     <Card className="flex flex-col overflow-hidden rounded-lg shadow-lg transition-all hover:shadow-xl">
       <CardHeader className="p-0">
@@ -35,13 +38,17 @@ export default function OfferCard({ offer }: OfferCardProps) {
           </div>
           <div className="mt-1 flex items-center text-sm text-muted-foreground">
             <MapPin className="mr-1.5 h-4 w-4" />
-            <span>{offer.distance.toFixed(1)} miles away</span>
+            <span>
+              {offer.distance !== null 
+                ? `${offer.distance.toFixed(1)} km ${dictionary.distanceAway || 'away'}`
+                : dictionary.distanceUnknown || 'Distance unknown'}
+            </span>
           </div>
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-          View Deal
+          {dictionary.viewDealButton || 'View Deal'}
         </Button>
       </CardFooter>
     </Card>

@@ -9,8 +9,6 @@ Objetivo Principal: Permitir que usuários encontrem produtos e serviços sendo 
 
 Facilitar a descoberta de ofertas locais através de um feed de produtos geolocalizado.
 
-Buscar ativamente por produtos para que os lojistas escolham produtos pré-cadastrados.
-
 Usar firebase real time database.
 Minhas credenciais:
 NEXT_PUBLIC_FIREBASE_API_KEY="AIzaSyDfDN7WxXp7aO_GzMKtmHoRtlH47AA9aP4"
@@ -25,15 +23,15 @@ GEMINI_API_KEY=AIzaSyByrggmNnonVbCBaqoXCEbB2Jb1JwIEz8M
 
 Permitir que usuários filtrem produtos por categoria.
 
-Apresentar lojas que vendem um produto específico, ordenadas por proximidade.
+Apresentar lojas que vendem um produto específico, ordenadas por proximidade. (Parcialmente concluído - Cálculo de distância implementado, falta entrada de localização da loja via mapa e melhorias na UX da permissão de localização do usuário.)
 
-Permitir que lojistas (outro tipo de cliente do aplicativo) cadastrem seus estabelecimentos e anunciem seus produtos na plataforma. (Parcialmente Concluído - Implementada autenticação para lojistas)
+Permitir que lojistas (outro tipo de cliente do aplicativo) cadastrem seus estabelecimentos e anunciem seus produtos na plataforma. (Concluído - Implementada autenticação para lojistas. Lojas incluem agora latitude e longitude.)
 
 Anúncios de produtos terão um tempo de validade definido entre 1 e 7 dias.
 
 Os dados dos anúncios expirados serão registrados para compor um histórico de preços.
 
-Utilizar a localização GPS do usuário (com consentimento) para otimizar a busca por ofertas e lojas.
+Utilizar a localização GPS do usuário (com consentimento) para otimizar a busca por ofertas e lojas. (Parcialmente Concluído - Usuário pode fornecer localização. Distância real calculada.)
 
 Oferecer uma interface de usuário intuitiva e responsiva.
     - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Para Lojas) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade. (Ajustado para incluir autenticação)
@@ -44,7 +42,7 @@ Integrar com Firebase Realtime Database para:
 
 Manter um catálogo de produtos canônicos (para referência.)
 
-Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores com ownerId vinculado ao usuário autenticado.)
+Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores com ownerId vinculado ao usuário autenticado e campos para latitude/longitude.)
 
 Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, validade e localização. (UC4 - Concluído, forma salva em /advertisements, vinculada a um storeId.)
 
@@ -60,36 +58,29 @@ Implementar um sistema de Retrieval Augmented Generation (RAG) geospacial para c
 
 Desenvolver "Superagentes" de IA para funcionalidades avançadas (ver seção 8).
 
-Proposta (Adicionada): Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por novos produtos na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo.
+Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por novos produtos na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo.
 
 2. Casos de Uso
 
 UC1 (Principal): Descoberta de Ofertas Próximas (Feed Geolocalizado):
 
 O usuário (consumidor) abre o aplicativo Preço Real.
-
-O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil.
-
-O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados. Nome real da loja buscado de /stores. Cálculo de distância ainda é mock.)
-
-Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância (calculada se localizações disponíveis).
-
+O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil e permitir. (Concluído - Usuário pode fornecer localização via botão; cálculo de distância agora é real se coordenadas estiverem disponíveis.)
+O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados. Nome real da loja buscado de /stores. Distância real calculada se localizações disponíveis.)
+Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância.
 O usuário pode rolar o feed para ver mais ofertas.
 
 UC2 (Principal): Filtragem e Busca de Produto Específico por Proximidade:
 
 (Continuando do UC1 ou como uma ação separada) O usuário deseja um produto específico (ex: "hot dog").
-
 O usuário utiliza um filtro de categoria (ex: toca no ícone "hot dog") ou uma barra de busca.
-
-O sistema exibe uma lista de todas as lojas próximas que anunciaram "hot dogs" (ou o produto buscado), ordenadas pela proximidade em relação ao usuário. (Depende de dados reais em UC1)
-
+O sistema exibe uma lista de todas as lojas próximas que anunciaram "hot dogs" (ou o produto buscado), ordenadas pela proximidade em relação ao usuário. (Concluído - Ordenação por distância real implementada.)
 Cada item da lista mostra o nome da loja, o produto, o preço anunciado e a distância.
 
 UC3 (Lojista): Cadastro e Gerenciamento de Perfil de Loja:
 
 Um proprietário de loja se cadastra no Preço Real como "lojista". (Implementada funcionalidade de cadastro de usuário lojista com email/senha.)
-O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica. (Concluído - Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}` com `ownerId` vinculado ao UID do lojista.)
+O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica (latitude e longitude). (Concluído - Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}` com `ownerId` vinculado ao UID do lojista e campos para lat/lon.)
 A página de cadastro de loja agora requer que o usuário esteja autenticado.
 
 UC4 (Lojista): Publicação de Anúncios/Ofertas:
@@ -103,21 +94,15 @@ O anúncio publicado aparece no feed de usuários próximos que se encaixam na c
 UC5 (Sistema): Gerenciamento de Anúncios e Histórico de Preços:
 
 Anúncios publicados têm um tempo de vida limitado de entre 1 a 7 dias. (Implementado no formulário de listagem, `validUntil` é calculado. Filtragem de expirados implementada no feed UC1)
-
 Após a expiração, o anúncio desaparece do feed ativo dos usuários. 
-
 Os dados do anúncio expirado (produto, preço, loja, data) são registrados no sistema de histórico de preços associado ao produto (se for um produto catalogado) e/ou à loja. (Coleta de dados expirados para histórico pendente)
 
 UC6: Análise de Imagem (Upload ou Câmera) para Busca de Ofertas:
 
 Um usuário (consumidor), como o de Formosa, Goiás, está com fome e quer um "hot dog".
-
 Ele abre o app Preço Real, que atualiza o feed de ofertas locais.
-
 O usuário pode opcionalmente tocar no ícone da câmera, tirar uma foto de um hot dog (ou selecionar uma imagem do seu dispositivo). 
-
 O sistema identifica "hot dog" na imagem. (Fluxo Genkit `analyzeImageOffers` implementado para identificação do produto. Upload de imagem funcional. Funcionalidade de câmera (UC15) implementada.)
-
 O sistema então busca e exibe uma lista de todas as lojas que vendem "hot dogs", ordenadas por proximidade. A busca é feita no feed principal de `/advertisements` usando o nome do produto identificado como termo de busca. (Concluído - Análise de imagem redireciona para o feed com termo de busca).
 
 UC7 (Apoio à busca via imagem): Descoberta de Produtos Relacionados (IA):
@@ -131,13 +116,11 @@ Para produtos identificados (UC6) ou encontrados (UC7), o sistema (via IA) pode 
 UC9 (Para análise de imagem): Feedback Visual do Processamento:
 
 O usuário visualiza o progresso da análise da imagem em etapas. 
-
 O usuário recebe notificações (toasts) sobre o status e erros. (Implementado no ImageAnalysisTool)
 
 UC10: Consulta de Produtos no Banco de Dados (Catálogo - via análise de imagem):
 
 O usuário (ou o sistema através da análise de imagem) pode pesquisar produtos existentes no catálogo de produtos canônicos do Preço Real.
-
 O sistema exibe informações do produto, incluindo dados multilíngues e, potencialmente, um resumo do histórico de preços. Esta busca é atualmente feita pelo findStoresTool com base em um canonicalName.
 
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
@@ -153,53 +136,46 @@ As rotas incluirão o código do idioma (ex: /pt/ofertas, /en/offers).
 UC13: Monitoramento de Dados Agregados:
 
 O usuário (administrador ou analista do Preço Real) acessa uma página de monitoramento. 
-
 O usuário seleciona um produto ou categoria.
-
 O sistema exibe o valor médio desse produto/categoria em diferentes regiões/países onde há anúncios registrados, com base nos dados de anúncios expirados e perfis de lojas. (PÁGINA DE MONITORAMENTO USA productAvailability, PRECISA ADAPTAR PARA /advertisements E HISTÓRICO)
 
 UC14 (Administrador): Interação com Superagente de Análise via Chat:
 
 O administrador acessa uma página de chat dedicada (ex: /admin/super-agent-chat).
-
 O administrador interage com o "Superagente de Análise e Relatórios" para obter insights sobre o projeto, uso do banco de dados, atividade de usuários, possíveis falhas ou pontos de atenção. 
 
 UC15 (Variação de UC6): Uso da Câmera para Identificação e Busca Rápida: (Concluído)
 
 Um usuário abre o Preço Real.
-
 O aplicativo exibe o feed de ofertas locais.
-
 O usuário toca no ícone da câmera (na aba "Identificar").
-
 O aplicativo solicita permissão para usar a câmera.
-
 O usuário tira uma foto de um item (ex: um hot dog).
-
 A imagem capturada é usada para identificar o objeto ("hot dog").
-
 O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas por proximidade. (Concluído via UC6)
 
 3. Plano para versão atual 
 - Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído, com autenticação de lojista)
-- Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements e /stores implementada, filtragem de expirados feita. Nome real da loja é exibido. Distância ainda é mock/placeholder.)
+- Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements e /stores implementada, filtragem de expirados feita. Nome real da loja é exibido. Distância real calculada se coordenadas disponíveis.)
 - Implementar funcionalidade de câmera para análise de imagem. (Concluído)
-- Paleta de cores definida pelo usuário (Azul Médio Primário, Laranja Brilhante Secundário, Fundo Branco). (Concluído)
+- Paleta de cores atualizada para Azul Médio Primário, Laranja Brilhante Secundário, Fundo Branco, Texto Azul Escuro e Acento Laranja Claro/Dourado. (Concluído)
 - Conectar análise de imagem (UC6) à busca de ofertas no feed principal. (Concluído - Análise de imagem redireciona para o feed com o produto identificado como termo de busca).
 - Implementar autenticação para lojistas (Email/Senha) e proteger as rotas de cadastro de loja e listagem de produtos. (Concluído)
+- Implementar cálculo de distância real ou permitir que o usuário salve uma localização (GPS). (Concluído - Lojistas podem adicionar lat/lon. Usuários podem fornecer localização para cálculo de distância.)
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada.
 - Layout responsivo com navegação superior para desktop e inferior para mobile.
-- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos.
+- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização e as lojas tiverem coordenadas.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca.
-- Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId`. Produtos são listados sob o `storeId` da loja do usuário.
-- Paleta de cores atualizada conforme solicitação do usuário (Azul Médio, Laranja, com Fundo Branco).
+- Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude`. Produtos são listados sob o `storeId` da loja do usuário.
+- Paleta de cores atualizada conforme solicitação do usuário.
 - `QueryClientProvider` e `AuthProvider` configurados.
 - Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
 
 5. Planejamento para próximas versões
-- Implementar cálculo de distância real ou permitir que o usuário salve uma localização (GPS).
+- Melhorar UX do cadastro de localização da loja (ex: usar um mapa interativo).
+- Melhorar UX da solicitação de permissão de localização do usuário (ex: explicar o motivo, permitir salvar preferência).
 - Desenvolver histórico de preços (UC5 - parte de salvar dados expirados).
 - Criar página de monitoramento (UC13).
 - Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo (conforme nova proposta).

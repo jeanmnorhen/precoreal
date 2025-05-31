@@ -12,7 +12,7 @@ export interface Offer {
   price: number;
   storeId: string; 
   storeName: string; 
-  distance: number; // in miles or km
+  distance: number | null; // in km, can be null if not calculable
   category: string; // Category name or ID
   description?: string;
   dataAiHint?: string;

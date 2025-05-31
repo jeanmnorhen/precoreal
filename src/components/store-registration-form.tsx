@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
+import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase, Globe2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { productCategories } from '@/lib/mock-data';
 import { db } from '@/lib/firebase';
@@ -49,6 +49,8 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
     phone: z.string().min(10, { message: dictionary.phoneMinLengthError.replace('{length}', '10') }),
     storeCategory: z.string({ required_error: dictionary.categoryRequiredError }),
     description: z.string().optional(),
+    latitude: z.coerce.number().min(-90, {message: dictionary.latitudeInvalidError}).max(90, {message: dictionary.latitudeInvalidError}).optional(),
+    longitude: z.coerce.number().min(-180, {message: dictionary.longitudeInvalidError}).max(180, {message: dictionary.longitudeInvalidError}).optional(),
   });
   
   type StoreRegistrationFormValues = z.infer<typeof storeRegistrationSchema>;
@@ -64,6 +66,8 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
       email: '',
       phone: '',
       description: '',
+      latitude: undefined,
+      longitude: undefined,
     },
   });
 
@@ -75,11 +79,11 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
       const newStoreId = newStoreRef.key;
 
       if (!newStoreId) {
-        throw new Error(dictionary.genericError); // Or a more specific error
+        throw new Error(dictionary.genericError); 
       }
 
       const storeData: Omit<Store, 'id'> = {
-        ownerId: userId, // Link store to the authenticated user
+        ownerId: userId, 
         name: data.storeName,
         address: data.address,
         city: data.city,
@@ -89,8 +93,13 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
         phone: data.phone,
         category: data.storeCategory,
         description: data.description || '',
-        // latitude and longitude would be added here if collected
       };
+
+      if (data.latitude !== undefined && data.longitude !== undefined) {
+        storeData.latitude = data.latitude;
+        storeData.longitude = data.longitude;
+      }
+
 
       await set(newStoreRef, storeData);
 
@@ -99,8 +108,6 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
         description: dictionary.registrationSuccessMessage.replace('{storeName}', data.storeName),
       });
       form.reset();
-      // Potentially redirect to product listing page or dashboard
-      // router.push(`/${lang}/stores/products`);
     } catch (error) {
       console.error('Error saving store registration data:', error);
       toast({
@@ -224,6 +231,38 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                 )}
               />
             </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="latitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center"><Globe2 className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.latitudeLabel}</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder={dictionary.latitudePlaceholder} {...field} step="any" />
+                    </FormControl>
+                    <FormDescription>{dictionary.coordinatesHint}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="longitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center"><Globe2 className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.longitudeLabel}</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder={dictionary.longitudePlaceholder} {...field} step="any" />
+                    </FormControl>
+                     <FormDescription>{dictionary.coordinatesHint}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
 
             <FormField
               control={form.control}
@@ -238,8 +277,6 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {/* Using productCategories for store types, consider a separate list for actual store types */}
-                      {/* TODO: Internationalize category names if they come from a dynamic source or make these static options internationalized */}
                       {productCategories.map(category => (
                         <SelectItem key={category.id} value={category.name}>
                           {category.icon && <category.icon className="mr-2 h-4 w-4 inline-block" />}
