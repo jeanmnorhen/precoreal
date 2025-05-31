@@ -391,7 +391,7 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
       </Dialog>
 
 
-      {/* Section for Reviewed Suggestions (Read-only for now) */}
+      {/* Section for Reviewed Suggestions */}
       {reviewedSuggestions.length > 0 && (
          <Card className="shadow-md">
             <CardHeader>
@@ -455,3 +455,4 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     </div>
   );
 }
+
