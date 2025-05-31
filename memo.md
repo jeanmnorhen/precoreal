@@ -1,3 +1,4 @@
+
 Relatório do Projeto: Preço Real
 
 1. Objetivos do Projeto
@@ -34,6 +35,7 @@ Utilizar a localização GPS do usuário (com consentimento) para otimizar a bus
 
 Oferecer uma interface de usuário intuitiva e responsiva.
     - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Monitoramento, Para Lojas/Meus Produtos) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade. (Ajustado para incluir autenticação e Monitoramento)
+    - Rodapé removido do aplicativo.
 
 Funcionalidade Secundária: Permitir que os usuários façam upload de imagens ou tirem fotos com a câmera do dispositivo para análise (identificar objetos). Essa funcionalidade pode ser usada para ajudar o usuário a identificar um item sobre o qual deseja buscar ofertas no feed principal. (Concluído)
 
@@ -57,14 +59,14 @@ Implementar um sistema de Retrieval Augmented Generation (RAG) geospacial para c
 
 Desenvolver "Superagentes" de IA para funcionalidades avançadas (ver seção 8).
 
-Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por novos produtos na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo.
+Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por new products na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo.
 
 2. Casos de Uso
 
 UC1 (Principal): Descoberta de Ofertas Próximas (Feed Geolocalizado):
 
 O usuário (consumidor) abre o aplicativo Preço Real.
-O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil e permitir. (Concluído - Usuário pode fornecer localização via botão; cálculo de distância agora é real se coordenadas estiverem disponíveis.)
+O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil e permitir. (Concluído - Usuário pode fornecer localização via botão; cálculo de distância agora é real se coordenadas estiverem disponíveis. UX da solicitação de permissão melhorada com AlertDialog.)
 O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados e arquivados. Nome real da loja buscado de /stores. Distância real calculada se localizações disponíveis.)
 Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância.
 O usuário pode rolar o feed para ver mais ofertas.
@@ -72,14 +74,14 @@ O usuário pode rolar o feed para ver mais ofertas.
 UC2 (Principal): Filtragem e Busca de Produto Específico por Proximidade:
 
 (Continuando do UC1 ou como uma ação separada) O usuário deseja um produto específico (ex: "hot dog").
-O usuário utiliza um filtro de categoria (ex: toca no ícone "hot dog") ou uma barra de busca.
+O usuário utiliza um filtro de categoria (ex: toca no ícone "hot dog") ou uma barra de busca. (Nomes das categorias agora internacionalizados no filtro).
 O sistema exibe uma lista de todas as lojas próximas que anunciaram "hot dogs" (ou o produto buscado), ordenadas pela proximidade em relação ao usuário. (Concluído - Ordenação por distância real implementada.)
 Cada item da lista mostra o nome da loja, o produto, o preço anunciado e a distância.
 
 UC3 (Lojista): Cadastro e Gerenciamento de Perfil de Loja:
 
 Um proprietário de loja se cadastra no Preço Real como "lojista". (Implementada funcionalidade de cadastro de usuário lojista com email/senha.)
-O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica (latitude e longitude). (Concluído - Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}` com `ownerId` vinculado ao UID do lojista e campos para lat/lon.)
+O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica (latitude e longitude). (Concluído - Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}` com `ownerId` vinculado ao UID do lojista e campos para lat/lon. UX dos campos de coordenadas melhorada com dicas.)
 A página de cadastro de loja agora requer que o usuário esteja autenticado.
 
 UC4 (Lojista): Publicação de Anúncios/Ofertas:
@@ -160,16 +162,16 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Paleta de cores atualizada para Azul Médio Primário, Laranja Brilhante Secundário, Fundo Branco, Texto Azul Escuro e Acento Laranja Claro/Dourado. (Concluído - Usuário definiu nova paleta: Primária: #026296 (Azul Médio), Secundária: #F27F00 (Laranja Brilhante), Fundo: #FFFFFF (Branco), Foreground: #01304A (Azul Escuro/Marinho), Acento: #FBB849 (Laranja Claro/Dourado)).
 - Conectar análise de imagem (UC6) à busca de ofertas no feed principal. (Concluído - Análise de imagem redireciona para o feed com o produto identificado como termo de busca).
 - Implementar autenticação para lojistas (Email/Senha) e proteger as rotas de cadastro de loja e listagem de produtos. (Concluído)
-- Implementar cálculo de distância real ou permitir que o usuário salve uma localização (GPS). (Concluído - Lojistas podem adicionar lat/lon. Usuários podem fornecer localização para cálculo de distância.)
+- Implementar cálculo de distância real ou permitir que o usuário salve uma localização (GPS). (Concluído - Lojistas podem adicionar lat/lon. Usuários podem fornecer localização para cálculo de distância. UX da permissão melhorada.)
 - Implementar sistema de histórico de preços (UC5). (Concluído - Anúncios expirados são arquivados e movidos para `/priceHistory`).
 - Criar página de monitoramento de preços (UC13). (Concluído - Exibe histórico de preços e gráfico de tendência).
 
 4. Estado Atual
-- Estrutura básica do Next.js com internacionalização (i18n) configurada.
-- Layout responsivo com navegação superior para desktop e inferior para mobile.
-- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados.
+- Estrutura básica do Next.js com internacionalização (i18n) configurada. Nomes das categorias no filtro internacionalizados.
+- Layout responsivo com navegação superior para desktop e inferior para mobile. Rodapé removido.
+- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização (com diálogo de confirmação) e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca.
-- Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude`. Produtos são listados sob o `storeId` da loja do usuário.
+- Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude` (com dicas de UX melhoradas). Produtos são listados sob o `storeId` da loja do usuário.
 - Paleta de cores atualizada conforme solicitação do usuário (Primária: Azul Médio `#026296`, Secundária: Laranja Brilhante `#F27F00`, Fundo: Branco `#FFFFFF`, Foreground: Azul Escuro `#01304A`, Acento: Laranja Claro `#FBB849`).
 - `QueryClientProvider` e `AuthProvider` configurados.
 - Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
@@ -178,8 +180,8 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 
 5. Planejamento para próximas versões
 - Melhorar UX do cadastro de localização da loja (ex: usar um mapa interativo).
-- Melhorar UX da solicitação de permissão de localização do usuário (ex: explicar o motivo, permitir salvar preferência).
-- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo (conforme nova proposta).
+- Permitir que o usuário salve sua preferência de localização (ou uma localização manual como "casa" ou "trabalho") no perfil do usuário.
+- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo (conforme nova proposta - PRÓXIMO PASSO).
 - Considerar fluxo para lojista editar informações da loja e produtos.
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
 

@@ -15,10 +15,6 @@
     "stores": "Tiendas",
     "monitoring": "Monitor"
   },
-  "footer": {
-    "copy": "© {year} Precio Real. Todos los derechos reservados.",
-    "tagline": "Tu manera inteligente de encontrar ofertas locales."
-  },
   "homePage": {
     "searchPlaceholder": "Buscar productos, tiendas o categorías...",
     "sortBy": "Ordenar por:",
@@ -142,7 +138,8 @@
       "auth/user-not-found": "No se encontró ningún usuario con este correo. Verifica el correo o regístrate.",
       "auth/wrong-password": "Contraseña incorrecta. Verifica tu contraseña e inténtalo de nuevo.",
       "auth/invalid-credential": "Credenciales inválidas. Verifica tu correo y contraseña."
-    }
+    },
+    "formLoadingText": "Cargando formulario..."
   },
   "storeRegistrationForm": {
     "formTitle": "Registra Tu Tienda",
@@ -192,7 +189,8 @@
     "registrationSuccessTitle": "¡Registro Enviado!",
     "registrationSuccessMessage": "Gracias, {storeName}, por registrarte. Los datos de tu tienda han sido guardados.",
     "registrationErrorTitle": "Fallo en el Registro",
-    "genericError": "Ocurrió un error. Por favor, inténtalo de nuevo."
+    "genericError": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+    "formLoadingText": "Cargando formulario..."
   },
   "productListingPage": {
     "loadingProductPageText": "Cargando...",
@@ -216,14 +214,6 @@
     "categoryLabel": "Categoría del Producto",
     "categoryPlaceholder": "Selecciona la categoría del producto",
     "categoryRequiredError": "Por favor, selecciona una categoría para el producto.",
-    "categoryNames": {
-      "electronics": "Electrónicos",
-      "clothing": "Ropa",
-      "home-kitchen": "Hogar y Cocina",
-      "books": "Libros",
-      "groceries": "Alimentos",
-      "other": "Otros"
-    },
     "imageUrlLabel": "URL de la Imagen del Producto (Opcional)",
     "imageUrlHint": "Enlace a una imagen de tu producto. Usa https://placehold.co para placeholders.",
     "imageUrlInvalidError": "Por favor, introduce una URL de imagen válida.",
@@ -247,7 +237,8 @@
     "productAdvertisedTitle": "¡Producto Anunciado!",
     "productAdvertisedMessage": "{productName} ha sido anunciado con éxito.",
     "advertisingFailedTitle": "Error al Anunciar",
-    "advertisingFailedMessage": "Hubo un error al publicar tu anuncio. Por favor, inténtalo de nuevo."
+    "advertisingFailedMessage": "Hubo un error al publicar tu anuncio. Por favor, inténtalo de nuevo.",
+    "formLoadingText": "Cargando formulario..."
   },
   "monitoringPage": {
     "title": "Monitoreo de Precios",

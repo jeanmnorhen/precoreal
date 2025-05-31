@@ -15,10 +15,6 @@
     "stores": "Lojas",
     "monitoring": "Monitorar"
   },
-  "footer": {
-    "copy": "© {year} Preço Real. Todos os direitos reservados.",
-    "tagline": "Sua maneira inteligente de encontrar ofertas locais."
-  },
   "homePage": {
     "searchPlaceholder": "Buscar produtos, lojas ou categorias...",
     "sortBy": "Ordenar por:",
@@ -142,7 +138,8 @@
       "auth/user-not-found": "Nenhum usuário encontrado com este email. Verifique o email ou cadastre-se.",
       "auth/wrong-password": "Senha incorreta. Verifique sua senha e tente novamente.",
       "auth/invalid-credential": "Credenciais inválidas. Verifique seu email e senha."
-    }
+    },
+    "formLoadingText": "Carregando formulário..."
   },
   "storeRegistrationForm": {
     "formTitle": "Cadastre Sua Loja",
@@ -192,7 +189,8 @@
     "registrationSuccessTitle": "Cadastro Enviado!",
     "registrationSuccessMessage": "Obrigado, {storeName}, por se cadastrar. Os dados da sua loja foram salvos.",
     "registrationErrorTitle": "Falha no Cadastro",
-    "genericError": "Ocorreu um erro. Por favor, tente novamente."
+    "genericError": "Ocorreu um erro. Por favor, tente novamente.",
+    "formLoadingText": "Carregando formulário..."
   },
   "productListingPage": {
     "loadingProductPageText": "Carregando...",
@@ -216,14 +214,6 @@
     "categoryLabel": "Categoria do Produto",
     "categoryPlaceholder": "Selecione a categoria do produto",
     "categoryRequiredError": "Por favor, selecione uma categoria para o produto.",
-    "categoryNames": {
-      "electronics": "Eletrônicos",
-      "clothing": "Vestuário",
-      "home-kitchen": "Casa e Cozinha",
-      "books": "Livros",
-      "groceries": "Alimentos",
-      "other": "Outros"
-    },
     "imageUrlLabel": "URL da Imagem do Produto (Opcional)",
     "imageUrlHint": "Link para uma imagem do seu produto. Use https://placehold.co para placeholders.",
     "imageUrlInvalidError": "Por favor, insira uma URL de imagem válida.",
@@ -247,7 +237,8 @@
     "productAdvertisedTitle": "Produto Anunciado!",
     "productAdvertisedMessage": "{productName} foi anunciado com sucesso.",
     "advertisingFailedTitle": "Falha ao Anunciar",
-    "advertisingFailedMessage": "Houve um erro ao postar seu anúncio. Por favor, tente novamente."
+    "advertisingFailedMessage": "Houve um erro ao postar seu anúncio. Por favor, tente novamente.",
+    "formLoadingText": "Carregando formulário..."
   },
    "monitoringPage": {
     "title": "Monitoramento de Preços",

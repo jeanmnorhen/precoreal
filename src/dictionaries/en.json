@@ -15,10 +15,6 @@
     "stores": "Stores",
     "monitoring": "Monitor"
   },
-  "footer": {
-    "copy": "© {year} RealPrice Finder. All rights reserved.",
-    "tagline": "Your smart way to find local deals."
-  },
   "homePage": {
     "searchPlaceholder": "Search for products, stores, or categories...",
     "sortBy": "Sort by:",
@@ -142,7 +138,8 @@
       "auth/user-not-found": "No user found with this email. Check the email or sign up.",
       "auth/wrong-password": "Incorrect password. Check your password and try again.",
       "auth/invalid-credential": "Invalid credentials. Check your email and password."
-    }
+    },
+    "formLoadingText": "Form loading..."
   },
   "storeRegistrationForm": {
     "formTitle": "Register Your Store",
@@ -192,7 +189,8 @@
     "registrationSuccessTitle": "Registration Submitted!",
     "registrationSuccessMessage": "Thank you, {storeName}, for registering. Your store data has been saved.",
     "registrationErrorTitle": "Registration Failed",
-    "genericError": "An error occurred. Please try again."
+    "genericError": "An error occurred. Please try again.",
+    "formLoadingText": "Form loading..."
   },
   "productListingPage": {
     "loadingProductPageText": "Loading...",
@@ -216,14 +214,6 @@
     "categoryLabel": "Product Category",
     "categoryPlaceholder": "Select product category",
     "categoryRequiredError": "Please select a product category.",
-    "categoryNames": {
-      "electronics": "Electronics",
-      "clothing": "Clothing",
-      "home-kitchen": "Home & Kitchen",
-      "books": "Books",
-      "groceries": "Groceries",
-      "other": "Other"
-    },
     "imageUrlLabel": "Product Image URL (Optional)",
     "imageUrlHint": "Link to an image of your product. Use https://placehold.co for placeholders.",
     "imageUrlInvalidError": "Please enter a valid image URL.",
@@ -247,7 +237,8 @@
     "productAdvertisedTitle": "Product Advertised!",
     "productAdvertisedMessage": "{productName} has been successfully advertised.",
     "advertisingFailedTitle": "Advertising Failed",
-    "advertisingFailedMessage": "There was an error posting your advertisement. Please try again."
+    "advertisingFailedMessage": "There was an error posting your advertisement. Please try again.",
+    "formLoadingText": "Form loading..."
   },
   "monitoringPage": {
     "title": "Price Monitoring",

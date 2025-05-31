@@ -3,13 +3,13 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google'; 
 import '../globals.css'; 
 import Navbar from '@/components/layout/navbar';
-import Footer from '@/components/layout/footer';
+// import Footer from '@/components/layout/footer'; // Removed Footer import
 import BottomNavbar from '@/components/layout/bottom-navbar';
 import { Toaster } from '@/components/ui/toaster';
 import { getDictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
 import QueryClientProvider from '@/components/providers/query-provider';
-import { AuthProvider } from '@/components/providers/auth-provider'; // Import AuthProvider
+import { AuthProvider } from '@/components/providers/auth-provider'; 
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -38,14 +38,14 @@ export default async function LangLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <AuthProvider> {/* Wrap with AuthProvider */}
+        <AuthProvider> 
           <QueryClientProvider> 
             <div className="flex min-h-screen flex-col">
               <Navbar lang={lang} dictionary={dictionary.navbar} localeSwitcherDictionary={dictionary.localeSwitcher} authDictionary={dictionary.auth} />
               <main className="flex-grow container mx-auto px-4 py-8 pb-20 md:pb-8">
                 {children}
               </main>
-              <Footer lang={lang} dictionary={dictionary.footer} />
+              {/* <Footer lang={lang} dictionary={dictionary.footer} /> // Removed Footer component */}
               <BottomNavbar lang={lang} dictionary={dictionary.bottomNavbar} authDictionary={dictionary.auth}/>
             </div>
             <Toaster />
