@@ -30,7 +30,7 @@ export default function BottomNavbar({ lang, dictionary }: BottomNavbarProps) {
 
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 h-16 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 h-16 border-t border-border bg-foreground/95 backdrop-blur supports-[backdrop-filter]:bg-foreground/60 md:hidden">
       <div className="mx-auto flex h-full max-w-md items-center justify-around px-2">
         {bottomNavItems.map((item) => {
           // Check if the current path starts with the item's base path (e.g. /pt/stores for /pt/stores/register)
@@ -43,10 +43,10 @@ export default function BottomNavbar({ lang, dictionary }: BottomNavbarProps) {
               href={item.href}
               className={cn(
                 'flex flex-1 flex-col items-center justify-center p-1 rounded-md transition-colors duration-150 ease-in-out h-full',
-                isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                isActive ? 'text-primary-foreground' : 'text-muted hover:text-primary-foreground/80'
               )}
             >
-              <item.icon className={cn('h-6 w-6 mb-0.5', isActive ? 'text-primary' : '')} />
+              <item.icon className={cn('h-6 w-6 mb-0.5', isActive ? 'text-primary-foreground' : 'text-muted')} />
               <span className={cn('text-xs', isActive ? 'font-medium' : 'font-normal')}>
                 {item.label}
               </span>
