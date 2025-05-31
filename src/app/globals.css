@@ -4,33 +4,33 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%; /* White */
-    --foreground: 0 0% 3.9%; /* Near Black */
+    --background: 56 43% 90%; /* #f5f4d7 - Color 2 */
+    --foreground: 58 22% 26%; /* #535233 - Color 5 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card: 56 43% 93%; /* Lighter version of Color 2 */
+    --card-foreground: 58 22% 26%; /* #535233 - Color 5 */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --popover: 56 43% 93%; /* Same as card */
+    --popover-foreground: 58 22% 26%; /* #535233 - Color 5 */
 
-    --primary: 39 100% 50%; /* Vibrant Orange #FFA500 */
-    --primary-foreground: 0 0% 100%; /* White text on orange */
+    --primary: 353 66% 35%; /* #951f2b - Color 1 */
+    --primary-foreground: 56 43% 95%; /* Light beige for contrast on dark red */
 
-    --secondary: 120 61% 50%; /* Calming Green #32CD32 */
-    --secondary-foreground: 0 0% 100%; /* White text on green */
+    --secondary: 58 21% 53%; /* #a5a36c - Color 4 */
+    --secondary-foreground: 58 22% 20%; /* Dark olive for contrast on Color 4 */
 
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted: 58 33% 82%; /* Lighter #e0dfb1 - Color 3 */
+    --muted-foreground: 58 22% 40%; /* Mid-tone olive/brown */
 
-    --accent: 0 0% 29%; /* Dark Gray #4A4A4A */
-    --accent-foreground: 0 0% 98%; /* Light gray/white text on dark gray */
+    --accent: 58 33% 78%; /* #e0dfb1 - Color 3 */
+    --accent-foreground: 58 22% 26%; /* #535233 - Color 5 */
     
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 353 66% 45%; /* Brighter red than primary */
+    --destructive-foreground: 56 43% 95%; /* Light beige */
 
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 39 100% 50%; /* Ring color to match primary */
+    --border: 58 33% 70%; /* Derived from Color 3 */
+    --input: 58 33% 75%; /* Derived from Color 3 */
+    --ring: 353 66% 40%; /* Primary color, slightly brighter for ring */
 
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -40,44 +40,44 @@
     --radius: 0.5rem;
 
     /* Sidebar specific theme variables */
-    --sidebar-background: 0 0% 98%; /* Very light gray */
-    --sidebar-foreground: 0 0% 20%; /* Dark gray */
-    --sidebar-primary: 39 100% 50%; /* Vibrant Orange */
-    --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 0 0% 29%; /* Dark Gray */
-    --sidebar-accent-foreground: 0 0% 98%; /* Light gray/white */
-    --sidebar-border: 0 0% 89.8%; /* Light border */
-    --sidebar-ring: 39 100% 50%; /* Ring color to match primary */
+    --sidebar-background: 56 43% 92%; /* Similar to background, slightly brighter */
+    --sidebar-foreground: 58 22% 26%; /* #535233 - Color 5 */
+    --sidebar-primary: 353 66% 35%; /* #951f2b - Color 1 */
+    --sidebar-primary-foreground: 56 43% 95%;
+    --sidebar-accent: 58 33% 78%; /* #e0dfb1 - Color 3 */
+    --sidebar-accent-foreground: 58 22% 26%; /* #535233 - Color 5 */
+    --sidebar-border: 58 33% 70%;
+    --sidebar-ring: 353 66% 40%;
   }
 
   .dark {
-    --background: 0 0% 10%; /* Dark Gray */
-    --foreground: 0 0% 95%; /* Light Gray */
+    --background: 58 15% 10%; /* Very dark olive/brown, from Color 5 */
+    --foreground: 56 43% 85%; /* Light beige from Color 2 */
 
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 95%;
+    --card: 58 15% 15%; /* Slightly lighter than dark background */
+    --card-foreground: 56 43% 85%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 58 15% 15%;
+    --popover-foreground: 56 43% 85%;
 
-    --primary: 39 100% 55%; /* Slightly lighter orange for dark mode */
-    --primary-foreground: 0 0% 5%; /* Dark text on lighter orange */
+    --primary: 353 70% 55%; /* Brighter red from Color 1 */
+    --primary-foreground: 56 43% 96%; /* Almost white for contrast */
 
-    --secondary: 120 61% 55%; /* Slightly lighter green for dark mode */
-    --secondary-foreground: 0 0% 5%; /* Dark text on lighter green */
+    --secondary: 58 30% 45%; /* Dark mode version of Color 4 */
+    --secondary-foreground: 56 43% 90%; /* Light text for dark secondary */
 
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted: 58 20% 25%; /* Dark mode version of Color 3 */
+    --muted-foreground: 56 43% 65%; /* Lighter muted text */
 
-    --accent: 0 0% 80%; /* Light gray for dark mode accent */
-    --accent-foreground: 0 0% 5%; /* Dark text on light gray accent */
+    --accent: 58 30% 60%; /* Dark mode version of Color 3, brighter */
+    --accent-foreground: 58 15% 10%; /* Very dark text on accent */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 353 75% 60%; /* Brighter destructive red */
+    --destructive-foreground: 56 43% 96%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 39 100% 55%; /* Ring color to match dark primary */
+    --border: 58 20% 30%; /* Dark border */
+    --input: 58 20% 35%; /* Dark input */
+    --ring: 353 70% 55%; /* Same as dark primary */
     
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -86,14 +86,14 @@
     --chart-5: 340 75% 55%;
 
     /* Sidebar specific theme variables for dark mode */
-    --sidebar-background: 0 0% 12%; /* Darker gray */
-    --sidebar-foreground: 0 0% 85%; /* Lighter gray */
-    --sidebar-primary: 39 100% 55%; /* Lighter Orange */
-    --sidebar-primary-foreground: 0 0% 5%; /* Dark text */
-    --sidebar-accent: 0 0% 80%; /* Light gray */
-    --sidebar-accent-foreground: 0 0% 5%; /* Dark text */
-    --sidebar-border: 0 0% 20%; /* Darker border */
-    --sidebar-ring: 39 100% 55%; /* Ring color to match dark primary */
+    --sidebar-background: 58 15% 12%; /* Slightly different from main dark bg */
+    --sidebar-foreground: 56 43% 85%;
+    --sidebar-primary: 353 70% 55%;
+    --sidebar-primary-foreground: 56 43% 96%;
+    --sidebar-accent: 58 30% 60%;
+    --sidebar-accent-foreground: 58 15% 10%;
+    --sidebar-border: 58 20% 30%;
+    --sidebar-ring: 353 70% 55%;
   }
 }
 
