@@ -1,0 +1,180 @@
+'use client';
+
+import { useState, type ChangeEvent, type FormEvent } from 'react';
+import Image from 'next/image';
+import { analyzeImageOffers, type AnalyzeImageOffersOutput } from '@/ai/flows/analyze-image-offers';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { UploadCloud, FileImage, Wand2, AlertCircle, ShoppingBag, MapPinIcon, DollarSign } from 'lucide-react';
+import LoadingSpinner from './loading-spinner';
+import { useToast } from '@/hooks/use-toast';
+
+export default function ImageAnalysisTool() {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageDataUri, setImageDataUri] = useState<string | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<AnalyzeImageOffersOutput | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type (optional but good practice)
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file (JPEG, PNG, GIF, WebP).');
+        setImagePreview(null);
+        setImageDataUri(null);
+        return;
+      }
+      setError(null); // Clear previous error
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        setImageDataUri(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!imageDataUri) {
+      setError('Please select an image first.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setAnalysisResult(null);
+
+    try {
+      const result = await analyzeImageOffers({ photoDataUri: imageDataUri });
+      setAnalysisResult(result);
+      toast({
+        title: "Analysis Complete",
+        description: `Identified: ${result.productIdentification}`,
+      });
+    } catch (err) {
+      console.error('Error analyzing image:', err);
+      setError('Failed to analyze image. Please try again.');
+       toast({
+        title: "Analysis Failed",
+        description: "An error occurred during image analysis.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Card className="w-full max-w-2xl mx-auto shadow-xl">
+      <CardHeader>
+        <CardTitle className="flex items-center text-2xl font-headline">
+          <Wand2 className="mr-2 h-7 w-7 text-primary" />
+          Analyze Image for Offers
+        </CardTitle>
+        <CardDescription>
+          Upload a picture of a product, and we'll identify it and find nearby offers.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="imageUpload" className="block text-sm font-medium text-foreground mb-1">
+              Upload Image
+            </label>
+            <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-border px-6 pt-5 pb-6 hover:border-primary transition-colors">
+              <div className="space-y-1 text-center">
+                {imagePreview ? (
+                  <div className="relative w-full h-64 rounded-md overflow-hidden">
+                    <Image src={imagePreview} alt="Selected preview" layout="fill" objectFit="contain" />
+                  </div>
+                ) : (
+                  <>
+                    <FileImage className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <div className="flex text-sm text-muted-foreground">
+                      <span className="relative cursor-pointer rounded-md bg-background font-medium text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/80">
+                        <span>Upload a file</span>
+                        <Input id="imageUpload" name="imageUpload" type="file" className="sr-only" onChange={handleImageChange} accept="image/*" />
+                      </span>
+                      <p className="pl-1">or drag and drop</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground">PNG, JPG, GIF, WebP up to 10MB</p>
+                  </>
+                )}
+              </div>
+            </div>
+            {imagePreview && (
+               <Button type="button" variant="link" className="mt-2 text-sm text-primary" onClick={() => {
+                 setImagePreview(null);
+                 setImageDataUri(null);
+                 const fileInput = document.getElementById('imageUpload') as HTMLInputElement;
+                 if (fileInput) fileInput.value = ''; // Reset file input
+               }}>
+                Clear image
+              </Button>
+            )}
+          </div>
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={isLoading || !imageDataUri}>
+            {isLoading ? (
+              <>
+                <LoadingSpinner size={20} className="mr-2 text-primary-foreground" /> Analyzing...
+              </>
+            ) : (
+              <>
+                <UploadCloud className="mr-2 h-5 w-5" /> Analyze Product
+              </>
+            )}
+          </Button>
+        </form>
+
+        {analysisResult && (
+          <div className="mt-8 space-y-6">
+            <Alert variant="default" className="bg-secondary/10 border-secondary">
+               <ShoppingBag className="h-5 w-5 text-secondary" />
+              <AlertTitle className="text-secondary font-semibold">Product Identified</AlertTitle>
+              <AlertDescription className="text-lg">
+                {analysisResult.productIdentification}
+              </AlertDescription>
+            </Alert>
+
+            {analysisResult.nearbyOffers.length > 0 ? (
+              <div>
+                <h3 className="text-xl font-semibold mb-3">Nearby Offers:</h3>
+                <ul className="space-y-4">
+                  {analysisResult.nearbyOffers.map((offer, index) => (
+                    <li key={index} className="rounded-md border p-4 shadow-sm bg-card">
+                      <div className="flex justify-between items-start">
+                        <h4 className="text-md font-medium text-foreground">{offer.storeName}</h4>
+                         <span className="text-lg font-bold text-primary">${offer.price.toFixed(2)}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground flex items-center mt-1">
+                         <MapPinIcon className="h-4 w-4 mr-1.5" /> {offer.distance} miles away
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground">No nearby offers found for this product.</p>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
