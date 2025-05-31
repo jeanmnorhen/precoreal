@@ -30,7 +30,7 @@ Anúncios de produtos terão um tempo de validade definido entre 1 e 7 dias. (Co
 
 Os dados dos anúncios expirados serão registrados para compor um histórico de preços. (Concluído - Anúncios expirados e não arquivados são movidos para /priceHistory e marcados como `archived: true` em /advertisements.)
 
-Utilizar a localização GPS do usuário (com consentimento) para otimizar a busca por ofertas e lojas. (Concluído - Usuário pode fornecer localização. Distância real calculada e usada para ordenação.)
+Utilizar a localização GPS do usuário (com consentimento) para otimizar a busca por ofertas e lojas.
 
 Oferecer uma interface de usuário intuitiva e responsiva.
     - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Monitoramento, Para Lojas/Meus Produtos) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade. (Ajustado para incluir autenticação e Monitoramento)
@@ -135,7 +135,7 @@ Administradores do Preço Real (se houver) poderão gerenciar o catálogo de pro
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
-O sistema permite ao usuário alternar o idioma da interface (ex: Português, Inglês, Espanhol) através de um seletor.
+O sistema permite ao usuário alternar o idioma da interface (ex: Português, Inglês, Espanhol, Russo, chileno, mexicano e chinês) através de um seletor.
 As rotas incluirão o código do idioma (ex: /pt/ofertas, /en/offers).
 
 UC13: Monitoramento de Dados Agregados:
