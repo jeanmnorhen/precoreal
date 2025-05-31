@@ -1,4 +1,3 @@
-
 Relatório do Projeto: Preço Real
 
 1. Objetivos do Projeto
@@ -41,7 +40,7 @@ Funcionalidade Secundária: Permitir que os usuários façam upload de imagens o
 
 Integrar com Firebase Realtime Database para:
 
-Manter um catálogo de produtos canônicos (para referência.) (Em andamento - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de Admin para gerenciamento parcialmente implementada: exibição de sugestões pendentes, dispensar sugestão e criar produto canônico a partir de sugestão funcional. Exibição de sugestões revisadas funcional.)
+Manter um catálogo de produtos canônicos (para referência.) (Em andamento - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de Admin para gerenciamento parcialmente implementada: exibição de sugestões pendentes e revisadas, dispensar sugestão, criar produto canônico a partir de sugestão, e editar produto canônico funcional. Exibição de produtos canônicos existentes funcional.)
 
 Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores com ownerId vinculado ao usuário autenticado e campos para latitude/longitude.)
 
@@ -66,7 +65,7 @@ Busca ativa por produtos para registrar no catálogo canônico: A identificaçã
 UC1 (Principal): Descoberta de Ofertas Próximas (Feed Geolocalizado):
 
 O usuário (consumidor) abre o aplicativo Preço Real.
-O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil e permitir. (Concluído - Usuário pode fornecer localização via botão; cálculo de distância agora é real se coordenadas estiverem disponíveis. UX da solicitação de permissão melhorada com AlertDialog.)
+O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil e permitir. (Concluído - Usuário pode fornecer localização via botão; cálculo de distância agora é real se coordenadas estiverem disponíveis. UX da permissão de localização do usuário funcional.)
 O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados e arquivados. Nome real da loja buscado de /stores. Distância real calculada se localizações disponíveis.)
 Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância.
 O usuário pode rolar o feed para ver mais ofertas.
@@ -132,7 +131,7 @@ Se uma busca na `HomePage` não encontrar ofertas ativas:
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
 
 Implementada autenticação para lojistas (cadastro, login, logout). As lojas são vinculadas aos UIDs dos lojistas.
-Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar produtos canônicos a partir de sugestões parcialmente implementada: exibição de sugestões pendentes, ação de dispensar e criação de produto canônico a partir de sugestão funcional. Exibição de sugestões revisadas funcional.)
+Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar/editar produtos canônicos a partir de sugestões parcialmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição de produtos canônicos funcional.)
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
@@ -171,7 +170,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Implementar sistema de histórico de preços (UC5). (Concluído - Anúncios expirados são arquivados e movidos para `/priceHistory`).
 - Criar página de monitoramento de preços (UC13). (Concluído - Exibe histórico de preços e gráfico de tendência).
 - Melhorar UX do cadastro de localização da loja e da solicitação de permissão de localização do usuário. (Concluído - Adicionadas dicas e AlertDialog para permissão).
-- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Em andamento - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões e criar produtos canônicos a partir de sugestões parcialmente implementada: exibição de sugestões pendentes, ação de dispensar e criação de produto canônico a partir de sugestão funcional. Exibição de sugestões revisadas funcional.)
+- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Em andamento - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões, criar/editar produtos canônicos a partir de sugestões parcialmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição de produtos canônicos funcional.)
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
@@ -182,15 +181,15 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Paleta de cores atualizada (Fundo branco, Primária: Azul Médio `#026296`, Secundária: Laranja Brilhante `#F27F00`, Foreground: Azul Escuro `#01304A`, Acento: Laranja Claro `#FBB849`).
 - `QueryClientProvider` e `AuthProvider` configurados.
 - Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
-- Sistema de histórico de preços (UC5) implementado: anúncios expirados e não arquivados são movidos para `/priceHistory` e marcados como `archived: true` em `/advertisements`.
+- Sistema de histórico de preços (UC5) implementado: anúncios expirados são arquivados e movidos para `/priceHistory` e marcados como `archived: true` em `/advertisements`.
 - Página de monitoramento de preços (UC13) implementada, exibindo histórico de preços com tabela e gráfico de tendência.
 - Melhorias de UX na solicitação de permissão de localização do usuário (AlertDialog) e dicas nos campos de coordenadas do cadastro de loja. (Concluído)
 - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos em `src/types/index.ts`. (Concluído)
 - Lógica para verificar o catálogo canônico e registrar sugestões de novos produtos implementada na página de Análise de Imagem e na Busca da Página Inicial (quando não há ofertas). (Concluído)
-- Interface de Admin (UC11) iniciada em `/admin/catalog-management`:
-    - Exibe sugestões de produtos pendentes com opção de "Dispensar".
+- Interface de Admin (UC11) em `/admin/catalog-management`:
+    - Exibe sugestões de produtos pendentes (com opção de "Dispensar") e revisadas.
     - Permite "Criar Produto Canônico" a partir de uma sugestão pendente através de um diálogo com formulário.
-    - Exibe sugestões já revisadas.
+    - Exibe produtos canônicos existentes com opção de "Editar" (funcional). Botão de "Excluir" é placeholder.
     - Placeholders para gerenciamento direto de produtos canônicos e adição manual.
 
 5. Planejamento para próximas versões
@@ -198,7 +197,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Permitir que o usuário salve sua preferência de localização (ou uma localização manual como "casa" ou "trabalho") no perfil do usuário.
 - Considerar fluxo para lojista editar informações da loja e produtos.
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
-- Implementar interface de administração para gerenciar `/canonicalProducts` e `/suggestedNewProducts` (UC11 - Próximos passos: edição/exclusão de canônicos, adição manual).
+- Implementar interface de administração para gerenciar `/canonicalProducts` e `/suggestedNewProducts` (UC11 - Próximos passos: exclusão de canônicos, adição manual).
 - Integrar fluxos de IA para enriquecimento e adição automática de produtos ao catálogo.
 - Implementar perfis de usuário consumidor (autenticação, preferências, localização salva).
 

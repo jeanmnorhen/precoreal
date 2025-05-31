@@ -1,10 +1,9 @@
-
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { db } from '@/lib/firebase';
-import { ref, get, update, push, set, serverTimestamp } from 'firebase/database';
+import { ref, get, update, push, set, serverTimestamp, remove } from 'firebase/database';
 import type { SuggestedNewProduct, CanonicalProduct, ProductCategory as ProductCategoryType } from '@/types';
 import { productCategories } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
@@ -31,7 +30,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { ListChecks, PlusCircle, XCircle, Edit, Trash2, Info, BookOpen, CheckSquare } from 'lucide-react';
+import { ListChecks, PlusCircle, XCircle, Edit, Trash2, Info, BookOpen, CheckSquare, Edit3 } from 'lucide-react';
 import LoadingSpinner from '@/components/loading-spinner';
 import { useToast } from '@/hooks/use-toast';
 import { getDictionary, type Dictionary } from '@/lib/get-dictionary';
@@ -55,6 +54,20 @@ const fetchSuggestedProducts = async (): Promise<SuggestedNewProduct[]> => {
   return [];
 };
 
+const fetchCanonicalProducts = async (): Promise<CanonicalProduct[]> => {
+  const productsRef = ref(db, 'canonicalProducts');
+  const snapshot = await get(productsRef);
+  if (snapshot.exists()) {
+    const productsData = snapshot.val();
+    return Object.entries(productsData).map(([id, product]) => ({
+      id,
+      ...(product as Omit<CanonicalProduct, 'id'>),
+    }));
+  }
+  return [];
+};
+
+
 // Function to normalize product names for comparison/storage
 const normalizeProductName = (name: string): string => {
   return name.trim().toLowerCase();
@@ -68,6 +81,10 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
 
   const [isCreateCanonicalDialogOpen, setIsCreateCanonicalDialogOpen] = useState(false);
   const [currentSuggestion, setCurrentSuggestion] = useState<SuggestedNewProduct | null>(null);
+  
+  const [isEditCanonicalDialogOpen, setIsEditCanonicalDialogOpen] = useState(false);
+  const [currentCanonicalProduct, setCurrentCanonicalProduct] = useState<CanonicalProduct | null>(null);
+
 
   useEffect(() => {
     const fetchDict = async () => {
@@ -78,7 +95,7 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
   }, [lang]);
 
   const canonicalProductFormSchema = useMemo(() => {
-    if (!dictionary) return z.object({}); // Return a dummy schema if dictionary is not loaded
+    if (!dictionary) return z.object({}); 
     return z.object({
       productName: z.string().min(2, { message: dictionary.adminCatalogPage.productNameMinLengthError.replace('{length}', '2') }),
       category: z.string({ required_error: dictionary.adminCatalogPage.categoryRequiredError }),
@@ -97,7 +114,7 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     setValue: setCanonicalValue,
     formState: { errors: canonicalErrors, isSubmitting: isSubmittingCanonical },
   } = useForm<CanonicalProductFormValues>({
-    resolver: zodResolver(canonicalProductFormSchema as any), // Cast as any due to dynamic schema
+    resolver: zodResolver(canonicalProductFormSchema as any),
     defaultValues: {
       productName: '',
       category: undefined,
@@ -110,6 +127,12 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     queryKey: ['suggestedProducts'],
     queryFn: fetchSuggestedProducts,
   });
+
+  const { data: canonicalProducts, isLoading: isLoadingCanonicalProducts, error: canonicalProductsError } = useQuery<CanonicalProduct[]>({
+    queryKey: ['canonicalProducts'],
+    queryFn: fetchCanonicalProducts,
+  });
+
 
   const updateSuggestionStatusMutation = useMutation({
     mutationFn: async ({ suggestionId, status }: { suggestionId: string, status: SuggestedNewProduct['status'] }) => {
@@ -143,12 +166,11 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
         category: data.category,
         description: data.description || '',
         defaultImageUrl: data.defaultImageUrl || '',
-        // createdAt: serverTimestamp(), // Consider adding timestamps
       };
       await set(newCanonicalRef, newProduct);
       return newProduct;
     },
-    onSuccess: (newProduct, variables) => {
+    onSuccess: (newProduct) => {
       queryClient.invalidateQueries({ queryKey: ['canonicalProducts'] });
       if (currentSuggestion) {
         updateSuggestionStatusMutation.mutate({ suggestionId: currentSuggestion.id, status: 'added-to-catalog' });
@@ -170,6 +192,38 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     },
   });
 
+  const editCanonicalProductMutation = useMutation({
+    mutationFn: async ({ productId, data }: { productId: string, data: CanonicalProductFormValues }) => {
+      const productRef = ref(db, `canonicalProducts/${productId}`);
+      const updatedProductData: Partial<CanonicalProduct> = {
+        name: data.productName,
+        normalizedName: normalizeProductName(data.productName),
+        category: data.category,
+        description: data.description || '',
+        defaultImageUrl: data.defaultImageUrl || '',
+      };
+      await update(productRef, updatedProductData);
+      return { id: productId, ...updatedProductData };
+    },
+    onSuccess: (updatedProduct) => {
+      queryClient.invalidateQueries({ queryKey: ['canonicalProducts'] });
+      toast({
+        title: dictionary?.adminCatalogPage.toastCanonicalUpdatedTitle || 'Product Updated',
+        description: dictionary?.adminCatalogPage.toastCanonicalUpdatedDesc?.replace('{productName}', updatedProduct.name!) || `${updatedProduct.name} updated successfully.`,
+      });
+      setIsEditCanonicalDialogOpen(false);
+      resetCanonicalForm();
+      setCurrentCanonicalProduct(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: dictionary?.adminCatalogPage.toastErrorTitle || 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
 
   const handleDismissSuggestion = (suggestionId: string) => {
     updateSuggestionStatusMutation.mutate({ suggestionId, status: 'rejected' });
@@ -178,8 +232,7 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
   const handleOpenCreateCanonicalDialog = (suggestion: SuggestedNewProduct) => {
     setCurrentSuggestion(suggestion);
     setCanonicalValue('productName', suggestion.productName);
-    // Attempt to pre-select category if suggestion lang and mock-data category name match (simple case)
-    const suggestedCategory = productCategories.find(cat => cat.name.toLowerCase() === suggestion.normalizedName?.split(' ')[0]); // very naive
+    const suggestedCategory = productCategories.find(cat => cat.name.toLowerCase() === suggestion.normalizedName?.split(' ')[0]);
     if (suggestedCategory) {
         setCanonicalValue('category', suggestedCategory.name);
     } else {
@@ -190,12 +243,25 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     setIsCreateCanonicalDialogOpen(true);
   };
 
+  const handleOpenEditCanonicalDialog = (product: CanonicalProduct) => {
+    setCurrentCanonicalProduct(product);
+    setCanonicalValue('productName', product.name);
+    setCanonicalValue('category', product.category);
+    setCanonicalValue('description', product.description || '');
+    setCanonicalValue('defaultImageUrl', product.defaultImageUrl || '');
+    setIsEditCanonicalDialogOpen(true);
+  };
+
   const onSubmitCanonicalProduct = (data: CanonicalProductFormValues) => {
-    createCanonicalProductMutation.mutate(data);
+    if (currentCanonicalProduct && isEditCanonicalDialogOpen) {
+      editCanonicalProductMutation.mutate({ productId: currentCanonicalProduct.id, data });
+    } else {
+      createCanonicalProductMutation.mutate(data);
+    }
   };
 
 
-  if (isLoadingSuggestions || !dictionary) {
+  if (isLoadingSuggestions || isLoadingCanonicalProducts || !dictionary) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <LoadingSpinner size={48} />
@@ -204,12 +270,12 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     );
   }
 
-  if (suggestionsError) {
+  if (suggestionsError || canonicalProductsError) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
         <Info className="mx-auto mb-4 h-16 w-16 text-destructive/50" />
-        <h3 className="text-xl font-semibold text-destructive">{dictionary?.adminCatalogPage.errorLoadingTitle || 'Error Loading Suggestions'}</h3>
-        <p className="text-muted-foreground">{(suggestionsError as Error)?.message}</p>
+        <h3 className="text-xl font-semibold text-destructive">{dictionary?.adminCatalogPage.errorLoadingTitle || 'Error Loading Data'}</h3>
+        <p className="text-muted-foreground">{(suggestionsError as Error)?.message || (canonicalProductsError as Error)?.message}</p>
       </div>
     );
   }
@@ -277,23 +343,34 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
         </CardContent>
       </Card>
       
-      {/* Dialog for Creating Canonical Product from Suggestion */}
-      <Dialog open={isCreateCanonicalDialogOpen} onOpenChange={(open) => {
-          setIsCreateCanonicalDialogOpen(open);
+      {/* Dialog for Creating/Editing Canonical Product */}
+      <Dialog open={isCreateCanonicalDialogOpen || isEditCanonicalDialogOpen} onOpenChange={(open) => {
+          if (isCreateCanonicalDialogOpen) setIsCreateCanonicalDialogOpen(open);
+          if (isEditCanonicalDialogOpen) setIsEditCanonicalDialogOpen(open);
           if (!open) {
             resetCanonicalForm();
             setCurrentSuggestion(null);
+            setCurrentCanonicalProduct(null);
           }
         }}>
         <DialogContent className="sm:max-w-lg">
           <form onSubmit={handleSubmitCanonical(onSubmitCanonicalProduct)}>
             <DialogHeader>
-              <DialogTitle>{dictionary.adminCatalogPage.createCanonicalDialogTitle}</DialogTitle>
+              <DialogTitle>
+                {isEditCanonicalDialogOpen 
+                  ? dictionary.adminCatalogPage.editCanonicalDialogTitle 
+                  : dictionary.adminCatalogPage.createCanonicalDialogTitle}
+              </DialogTitle>
               <DialogDescription>
-                {dictionary.adminCatalogPage.createCanonicalDialogDescription.replace(
-                  '{productName}', 
-                  currentSuggestion?.productName || 'product'
-                )}
+                {isEditCanonicalDialogOpen
+                  ? dictionary.adminCatalogPage.editCanonicalDialogDescription.replace(
+                      '{productName}', 
+                      currentCanonicalProduct?.name || 'product'
+                    )
+                  : dictionary.adminCatalogPage.createCanonicalDialogDescription.replace(
+                      '{productName}', 
+                      currentSuggestion?.productName || 'product'
+                    )}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -377,13 +454,16 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
                 <Button type="button" variant="outline" onClick={() => {
                     resetCanonicalForm();
                     setCurrentSuggestion(null);
+                    setCurrentCanonicalProduct(null);
                 }}>
                   {dictionary.adminCatalogPage.cancelButton}
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isSubmittingCanonical || createCanonicalProductMutation.isPending}>
-                {isSubmittingCanonical || createCanonicalProductMutation.isPending ? <LoadingSpinner size={16} className="mr-2" /> : null}
-                {dictionary.adminCatalogPage.saveCanonicalButton}
+              <Button type="submit" disabled={isSubmittingCanonical || createCanonicalProductMutation.isPending || editCanonicalProductMutation.isPending}>
+                {(isSubmittingCanonical || createCanonicalProductMutation.isPending || editCanonicalProductMutation.isPending) ? <LoadingSpinner size={16} className="mr-2" /> : null}
+                {isEditCanonicalDialogOpen 
+                    ? dictionary.adminCatalogPage.saveChangesButton
+                    : dictionary.adminCatalogPage.saveCanonicalButton}
               </Button>
             </DialogFooter>
           </form>
@@ -424,8 +504,8 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
         </Card>
       )}
       
-      {/* Placeholder for "Manage Canonical Products" - To be implemented next */}
-      <Card className="shadow-lg opacity-50">
+      {/* Section for "Manage Canonical Products" */}
+      <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl font-headline">
             <BookOpen className="mr-2 h-7 w-7 text-primary" />
@@ -434,7 +514,55 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
           <CardDescription>{dictionary.adminCatalogPage.manageCanonicalProductsDescription}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-center py-4">{dictionary.adminCatalogPage.toBeImplemented}</p>
+          {canonicalProducts && canonicalProducts.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{dictionary.adminCatalogPage.productNameLabel}</TableHead>
+                  <TableHead>{dictionary.adminCatalogPage.categoryLabel}</TableHead>
+                  <TableHead className="hidden md:table-cell">{dictionary.adminCatalogPage.descriptionLabel}</TableHead>
+                  <TableHead className="hidden sm:table-cell">{dictionary.adminCatalogPage.imageUrlLabel}</TableHead>
+                  <TableHead>{dictionary.adminCatalogPage.actionsLabel}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {canonicalProducts.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell className="font-medium">{product.name}</TableCell>
+                    <TableCell>{product.category}</TableCell>
+                    <TableCell className="hidden md:table-cell truncate max-w-xs">{product.description || '-'}</TableCell>
+                    <TableCell className="hidden sm:table-cell truncate max-w-[100px]">
+                      {product.defaultImageUrl ? (
+                        <a href={product.defaultImageUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                          View Image
+                        </a>
+                      ) : '-'}
+                    </TableCell>
+                    <TableCell className="space-x-2">
+                       <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleOpenEditCanonicalDialog(product)}
+                        disabled={editCanonicalProductMutation.isPending}
+                      >
+                        <Edit3 className="mr-1 h-4 w-4" /> {dictionary.adminCatalogPage.editButton}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        // onClick={() => handleDeleteCanonicalProduct(product.id)} // To be implemented
+                        disabled={true || editCanonicalProductMutation.isPending} // Placeholder for delete mutation
+                      >
+                        <Trash2 className="mr-1 h-4 w-4" /> {dictionary.adminCatalogPage.deleteButton}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p className="text-muted-foreground text-center py-4">{dictionary.adminCatalogPage.noCanonicalProducts}</p>
+          )}
         </CardContent>
       </Card>
 
@@ -455,4 +583,3 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     </div>
   );
 }
-
