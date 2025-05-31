@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,9 +18,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store, Building, Mail, Phone, MapPin } from 'lucide-react';
+import { Store as StoreIcon, Building, Mail, Phone, MapPin } from 'lucide-react'; // Renamed Store import
 import { useToast } from '@/hooks/use-toast';
-import { productCategories } from '@/lib/mock-data'; // Assuming store categories might be similar or a subset
+import { productCategories } from '@/lib/mock-data';
+import { db } from '@/lib/firebase';
+import { ref, push, set } from 'firebase/database';
+import type { Store } from '@/types';
 
 const storeRegistrationSchema = z.object({
   storeName: z.string().min(2, { message: 'Store name must be at least 2 characters.' }),
@@ -52,20 +56,49 @@ export default function StoreRegistrationForm() {
   });
 
   async function onSubmit(data: StoreRegistrationFormValues) {
-    // Here you would typically send data to your backend
-    console.log('Store registration data:', data);
-    toast({
-      title: 'Registration Submitted!',
-      description: `Thank you, ${data.storeName}, for registering. We'll be in touch.`,
-    });
-    form.reset(); // Reset form after submission
+    try {
+      const storesRef = ref(db, 'stores');
+      const newStoreRef = push(storesRef);
+      const newStoreId = newStoreRef.key;
+
+      if (!newStoreId) {
+        throw new Error('Failed to generate store ID.');
+      }
+
+      const storeData: Omit<Store, 'id'> = {
+        name: data.storeName,
+        address: data.address,
+        city: data.city,
+        state: data.state,
+        zipCode: data.zipCode,
+        email: data.email,
+        phone: data.phone,
+        category: data.storeCategory,
+        description: data.description || '',
+      };
+
+      await set(ref(db, 'stores/' + newStoreId), storeData);
+
+      toast({
+        title: 'Registration Submitted!',
+        description: `Thank you, ${data.storeName}, for registering. Your store data has been saved.`,
+      });
+      form.reset();
+    } catch (error) {
+      console.error('Error saving store registration data:', error);
+      toast({
+        title: 'Registration Failed',
+        description: 'There was an error submitting your registration. Please try again.',
+        variant: 'destructive',
+      });
+    }
   }
 
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-xl">
       <CardHeader>
         <CardTitle className="flex items-center text-2xl font-headline">
-          <Store className="mr-2 h-7 w-7 text-primary" />
+          <StoreIcon className="mr-2 h-7 w-7 text-primary" />
           Register Your Store
         </CardTitle>
         <CardDescription>
@@ -213,8 +246,8 @@ export default function StoreRegistrationForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3">
-              Register Store
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Registering...' : 'Register Store'}
             </Button>
           </form>
         </Form>

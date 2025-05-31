@@ -1,3 +1,4 @@
+
 export interface ProductCategory {
   id: string;
   name: string;
@@ -26,6 +27,7 @@ export interface Store {
   email: string;
   phone: string;
   category: string; // Type of store
+  description?: string;
 }
 
 export interface ListedProduct {
