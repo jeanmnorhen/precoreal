@@ -85,16 +85,7 @@ export default function HomePage(props: HomePageProps) { // Accept props
   }
 
   return (
-    <div className="animate-fadeIn">
-      <header className="mb-12 text-center">
-        <h1 className="font-headline text-4xl font-bold tracking-tight text-primary md:text-5xl">
-          {dictionary.title}
-        </h1>
-        <p className="mt-3 text-lg text-muted-foreground md:text-xl">
-          {dictionary.subtitle}
-        </p>
-      </header>
-
+    <div className="animate-fadeIn pt-8"> {/* Added pt-8 for spacing after removing header */}
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center">
         <div className="relative flex-grow">
           <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />

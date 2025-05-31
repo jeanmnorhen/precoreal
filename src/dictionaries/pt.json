@@ -18,8 +18,6 @@
     "tagline": "Sua maneira inteligente de encontrar ofertas locais."
   },
   "homePage": {
-    "title": "Descubra Ofertas Locais",
-    "subtitle": "Encontre os melhores preços para produtos e serviços perto de você.",
     "searchPlaceholder": "Buscar produtos, lojas ou categorias...",
     "sortBy": "Ordenar por:",
     "proximity": "Proximidade",
