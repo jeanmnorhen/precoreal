@@ -117,7 +117,7 @@ O usuário pode opcionalmente tocar no ícone da câmera, tirar uma foto de um h
 
 O sistema identifica "hot dog" na imagem. (Fluxo Genkit `analyzeImageOffers` implementado para identificação do produto. Upload de imagem funcional. Funcionalidade de câmera (UC15) implementada.)
 
-O sistema então busca e exibe uma lista de todas as lojas que vendem "hot dogs", ordenadas por proximidade (esta busca de lojas ainda precisa ser adaptada para usar o feed de anúncios /advertisements em vez do antigo productAvailability). (Busca de ofertas após identificação pendente - deve usar o feed /advertisements)
+O sistema então busca e exibe uma lista de todas as lojas que vendem "hot dogs", ordenadas por proximidade. A busca é feita no feed principal de `/advertisements` usando o nome do produto identificado como termo de busca. (Concluído - Análise de imagem redireciona para o feed com termo de busca).
 
 UC7 (Apoio à busca via imagem): Descoberta de Produtos Relacionados (IA):
 
@@ -178,26 +178,26 @@ O usuário tira uma foto de um item (ex: um hot dog).
 
 A imagem capturada é usada para identificar o objeto ("hot dog").
 
-O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas por proximidade. 
+O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas por proximidade. (Concluído via UC6)
 
 3. Plano para versão atual 
 - Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído)
 - Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements implementada, filtragem de expirados feita. StoreName e Distance são placeholders)
 - Implementar funcionalidade de câmera para análise de imagem. (Concluído)
-- Nova paleta de cores aplicada conforme solicitação do usuário (Azul Médio Primário, Laranja Brilhante Secundário, Fundo Bege/Creme, depois Fundo Branco).
+- Paleta de cores atualizada (Azul Médio Primário, Laranja Brilhante Secundário, Fundo Bege/Creme, depois Fundo Branco). (Concluído)
+- Conectar análise de imagem (UC6) à busca de ofertas no feed principal. (Concluído - Análise de imagem redireciona para o feed com o produto identificado como termo de busca).
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada.
 - Layout responsivo com navegação superior para desktop e inferior para mobile.
 - Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements`).
-- Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto.
+- Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB.
 - Paleta de cores atualizada conforme solicitação do usuário (Azul Médio, Laranja, com Fundo Branco).
 - `QueryClientProvider` configurado para `react-query`.
 
 5. Planejamento para próximas versões
 - Implementar busca real de nome da loja para os anúncios (atualmente mostra ID).
-- Conectar a identificação de imagem (UC6) à busca de ofertas no feed principal.
 - Implementar cálculo de distância real ou permitir que o usuário salve uma localização.
 - Implementar autenticação para lojistas.
 - Desenvolver histórico de preços (UC5 - parte de salvar dados expirados).

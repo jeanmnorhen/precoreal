@@ -3,12 +3,14 @@
 
 import { useState, type ChangeEvent, type FormEvent, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation'; // Import useRouter
+import type { Locale } from '@/i18n-config'; // Import Locale
 import { analyzeImageOffers, type AnalyzeImageOffersOutput } from '@/ai/flows/analyze-image-offers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { UploadCloud, FileImage, Wand2, AlertCircle, ShoppingBag, Search, Camera, Video, CircleOff, CameraOff } from 'lucide-react';
+import { UploadCloud, FileImage, Wand2, AlertCircle, ShoppingBag, Search, Camera, Video, CameraOff } from 'lucide-react';
 import LoadingSpinner from './loading-spinner';
 import { useToast } from '@/hooks/use-toast';
 import type { Dictionary } from '@/lib/get-dictionary';
@@ -16,15 +18,17 @@ import { cn } from '@/lib/utils';
 
 interface ImageAnalysisToolProps {
   dictionary: Dictionary['imageAnalysisTool'];
+  lang: Locale; // Add lang prop
 }
 
-export default function ImageAnalysisTool({ dictionary }: ImageAnalysisToolProps) {
+export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToolProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageDataUri, setImageDataUri] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalyzeImageOffersOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter(); // Initialize useRouter
 
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -168,6 +172,13 @@ export default function ImageAnalysisTool({ dictionary }: ImageAnalysisToolProps
     }
   };
 
+  const handleSearchOffers = () => {
+    if (analysisResult?.productIdentification) {
+      const searchTerm = encodeURIComponent(analysisResult.productIdentification);
+      router.push(`/${lang}/?search=${searchTerm}`);
+    }
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-xl">
       <CardHeader>
@@ -284,7 +295,7 @@ export default function ImageAnalysisTool({ dictionary }: ImageAnalysisToolProps
               </AlertDescription>
             </Alert>
             
-            <Button variant="outline" className="w-full" onClick={() => alert('Offer search not implemented yet.')}>
+            <Button variant="outline" className="w-full" onClick={handleSearchOffers}>
               <Search className="mr-2 h-5 w-5" />
               {dictionary.searchOffersFor.replace('{productIdentification}', analysisResult.productIdentification)}
             </Button>
@@ -294,5 +305,3 @@ export default function ImageAnalysisTool({ dictionary }: ImageAnalysisToolProps
     </Card>
   );
 }
-
-    

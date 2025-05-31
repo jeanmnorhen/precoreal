@@ -24,6 +24,7 @@
     "price": "Price",
     "allCategories": "All",
     "noOffersFound": "No Offers Found",
+    "noOffersFoundForSearch": "No offers found for \"{searchTerm}\". Try different keywords or clear the search.",
     "noOffersAdvice": "Try adjusting your search or filters. No active advertisements available.",
     "loadingOffersText": "Loading offers...",
     "errorLoadingOffersTitle": "Error Loading Offers",
@@ -65,5 +66,3 @@
     "searchOffersFor": "Search offers for \"{productIdentification}\""
   }
 }
-
-    

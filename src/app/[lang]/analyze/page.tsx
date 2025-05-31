@@ -7,7 +7,7 @@ export default async function AnalyzePage({ params: { lang } }: { params: { lang
   const dictionary = await getDictionary(lang);
   return (
     <div className="animate-fadeIn">
-      <ImageAnalysisTool dictionary={dictionary.imageAnalysisTool} />
+      <ImageAnalysisTool dictionary={dictionary.imageAnalysisTool} lang={lang} />
     </div>
   );
 }

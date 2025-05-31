@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, use } from 'react';
+import { useSearchParams } from 'next/navigation'; // Import useSearchParams
 import OfferCard from '@/components/offer-card';
 import CategoryFilter from '@/components/category-filter';
 import { productCategories } from '@/lib/mock-data'; // Keep for category filter UI
@@ -14,7 +15,7 @@ import { getDictionary, type Dictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
 import { useQuery } from '@tanstack/react-query';
 import { db } from '@/lib/firebase';
-import { ref, get, query, orderByChild, endAt } from 'firebase/database';
+import { ref, get } from 'firebase/database'; // Removed unused query, orderByChild, endAt
 
 interface HomePageProps {
   params: Promise<{ lang: Locale }>;
@@ -22,11 +23,6 @@ interface HomePageProps {
 
 const fetchAdvertisements = async (): Promise<Offer[]> => {
   const advertisementsRef = ref(db, 'advertisements');
-  // Query to fetch only active advertisements (validUntil >= now)
-  // Firebase RTDB does not support direct >= on timestamp for filtering like Firestore.
-  // We fetch all and filter client-side, or structure data to allow limited server-side filtering (e.g. by day).
-  // For simplicity here, fetch all and filter client-side.
-  // For more complex scenarios, consider Cloud Functions or Firestore with better querying.
   const snapshot = await get(advertisementsRef);
   if (snapshot.exists()) {
     const adsData = snapshot.val();
@@ -60,6 +56,7 @@ const fetchAdvertisements = async (): Promise<Offer[]> => {
 
 export default function HomePage(props: HomePageProps) {
   const { lang } = use(props.params);
+  const searchParams = useSearchParams(); // Get searchParams
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -73,6 +70,15 @@ export default function HomePage(props: HomePageProps) {
     };
     fetchDict();
   }, [lang]);
+
+  // Effect to set searchTerm from URL query parameter
+  useEffect(() => {
+    const querySearchTerm = searchParams.get('search');
+    if (querySearchTerm) {
+      setSearchTerm(decodeURIComponent(querySearchTerm));
+    }
+  }, [searchParams]);
+
 
   const { data: fetchedOffers, isLoading: isLoadingOffers, error: offersError } = useQuery<Offer[]>({
     queryKey: ['advertisements'],
@@ -93,7 +99,7 @@ export default function HomePage(props: HomePageProps) {
     if (searchTerm) {
       offers = offers.filter((offer) =>
         offer.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        offer.storeName.toLowerCase().includes(searchTerm.toLowerCase()) || // May need adjustment if storeName changes
+        (offer.storeName && offer.storeName.toLowerCase().includes(searchTerm.toLowerCase())) || 
         offer.category.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -185,7 +191,7 @@ export default function HomePage(props: HomePageProps) {
           <Search className="mx-auto mb-4 h-16 w-16 text-muted-foreground/50" />
           <h3 className="text-xl font-semibold">{dictionary.noOffersFound}</h3>
           <p className="text-muted-foreground">
-            {dictionary.noOffersAdvice}
+            {searchTerm ? dictionary.noOffersFoundForSearch?.replace('{searchTerm}', searchTerm) || `No offers found for "${searchTerm}". Try a different search.` : dictionary.noOffersAdvice}
           </p>
         </div>
       )}
