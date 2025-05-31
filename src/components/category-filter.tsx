@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { ProductCategory } from '@/types';
@@ -8,16 +9,20 @@ interface CategoryFilterProps {
   categories: ProductCategory[];
   selectedCategory: string | null;
   onSelectCategory: (categoryId: string | null) => void;
+  allCategoriesText: string;
+  filterByCategoryText: string;
 }
 
 export default function CategoryFilter({
   categories,
   selectedCategory,
   onSelectCategory,
+  allCategoriesText,
+  filterByCategoryText,
 }: CategoryFilterProps) {
   return (
     <div className="mb-8">
-      <h2 className="mb-3 text-xl font-semibold">Filter by Category</h2>
+      <h2 className="mb-3 text-xl font-semibold">{filterByCategoryText}</h2>
       <ScrollArea className="w-full whitespace-nowrap rounded-md">
         <div className="flex space-x-3 pb-3">
           <Button
@@ -25,7 +30,7 @@ export default function CategoryFilter({
             onClick={() => onSelectCategory(null)}
             className="rounded-full px-4 py-2 shadow-sm"
           >
-            All
+            {allCategoriesText}
           </Button>
           {categories.map((category) => (
             <Button
@@ -35,7 +40,7 @@ export default function CategoryFilter({
               className="rounded-full px-4 py-2 shadow-sm"
             >
               {category.icon && <category.icon className="mr-2 h-5 w-5" />}
-              {category.name}
+              {category.name} {/* Category names are not yet internationalized */}
             </Button>
           ))}
         </div>

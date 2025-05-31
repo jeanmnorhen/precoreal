@@ -1,3 +1,4 @@
+
 Relatório do Projeto: Preço Real
 
 1. Objetivos do Projeto
@@ -49,7 +50,7 @@ Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, v
 
 Rastrear o histórico de preços dos produtos, alimentado pelos anúncios expirados.
 
-Manter perfis de usuário (consumidores) com preferências e dados como localização.
+Manter perfis de usuário (consumidores) com preferences e dados como localização.
 
 Fornecer uma página de monitoramento para visualizar dados agregados (ex: valor médio de um produto por região/país, tendências de preço).
 
@@ -145,8 +146,9 @@ Usuários consumidores autenticados poderão salvar preferências, locais freque
 Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. 
 
 UC12: Definição de Idioma da Interface:
-
-O sistema pode tentar detectar o idioma preferido do usuário.
+O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
+O sistema permite ao usuário alternar o idioma da interface (ex: Português, Inglês, Espanhol) através de um seletor.
+As rotas incluirão o código do idioma (ex: /pt/ofertas, /en/offers).
 
 UC13: Monitoramento de Dados Agregados:
 
@@ -189,6 +191,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 Sempre que receber um prompt que contenha ponto final “.” Revise o arquivo memo.md.
 
 Sempre que receber um prompt que contenha dois pontos finais “..” Revise o arquivo memo.md. e continue implementando.
+
 
 
 

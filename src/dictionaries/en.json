@@ -1,0 +1,38 @@
+
+{
+  "appTitle": "RealPrice Finder",
+  "appDescription": "Find the best local prices for products and services.",
+  "navbar": {
+    "offers": "Offers",
+    "analyzeImage": "Analyze Image",
+    "forStores": "For Stores",
+    "appName": "RealPrice Finder"
+  },
+  "bottomNavbar": {
+    "offers": "Offers",
+    "analyze": "Analyze",
+    "stores": "Stores"
+  },
+  "footer": {
+    "copy": "© {year} RealPrice Finder. All rights reserved.",
+    "tagline": "Your smart way to find local deals."
+  },
+  "homePage": {
+    "title": "Discover Local Deals",
+    "subtitle": "Find the best prices for products and services near you.",
+    "searchPlaceholder": "Search for products, stores, or categories...",
+    "sortBy": "Sort by:",
+    "proximity": "Proximity",
+    "price": "Price",
+    "filterByCategory": "Filter by Category",
+    "allCategories": "All",
+    "noOffersFound": "No Offers Found",
+    "noOffersAdvice": "Try adjusting your search or filters."
+  },
+  "localeSwitcher": {
+    "label": "Change language:",
+    "pt": "Portuguese",
+    "en": "English",
+    "es": "Spanish"
+  }
+}

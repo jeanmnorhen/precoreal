@@ -1,0 +1,38 @@
+
+{
+  "appTitle": "Precio Real",
+  "appDescription": "Encuentra los mejores precios locales para productos y servicios.",
+  "navbar": {
+    "offers": "Ofertas",
+    "analyzeImage": "Analizar Imagen",
+    "forStores": "Para Tiendas",
+    "appName": "Precio Real"
+  },
+  "bottomNavbar": {
+    "offers": "Ofertas",
+    "analyze": "Analizar",
+    "stores": "Tiendas"
+  },
+  "footer": {
+    "copy": "© {year} Precio Real. Todos los derechos reservados.",
+    "tagline": "Tu manera inteligente de encontrar ofertas locales."
+  },
+  "homePage": {
+    "title": "Descubre Ofertas Locales",
+    "subtitle": "Encuentra los mejores precios para productos y servicios cerca de ti.",
+    "searchPlaceholder": "Buscar productos, tiendas o categorías...",
+    "sortBy": "Ordenar por:",
+    "proximity": "Proximidad",
+    "price": "Precio",
+    "filterByCategory": "Filtrar por Categoría",
+    "allCategories": "Todas",
+    "noOffersFound": "No se Encontraron Ofertas",
+    "noOffersAdvice": "Intenta ajustar tu búsqueda o filtros."
+  },
+  "localeSwitcher": {
+    "label": "Cambiar idioma:",
+    "pt": "Portugués",
+    "en": "Inglés",
+    "es": "Español"
+  }
+}
