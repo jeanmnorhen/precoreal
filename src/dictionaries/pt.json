@@ -7,7 +7,8 @@
     "analyzeImage": "Analisar Imagem",
     "forStores": "Para Lojas",
     "appName": "Preço Real",
-    "monitoring": "Monitoramento"
+    "monitoring": "Monitoramento",
+    "adminCatalog": "Admin Catálogo"
   },
   "bottomNavbar": {
     "offers": "Ofertas",
@@ -94,7 +95,7 @@
     "productIdentifiedTitle": "Produto Identificado",
     "searchOffersFor": "Buscar ofertas para \"{productIdentification}\"",
     "suggestionLoggedToastTitle": "Obrigado pela Dica!",
-    "suggestionLoggedToastDesc": "\"{productName}\" será revisado para nosso catálogo. Isso nos ajuda a crescer!",
+    "suggestionLoggedToastDesc": "\"{productName}\" será revisado para nosso catálogo. Isso nos ajuda a crecer!",
     "suggestionErrorToastTitle": "Erro na Sugestão"
   },
   "auth": {
@@ -268,5 +269,45 @@
     "dateColumn": "Data do Arquivamento",
     "priceTrendChartTitle": "Tendência de Preço para {productName}",
     "noDataForProduct": "Não há dados de histórico para o produto selecionado."
+  },
+  "adminCatalogPage": {
+    "loadingText": "Carregando dados do catálogo...",
+    "errorLoadingTitle": "Erro ao Carregar Dados",
+    "suggestedProductsTitle": "Novos Produtos Sugeridos",
+    "suggestedProductsDescription": "Revise produtos sugeridos por usuários ou análise de imagens para adição ao catálogo canônico.",
+    "productNameLabel": "Nome do Produto",
+    "sourceLabel": "Origem",
+    "timestampLabel": "Data da Sugestão",
+    "languageLabel": "Idioma",
+    "statusLabel": "Status",
+    "actionsLabel": "Ações",
+    "createCanonicalButton": "Criar Canônico",
+    "dismissButton": "Dispensar",
+    "noPendingSuggestions": "Nenhuma sugestão de produto pendente no momento.",
+    "toastSuggestionStatusUpdatedTitle": "Sugestão Atualizada",
+    "toastSuggestionStatusUpdatedDesc": "Status da sugestão atualizado para {status}.",
+    "toastErrorTitle": "Erro",
+    "createCanonicalDialogTitle": "Criar Novo Produto Canônico",
+    "createCanonicalDialogDescription": "Revise e edite os detalhes de '{productName}' antes de adicioná-lo ao catálogo de produtos canônicos.",
+    "productNameFormLabel": "Nome do Produto",
+    "productNamePlaceholder": "Ex: iPhone 15 Pro",
+    "categoryFormLabel": "Categoria",
+    "descriptionFormLabel": "Descrição (Opcional)",
+    "descriptionPlaceholder": "Insira a descrição do produto",
+    "imageUrlFormLabel": "URL da Imagem Padrão (Opcional)",
+    "cancelButton": "Cancelar",
+    "saveCanonicalButton": "Salvar no Catálogo",
+    "productNameMinLengthError": "O nome do produto deve ter pelo menos {length} caracteres.",
+    "categoryRequiredError": "Categoria é obrigatória.",
+    "imageUrlInvalidError": "Por favor, insira uma URL válida.",
+    "toastCanonicalCreatedTitle": "Produto Canônico Criado",
+    "toastCanonicalCreatedDesc": "\"{productName}\" foi adicionado com sucesso ao catálogo canônico.",
+    "reviewedSuggestionsTitle": "Sugestões Revisadas",
+    "reviewedSuggestionsDescription": "Histórico de sugestões que foram processadas ou rejeitadas.",
+    "manageCanonicalProductsTitle": "Gerenciar Produtos Canônicos",
+    "manageCanonicalProductsDescription": "Visualize, edite ou exclua produtos existentes no catálogo canônico.",
+    "addManuallyTitle": "Adicionar Novo Produto Canônico Manualmente",
+    "addManuallyDescription": "Adicione diretamente um novo produto ao catálogo canônico sem uma sugestão prévia.",
+    "toBeImplemented": "Esta seção será implementada em breve."
   }
 }

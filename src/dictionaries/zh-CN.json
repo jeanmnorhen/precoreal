@@ -7,7 +7,8 @@
     "analyzeImage": "Analyze Image",
     "forStores": "For Stores",
     "appName": "RealPrice Finder",
-    "monitoring": "Monitoring"
+    "monitoring": "Monitoring",
+    "adminCatalog": "Admin Catalog"
   },
   "bottomNavbar": {
     "offers": "Offers",
@@ -40,7 +41,12 @@
     "confirmLocationAccessTitle": "Use Your Location?",
     "confirmLocationAccessMessage": "To sort offers by proximity and show distances, we need your permission to access your current location. Your location data is used only for this purpose.",
     "allowLocationButton": "Allow",
-    "cancelLocationButton": "Cancel"
+    "cancelLocationButton": "Cancel",
+    "productInCatalogTitle": "Product Information",
+    "productInCatalogButNoOffers": "No current offers for \"{searchTerm}\", but this product is in our catalog! Keep an eye out for future listings.",
+    "suggestionLoggedToastTitle": "Thanks for the Tip!",
+    "suggestionLoggedToastDesc": "\"{productName}\" will be reviewed for our catalog. This helps us grow!",
+    "suggestionErrorToastTitle": "Suggestion Error"
   },
   "productCategoryNames": {
     "electronics": "Electronics",
@@ -87,7 +93,10 @@
     "analysisFailedToastTitle": "Analysis Failed",
     "analysisFailedToastDesc": "An error occurred during image analysis.",
     "productIdentifiedTitle": "Product Identified",
-    "searchOffersFor": "Search offers for \"{productIdentification}\""
+    "searchOffersFor": "Search offers for \"{productIdentification}\"",
+    "suggestionLoggedToastTitle": "Thanks for the Tip!",
+    "suggestionLoggedToastDesc": "\"{productName}\" will be reviewed for our catalog. This helps us grow!",
+    "suggestionErrorToastTitle": "Suggestion Error"
   },
   "auth": {
     "signInLink": "Sign In",
@@ -260,5 +269,45 @@
     "dateColumn": "Date Archived",
     "priceTrendChartTitle": "Price Trend for {productName}",
     "noDataForProduct": "No price history data available for the selected product."
+  },
+  "adminCatalogPage": {
+    "loadingText": "Loading catalog data...",
+    "errorLoadingTitle": "Error Loading Data",
+    "suggestedProductsTitle": "Suggested New Products",
+    "suggestedProductsDescription": "Review products suggested by users or image analysis for addition to the canonical catalog.",
+    "productNameLabel": "Product Name",
+    "sourceLabel": "Source",
+    "timestampLabel": "Date Suggested",
+    "languageLabel": "Language",
+    "statusLabel": "Status",
+    "actionsLabel": "Actions",
+    "createCanonicalButton": "Create Canonical",
+    "dismissButton": "Dismiss",
+    "noPendingSuggestions": "No pending product suggestions at this time.",
+    "toastSuggestionStatusUpdatedTitle": "Suggestion Updated",
+    "toastSuggestionStatusUpdatedDesc": "Suggestion status updated to {status}.",
+    "toastErrorTitle": "Error",
+    "createCanonicalDialogTitle": "Create New Canonical Product",
+    "createCanonicalDialogDescription": "Review and edit the details for '{productName}' before adding it to the canonical product catalog.",
+    "productNameFormLabel": "Product Name",
+    "productNamePlaceholder": "e.g., iPhone 15 Pro",
+    "categoryFormLabel": "Category",
+    "descriptionFormLabel": "Description (Optional)",
+    "descriptionPlaceholder": "Enter product description",
+    "imageUrlFormLabel": "Default Image URL (Optional)",
+    "cancelButton": "Cancel",
+    "saveCanonicalButton": "Save to Catalog",
+    "productNameMinLengthError": "Product name must be at least {length} characters.",
+    "categoryRequiredError": "Category is required.",
+    "imageUrlInvalidError": "Please enter a valid URL.",
+    "toastCanonicalCreatedTitle": "Canonical Product Created",
+    "toastCanonicalCreatedDesc": "\"{productName}\" has been successfully added to the canonical catalog.",
+    "reviewedSuggestionsTitle": "Reviewed Suggestions",
+    "reviewedSuggestionsDescription": "History of suggestions that have been processed or rejected.",
+    "manageCanonicalProductsTitle": "Manage Canonical Products",
+    "manageCanonicalProductsDescription": "View, edit, or delete existing products in the canonical catalog.",
+    "addManuallyTitle": "Add New Canonical Product Manually",
+    "addManuallyDescription": "Directly add a new product to the canonical catalog without a prior suggestion.",
+    "toBeImplemented": "This section will be implemented soon."
   }
 }

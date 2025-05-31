@@ -41,7 +41,7 @@ Funcionalidade Secundária: Permitir que os usuários façam upload de imagens o
 
 Integrar com Firebase Realtime Database para:
 
-Manter um catálogo de produtos canônicos (para referência.) (Em andamento - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage.)
+Manter um catálogo de produtos canônicos (para referência.) (Em andamento - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de Admin para gerenciamento em andamento.)
 
 Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores com ownerId vinculado ao usuário autenticado e campos para latitude/longitude.)
 
@@ -59,7 +59,7 @@ Implementar um sistema de Retrieval Augmented Generation (RAG) geospacial para c
 
 Desenvolver "Superagentes" de IA para funcionalidades avançadas (ver seção 8).
 
-Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por new products na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo. (Em andamento - Lógica de sugestão implementada)
+Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por new products na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo. (Em andamento - Lógica de sugestão implementada. Interface de admin para aprovar sugestões e gerenciar catálogo em andamento)
 
 2. Casos de Uso
 
@@ -132,7 +132,7 @@ Se uma busca na `HomePage` não encontrar ofertas ativas:
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
 
 Implementada autenticação para lojistas (cadastro, login, logout). As lojas são vinculadas aos UIDs dos lojistas.
-Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida, interface de admin não implementada)
+Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar produtos canônicos a partir de sugestões parcialmente implementada: exibição de sugestões pendentes e ação de dispensar funcional. Criação de produto canônico a partir de sugestão em andamento.)
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
@@ -171,7 +171,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Implementar sistema de histórico de preços (UC5). (Concluído - Anúncios expirados são arquivados e movidos para `/priceHistory`).
 - Criar página de monitoramento de preços (UC13). (Concluído - Exibe histórico de preços e gráfico de tendência).
 - Melhorar UX do cadastro de localização da loja e da solicitação de permissão de localização do usuário. (Concluído - Adicionadas dicas e AlertDialog para permissão).
-- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Em andamento - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage.)
+- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Em andamento - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões e criar produtos canônicos a partir de sugestões parcialmente implementada: exibição de sugestões pendentes, ação de dispensar e criação de produto canônico a partir de sugestão funcional.)
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
@@ -187,14 +187,20 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Melhorias de UX na solicitação de permissão de localização do usuário (AlertDialog) e dicas nos campos de coordenadas do cadastro de loja. (Concluído)
 - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos em `src/types/index.ts`. (Concluído)
 - Lógica para verificar o catálogo canônico e registrar sugestões de novos produtos implementada na página de Análise de Imagem e na Busca da Página Inicial (quando não há ofertas). (Concluído)
+- Interface de Admin (UC11) iniciada em `/admin/catalog-management`:
+    - Exibe sugestões de produtos pendentes com opção de "Dispensar".
+    - Permite "Criar Produto Canônico" a partir de uma sugestão pendente através de um diálogo com formulário.
+    - Exibe sugestões já revisadas.
+    - Placeholders para gerenciamento direto de produtos canônicos e adição manual.
 
 5. Planejamento para próximas versões
 - Melhorar UX do cadastro de localização da loja (ex: usar um mapa interativo).
 - Permitir que o usuário salve sua preferência de localização (ou uma localização manual como "casa" ou "trabalho") no perfil do usuário.
 - Considerar fluxo para lojista editar informações da loja e produtos.
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
-- Implementar interface de administração para gerenciar `/canonicalProducts` e `/suggestedNewProducts` (UC11).
+- Implementar interface de administração para gerenciar `/canonicalProducts` e `/suggestedNewProducts` (UC11 - Próximos passos: edição/exclusão de canônicos, adição manual).
 - Integrar fluxos de IA para enriquecimento e adição automática de produtos ao catálogo.
+- Implementar perfis de usuário consumidor (autenticação, preferências, localização salva).
 
 6. Rotinas de manutenção 
 
