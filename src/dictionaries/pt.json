@@ -37,15 +37,23 @@
   },
   "imageAnalysisTool": {
     "title": "Analisar Imagem para ID de Produto",
-    "description": "Envie a foto de um produto e nós o identificaremos para você.",
-    "uploadLabel": "Enviar Imagem",
+    "description": "Envie uma imagem ou use sua câmera para identificar um produto.",
+    "uploadLabel": "Enviar Imagem ou Usar Câmera",
     "uploadButton": "Enviar um arquivo",
     "dragAndDrop": "ou arraste e solte",
     "fileTypes": "PNG, JPG, GIF, WebP até 10MB",
-    "clearImage": "Limpar imagem",
+    "selectedImageAlt": "Imagem selecionada para análise",
+    "clearImage": "Limpar imagem/câmera",
+    "openCameraButton": "Abrir Câmera",
+    "closeCameraButton": "Fechar Câmera",
+    "takePhotoButton": "Tirar Foto",
+    "cameraNotSupported": "A API da câmera não é suportada pelo seu navegador ou dispositivo.",
+    "cameraAccessDeniedMessage": "O acesso à câmera foi negado. Por favor, habilite-o nas configurações do seu navegador.",
+    "cameraErrorTitle": "Erro na Câmera",
+    "cameraPermissionWasDenied": "A permissão da câmera foi negada. Por favor, habilite-a nas configurações do seu navegador para usar esta funcionalidade.",
     "errorTitle": "Erro",
     "errorSelectImage": "Por favor, selecione um arquivo de imagem (JPEG, PNG, GIF, WebP).",
-    "errorSelectImageFirst": "Por favor, selecione uma imagem primeiro.",
+    "errorSelectImageFirst": "Por favor, selecione ou capture uma imagem primeiro.",
     "errorFailedAnalysis": "Falha ao analisar a imagem. Por favor, tente novamente.",
     "analyzeButton": "Identificar Produto",
     "analyzingButton": "Identificando...",
@@ -57,3 +65,5 @@
     "searchOffersFor": "Buscar ofertas para \"{productIdentification}\""
   }
 }
+
+    

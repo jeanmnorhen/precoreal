@@ -68,7 +68,7 @@ O usuário (consumidor) abre o aplicativo Preço Real.
 
 O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil.
 
-O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Em progresso - Busca dados de /advertisements, filtra expirados. StoreName e Distance são placeholders/mock)
+O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados. StoreName e Distance são placeholders/mock)
 
 Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância (calculada se localizações disponíveis).
 
@@ -115,7 +115,7 @@ Ele abre o app Preço Real, que atualiza o feed de ofertas locais.
 
 O usuário pode opcionalmente tocar no ícone da câmera, tirar uma foto de um hot dog (ou selecionar uma imagem do seu dispositivo). 
 
-O sistema identifica "hot dog" na imagem. (Fluxo Genkit `analyzeImageOffers` implementado para identificação do produto)
+O sistema identifica "hot dog" na imagem. (Fluxo Genkit `analyzeImageOffers` implementado para identificação do produto. Upload de imagem funcional. Funcionalidade de câmera (UC15) implementada.)
 
 O sistema então busca e exibe uma lista de todas as lojas que vendem "hot dogs", ordenadas por proximidade (esta busca de lojas ainda precisa ser adaptada para usar o feed de anúncios /advertisements em vez do antigo productAvailability). (Busca de ofertas após identificação pendente - deve usar o feed /advertisements)
 
@@ -164,7 +164,7 @@ O administrador acessa uma página de chat dedicada (ex: /admin/super-agent-chat
 
 O administrador interage com o "Superagente de Análise e Relatórios" para obter insights sobre o projeto, uso do banco de dados, atividade de usuários, possíveis falhas ou pontos de atenção. 
 
-UC15 (Variação de UC6): Uso da Câmera para Identificação e Busca Rápida:
+UC15 (Variação de UC6): Uso da Câmera para Identificação e Busca Rápida: (Concluído)
 
 Um usuário abre o Preço Real.
 
@@ -182,23 +182,22 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 
 3. Plano para versão atual 
 - Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído)
-- Atualizar feed de ofertas para buscar dados do Firebase. (Em progresso - Busca de /advertisements implementada, filtragem de expirados feita. StoreName e Distance são placeholders)
-- Implementar funcionalidade de câmera para análise de imagem.
+- Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements implementada, filtragem de expirados feita. StoreName e Distance são placeholders)
+- Implementar funcionalidade de câmera para análise de imagem. (Concluído)
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada.
 - Layout responsivo com navegação superior para desktop e inferior para mobile.
 - Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements`).
-- Página de análise de imagem (UC6) com upload de arquivo e integração com Genkit para identificação do produto.
+- Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB.
 - Paleta de cores atualizada conforme PRD.
 - `QueryClientProvider` configurado para `react-query`.
 
 5. Planejamento para próximas versões
 - Implementar busca real de nome da loja para os anúncios (atualmente mostra ID).
-- Implementar cálculo de distância real ou permitir que o usuário salve uma localização.
-- Adicionar funcionalidade de câmera para a análise de imagem (UC15).
 - Conectar a identificação de imagem (UC6) à busca de ofertas no feed principal.
+- Implementar cálculo de distância real ou permitir que o usuário salve uma localização.
 - Implementar autenticação para lojistas.
 - Desenvolver histórico de preços (UC5 - parte de salvar dados expirados).
 - Adicionar localização GPS e ordenação por proximidade real.
@@ -209,3 +208,5 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 Sempre que receber um prompt que contenha ponto final “.” Revise o arquivo memo.md.
 
 Sempre que receber um prompt que contenha dois pontos finais “..” Revise o arquivo memo.md. e continue implementando.
+
+    

@@ -1,17 +1,18 @@
 
 'use client';
 
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useState, type ChangeEvent, type FormEvent, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { analyzeImageOffers, type AnalyzeImageOffersOutput } from '@/ai/flows/analyze-image-offers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { UploadCloud, FileImage, Wand2, AlertCircle, ShoppingBag, Search } from 'lucide-react';
+import { UploadCloud, FileImage, Wand2, AlertCircle, ShoppingBag, Search, Camera, Video, CircleOff, CameraOff } from 'lucide-react';
 import LoadingSpinner from './loading-spinner';
 import { useToast } from '@/hooks/use-toast';
 import type { Dictionary } from '@/lib/get-dictionary';
+import { cn } from '@/lib/utils';
 
 interface ImageAnalysisToolProps {
   dictionary: Dictionary['imageAnalysisTool'];
@@ -25,6 +26,67 @@ export default function ImageAnalysisTool({ dictionary }: ImageAnalysisToolProps
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+
+  useEffect(() => {
+    // Cleanup stream on component unmount or when camera is closed
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
+
+  const requestCameraPermission = async () => {
+    if (typeof navigator.mediaDevices === 'undefined' || !navigator.mediaDevices.getUserMedia) {
+      setError(dictionary.cameraNotSupported);
+      setHasCameraPermission(false);
+      toast({
+        variant: 'destructive',
+        title: dictionary.cameraErrorTitle,
+        description: dictionary.cameraNotSupported,
+      });
+      return;
+    }
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setStream(mediaStream);
+      setHasCameraPermission(true);
+      setIsCameraOpen(true);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+      setError(null);
+    } catch (err) {
+      console.error('Error accessing camera:', err);
+      setError(dictionary.cameraAccessDeniedMessage);
+      setHasCameraPermission(false);
+      setIsCameraOpen(false);
+      toast({
+        variant: 'destructive',
+        title: dictionary.cameraErrorTitle,
+        description: dictionary.cameraAccessDeniedMessage,
+      });
+    }
+  };
+
+  const closeCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+    setStream(null);
+    setIsCameraOpen(false);
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -35,6 +97,7 @@ export default function ImageAnalysisTool({ dictionary }: ImageAnalysisToolProps
         return;
       }
       setError(null); 
+      closeCamera();
 
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -44,6 +107,35 @@ export default function ImageAnalysisTool({ dictionary }: ImageAnalysisToolProps
       reader.readAsDataURL(file);
     }
   };
+
+  const handleTakePhoto = () => {
+    if (videoRef.current && canvasRef.current && stream) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      if (context) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUri = canvas.toDataURL('image/jpeg');
+        setImageDataUri(dataUri);
+        setImagePreview(dataUri);
+      }
+      closeCamera();
+      setAnalysisResult(null); // Clear previous results
+    }
+  };
+  
+  const clearImageSelection = () => {
+    setImagePreview(null);
+    setImageDataUri(null);
+    setAnalysisResult(null);
+    setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    closeCamera();
+  }
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -89,43 +181,77 @@ export default function ImageAnalysisTool({ dictionary }: ImageAnalysisToolProps
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="imageUpload" className="block text-sm font-medium text-foreground mb-1">
-              {dictionary.uploadLabel}
-            </label>
-            <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-border px-6 pt-5 pb-6 hover:border-primary transition-colors">
-              <div className="space-y-1 text-center">
-                {imagePreview ? (
-                  <div className="relative w-full h-64 rounded-md overflow-hidden">
-                    <Image src={imagePreview} alt="Selected preview" layout="fill" objectFit="contain" />
-                  </div>
-                ) : (
-                  <>
-                    <FileImage className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <div className="flex text-sm text-muted-foreground">
-                      <span className="relative cursor-pointer rounded-md bg-background font-medium text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/80">
-                        <span>{dictionary.uploadButton}</span>
-                        <Input id="imageUpload" name="imageUpload" type="file" className="sr-only" onChange={handleImageChange} accept="image/*" />
-                      </span>
-                      <p className="pl-1">{dictionary.dragAndDrop}</p>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{dictionary.fileTypes}</p>
-                  </>
-                )}
+          <div className="space-y-4">
+            {isCameraOpen && hasCameraPermission && (
+              <div className="relative w-full aspect-video rounded-md overflow-hidden border border-border bg-muted">
+                <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+                <canvas ref={canvasRef} className="hidden"></canvas>
               </div>
+            )}
+
+            {imagePreview && !isCameraOpen && (
+              <div className="relative w-full h-64 rounded-md overflow-hidden border border-border">
+                <Image src={imagePreview} alt={dictionary.selectedImageAlt} layout="fill" objectFit="contain" />
+              </div>
+            )}
+
+            {!imagePreview && !isCameraOpen && (
+               <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-border px-6 py-10 text-center hover:border-primary transition-colors">
+                <div className="space-y-1">
+                  <FileImage className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <div className="flex text-sm text-muted-foreground">
+                    <label htmlFor="imageUpload" className="relative cursor-pointer rounded-md bg-background font-medium text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/80">
+                      <span>{dictionary.uploadButton}</span>
+                      <Input id="imageUpload" name="imageUpload" type="file" className="sr-only" onChange={handleImageChange} accept="image/*" ref={fileInputRef}/>
+                    </label>
+                    <p className="pl-1">{dictionary.dragAndDrop}</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{dictionary.fileTypes}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-2">
+              {!isCameraOpen ? (
+                 <Button type="button" variant="outline" className="flex-1" onClick={requestCameraPermission} disabled={hasCameraPermission === false}>
+                   <Camera className="mr-2 h-5 w-5" />
+                   {dictionary.openCameraButton}
+                 </Button>
+              ) : (
+                <Button type="button" variant="outline" className="flex-1" onClick={closeCamera}>
+                  <CameraOff className="mr-2 h-5 w-5" />
+                  {dictionary.closeCameraButton}
+                </Button>
+              )}
+
+              <Button
+                type="button"
+                variant="outline"
+                className={cn("flex-1", { hidden: !isCameraOpen })}
+                onClick={handleTakePhoto}
+                disabled={!stream}
+              >
+                <Video className="mr-2 h-5 w-5" />
+                {dictionary.takePhotoButton}
+              </Button>
             </div>
+
+
             {imagePreview && (
-               <Button type="button" variant="link" className="mt-2 text-sm text-primary" onClick={() => {
-                 setImagePreview(null);
-                 setImageDataUri(null);
-                 setAnalysisResult(null);
-                 const fileInput = document.getElementById('imageUpload') as HTMLInputElement;
-                 if (fileInput) fileInput.value = ''; 
-               }}>
+               <Button type="button" variant="link" className="mt-2 text-sm text-primary p-0 h-auto" onClick={clearImageSelection}>
                 {dictionary.clearImage}
               </Button>
             )}
           </div>
+          
+          {hasCameraPermission === false && !isCameraOpen && (
+             <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>{dictionary.cameraErrorTitle}</AlertTitle>
+              <AlertDescription>{dictionary.cameraPermissionWasDenied}</AlertDescription>
+            </Alert>
+          )}
+
 
           {error && (
             <Alert variant="destructive">
@@ -168,3 +294,5 @@ export default function ImageAnalysisTool({ dictionary }: ImageAnalysisToolProps
     </Card>
   );
 }
+
+    

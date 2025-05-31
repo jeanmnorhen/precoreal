@@ -37,15 +37,23 @@
   },
   "imageAnalysisTool": {
     "title": "Analizar Imagen para ID de Producto",
-    "description": "Sube una foto de un producto y lo identificaremos por ti.",
-    "uploadLabel": "Subir Imagen",
+    "description": "Sube una imagen o usa tu cámara para identificar un producto.",
+    "uploadLabel": "Subir Imagen o Usar Cámara",
     "uploadButton": "Subir un archivo",
     "dragAndDrop": "o arrastra y suelta",
     "fileTypes": "PNG, JPG, GIF, WebP hasta 10MB",
-    "clearImage": "Limpiar imagen",
+    "selectedImageAlt": "Imagen seleccionada para análisis",
+    "clearImage": "Limpiar imagen/cámara",
+    "openCameraButton": "Abrir Cámara",
+    "closeCameraButton": "Cerrar Cámara",
+    "takePhotoButton": "Tomar Foto",
+    "cameraNotSupported": "La API de la cámara no es compatible con tu navegador o dispositivo.",
+    "cameraAccessDeniedMessage": "Se denegó el acceso a la cámara. Habilítalo en la configuración de tu navegador.",
+    "cameraErrorTitle": "Error de Cámara",
+    "cameraPermissionWasDenied": "Se denegó el permiso de cámara. Habilítalo en la configuración de tu navegador para usar esta función.",
     "errorTitle": "Error",
     "errorSelectImage": "Por favor, selecciona un archivo de imagen (JPEG, PNG, GIF, WebP).",
-    "errorSelectImageFirst": "Por favor, selecciona una imagen primero.",
+    "errorSelectImageFirst": "Por favor, selecciona o captura una imagen primero.",
     "errorFailedAnalysis": "No se pudo analizar la imagen. Por favor, inténtalo de nuevo.",
     "analyzeButton": "Identificar Producto",
     "analyzingButton": "Identificando...",
@@ -57,3 +65,5 @@
     "searchOffersFor": "Buscar ofertas para \"{productIdentification}\""
   }
 }
+
+    

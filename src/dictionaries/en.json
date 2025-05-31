@@ -37,15 +37,23 @@
   },
   "imageAnalysisTool": {
     "title": "Analyze Image for Product ID",
-    "description": "Upload a picture of a product, and we'll identify it for you.",
-    "uploadLabel": "Upload Image",
+    "description": "Upload an image or use your camera to identify a product.",
+    "uploadLabel": "Upload Image or Use Camera",
     "uploadButton": "Upload a file",
     "dragAndDrop": "or drag and drop",
     "fileTypes": "PNG, JPG, GIF, WebP up to 10MB",
-    "clearImage": "Clear image",
+    "selectedImageAlt": "Selected image for analysis",
+    "clearImage": "Clear image/camera",
+    "openCameraButton": "Open Camera",
+    "closeCameraButton": "Close Camera",
+    "takePhotoButton": "Take Photo",
+    "cameraNotSupported": "Camera API is not supported by your browser or device.",
+    "cameraAccessDeniedMessage": "Camera access was denied. Please enable it in your browser settings.",
+    "cameraErrorTitle": "Camera Error",
+    "cameraPermissionWasDenied": "Camera permission was denied. Please enable it in your browser settings to use this feature.",
     "errorTitle": "Error",
     "errorSelectImage": "Please select an image file (JPEG, PNG, GIF, WebP).",
-    "errorSelectImageFirst": "Please select an image first.",
+    "errorSelectImageFirst": "Please select or capture an image first.",
     "errorFailedAnalysis": "Failed to analyze image. Please try again.",
     "analyzeButton": "Identify Product",
     "analyzingButton": "Identifying...",
@@ -57,3 +65,5 @@
     "searchOffersFor": "Search offers for \"{productIdentification}\""
   }
 }
+
+    
