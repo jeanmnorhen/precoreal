@@ -5,10 +5,10 @@
 
 @layer base {
   :root {
-    --background: 49 44% 79%; /* Pale Beige/Cream #E2D9AF */
+    --background: 0 0% 100%; /* White */
     --foreground: 201 97% 15%; /* Dark Blue/Navy #01304A */
 
-    --card: 0 0% 100%; /* White, for contrast with beige background */
+    --card: 0 0% 100%; /* White, for contrast with potential shadows/borders */
     --card-foreground: 201 97% 15%; /* Dark Blue/Navy */
 
     --popover: 0 0% 100%; /* White */
@@ -20,8 +20,8 @@
     --secondary: 32 100% 47%; /* Bright Orange #F27F00 */
     --secondary-foreground: 201 97% 10%; /* Very Dark Blue/Navy (for contrast on orange) */
 
-    --muted: 49 44% 90%; /* Very light beige (lighter than background) */
-    --muted-foreground: 201 97% 30%; /* Slightly lighter navy */
+    --muted: 0 0% 96.1%; /* Very Light Gray (was 49 44% 90%) */
+    --muted-foreground: 201 97% 35%; /* Slightly lighter/softer navy (was 201 97% 30%) */
 
     --accent: 39 95% 63%; /* Light Orange/Gold #FBB849 */
     --accent-foreground: 201 97% 10%; /* Very Dark Blue/Navy */
@@ -29,8 +29,8 @@
     --destructive: 0 84% 60%; /* Standard Red */
     --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 49 30% 70%; /* Beige-gray border */
-    --input: 49 30% 70%; /* Beige-gray input border */
+    --border: 0 0% 89.8%; /* Light Gray Border (was 49 30% 70%) */
+    --input: 0 0% 89.8%; /* Light Gray Input Border (was 49 30% 70%) */
     --ring: 203 96% 40%; /* Slightly lighter primary for focus ring */
 
     --chart-1: 203 96% 30%;  /* primary */
@@ -41,25 +41,25 @@
     --radius: 0.5rem;
 
     /* Sidebar specific theme variables */
-    --sidebar-background: 49 44% 79%; /* Pale Beige/Cream */
+    --sidebar-background: 0 0% 100%; /* White */
     --sidebar-foreground: 201 97% 15%; /* Dark Blue/Navy */
     --sidebar-primary: 203 96% 30%; /* Medium Blue */
     --sidebar-primary-foreground: 0 0% 100%; /* White */
     --sidebar-accent: 39 95% 63%; /* Light Orange/Gold */
     --sidebar-accent-foreground: 201 97% 10%; /* Very Dark Blue/Navy */
-    --sidebar-border: 49 30% 65%; /* Slightly darker beige-gray for sidebar border */
+    --sidebar-border: 0 0% 89.8%; /* Light Gray Border for sidebar */
     --sidebar-ring: 203 96% 40%; /* Ring color for sidebar */
   }
 
   .dark {
     --background: 201 97% 10%; /* Very Dark Blue/Navy */
-    --foreground: 49 44% 85%; /* Light Beige/Cream */
+    --foreground: 0 0% 98%; /* Off-White (was 49 44% 85%) */
 
     --card: 201 97% 13%; /* Slightly Lighter Dark Blue/Navy */
-    --card-foreground: 49 44% 85%; /* Light Beige/Cream */
+    --card-foreground: 0 0% 98%; /* Off-White */
 
     --popover: 201 97% 13%; /* Slightly Lighter Dark Blue/Navy */
-    --popover-foreground: 49 44% 85%; /* Light Beige/Cream */
+    --popover-foreground: 0 0% 98%; /* Off-White */
 
     --primary: 203 96% 45%; /* Brighter Medium Blue */
     --primary-foreground: 0 0% 100%; /* White */
@@ -68,7 +68,7 @@
     --secondary-foreground: 201 97% 10%; /* Very Dark Blue/Navy */
 
     --muted: 201 90% 20%; /* Dark muted blue */
-    --muted-foreground: 49 40% 70%; /* Lighter beige */
+    --muted-foreground: 0 0% 63.9%; /* Lighter gray (was 49 40% 70%) */
 
     --accent: 39 95% 70%; /* Brighter Light Orange/Gold */
     --accent-foreground: 201 97% 10%; /* Very Dark Blue/Navy */
@@ -88,7 +88,7 @@
 
     /* Sidebar specific theme variables for dark mode */
     --sidebar-background: 201 97% 10%; 
-    --sidebar-foreground: 49 44% 85%;
+    --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 203 96% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 39 95% 70%;
