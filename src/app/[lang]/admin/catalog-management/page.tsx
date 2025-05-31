@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -22,9 +23,19 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogClose,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -84,6 +95,9 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
   
   const [isEditCanonicalDialogOpen, setIsEditCanonicalDialogOpen] = useState(false);
   const [currentCanonicalProduct, setCurrentCanonicalProduct] = useState<CanonicalProduct | null>(null);
+
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<CanonicalProduct | null>(null);
 
 
   useEffect(() => {
@@ -224,6 +238,28 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     },
   });
 
+  const deleteCanonicalProductMutation = useMutation({
+    mutationFn: async (productId: string) => {
+      const productRef = ref(db, `canonicalProducts/${productId}`);
+      await remove(productRef);
+      return productId;
+    },
+    onSuccess: (_, productId) => {
+      queryClient.invalidateQueries({ queryKey: ['canonicalProducts'] });
+      const deletedProductName = canonicalProducts?.find(p => p.id === productId)?.name || 'Product';
+      toast({
+        title: dictionary?.adminCatalogPage.toastCanonicalDeletedTitle || 'Product Deleted',
+        description: dictionary?.adminCatalogPage.toastCanonicalDeletedDesc?.replace('{productName}', deletedProductName) || `${deletedProductName} has been deleted.`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: dictionary?.adminCatalogPage.toastErrorTitle || 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
   const handleDismissSuggestion = (suggestionId: string) => {
     updateSuggestionStatusMutation.mutate({ suggestionId, status: 'rejected' });
@@ -250,6 +286,19 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     setCanonicalValue('description', product.description || '');
     setCanonicalValue('defaultImageUrl', product.defaultImageUrl || '');
     setIsEditCanonicalDialogOpen(true);
+  };
+
+  const handleOpenDeleteConfirmDialog = (product: CanonicalProduct) => {
+    setProductToDelete(product);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteCanonicalProduct = () => {
+    if (productToDelete) {
+      deleteCanonicalProductMutation.mutate(productToDelete.id);
+    }
+    setIsDeleteConfirmOpen(false);
+    setProductToDelete(null);
   };
 
   const onSubmitCanonicalProduct = (data: CanonicalProductFormValues) => {
@@ -470,6 +519,29 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
         </DialogContent>
       </Dialog>
 
+       {/* AlertDialog for Delete Confirmation */}
+      <AlertDialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{dictionary.adminCatalogPage.deleteConfirmDialogTitle}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {dictionary.adminCatalogPage.deleteConfirmDialogDescription.replace('{productName}', productToDelete?.name || 'product')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setProductToDelete(null)}>{dictionary.adminCatalogPage.cancelButton}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteCanonicalProduct}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteCanonicalProductMutation.isPending}
+            >
+              {deleteCanonicalProductMutation.isPending ? <LoadingSpinner size={16} className="mr-2"/> : null}
+              {dictionary.adminCatalogPage.confirmDeleteButton}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
 
       {/* Section for Reviewed Suggestions */}
       {reviewedSuggestions.length > 0 && (
@@ -543,15 +615,15 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
                         variant="outline"
                         size="sm"
                         onClick={() => handleOpenEditCanonicalDialog(product)}
-                        disabled={editCanonicalProductMutation.isPending}
+                        disabled={editCanonicalProductMutation.isPending || deleteCanonicalProductMutation.isPending}
                       >
                         <Edit3 className="mr-1 h-4 w-4" /> {dictionary.adminCatalogPage.editButton}
                       </Button>
                       <Button
                         variant="destructive"
                         size="sm"
-                        // onClick={() => handleDeleteCanonicalProduct(product.id)} // To be implemented
-                        disabled={true || editCanonicalProductMutation.isPending} // Placeholder for delete mutation
+                        onClick={() => handleOpenDeleteConfirmDialog(product)}
+                        disabled={deleteCanonicalProductMutation.isPending || editCanonicalProductMutation.isPending}
                       >
                         <Trash2 className="mr-1 h-4 w-4" /> {dictionary.adminCatalogPage.deleteButton}
                       </Button>
@@ -583,3 +655,5 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     </div>
   );
 }
+
+    

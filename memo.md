@@ -1,3 +1,4 @@
+
 Relatório do Projeto: Preço Real
 
 1. Objetivos do Projeto
@@ -40,7 +41,7 @@ Funcionalidade Secundária: Permitir que os usuários façam upload de imagens o
 
 Integrar com Firebase Realtime Database para:
 
-Manter um catálogo de produtos canônicos (para referência.) (Em andamento - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de Admin para gerenciamento parcialmente implementada: exibição de sugestões pendentes e revisadas, dispensar sugestão, criar produto canônico a partir de sugestão, e editar produto canônico funcional. Exibição de produtos canônicos existentes funcional.)
+Manter um catálogo de produtos canônicos (para referência.) (Em andamento - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de Admin para gerenciamento parcialmente implementada: exibição de sugestões pendentes e revisadas, dispensar sugestão, criar produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição e exclusão de produtos canônicos funcional.)
 
 Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores com ownerId vinculado ao usuário autenticado e campos para latitude/longitude.)
 
@@ -131,7 +132,7 @@ Se uma busca na `HomePage` não encontrar ofertas ativas:
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
 
 Implementada autenticação para lojistas (cadastro, login, logout). As lojas são vinculadas aos UIDs dos lojistas.
-Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar/editar produtos canônicos a partir de sugestões parcialmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição de produtos canônicos funcional.)
+Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar/editar/excluir produtos canônicos a partir de sugestões ou manualmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição de produtos canônicos funcional, exclusão de produtos canônicos funcional. Botão de adicionar manualmente é placeholder.)
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
@@ -170,7 +171,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Implementar sistema de histórico de preços (UC5). (Concluído - Anúncios expirados são arquivados e movidos para `/priceHistory`).
 - Criar página de monitoramento de preços (UC13). (Concluído - Exibe histórico de preços e gráfico de tendência).
 - Melhorar UX do cadastro de localização da loja e da solicitação de permissão de localização do usuário. (Concluído - Adicionadas dicas e AlertDialog para permissão).
-- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Em andamento - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões, criar/editar produtos canônicos a partir de sugestões parcialmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição de produtos canônicos funcional.)
+- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Em andamento - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões, criar/editar/excluir produtos canônicos a partir de sugestões ou manualmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição e exclusão de produtos canônicos funcional. Botão de adicionar manualmente é placeholder.)
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
@@ -189,15 +190,15 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Interface de Admin (UC11) em `/admin/catalog-management`:
     - Exibe sugestões de produtos pendentes (com opção de "Dispensar") e revisadas.
     - Permite "Criar Produto Canônico" a partir de uma sugestão pendente através de um diálogo com formulário.
-    - Exibe produtos canônicos existentes com opção de "Editar" (funcional). Botão de "Excluir" é placeholder.
-    - Placeholders para gerenciamento direto de produtos canônicos e adição manual.
+    - Exibe produtos canônicos existentes com opção de "Editar" e "Excluir" (ambas funcionais).
+    - Placeholders para adição manual de produtos canônicos.
 
 5. Planejamento para próximas versões
 - Melhorar UX do cadastro de localização da loja (ex: usar um mapa interativo).
 - Permitir que o usuário salve sua preferência de localização (ou uma localização manual como "casa" ou "trabalho") no perfil do usuário.
 - Considerar fluxo para lojista editar informações da loja e produtos.
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
-- Implementar interface de administração para gerenciar `/canonicalProducts` e `/suggestedNewProducts` (UC11 - Próximos passos: exclusão de canônicos, adição manual).
+- Implementar interface de administração para gerenciar `/canonicalProducts` e `/suggestedNewProducts` (UC11 - Próximos passos: adição manual de produtos canônicos).
 - Integrar fluxos de IA para enriquecimento e adição automática de produtos ao catálogo.
 - Implementar perfis de usuário consumidor (autenticação, preferências, localização salva).
 
@@ -214,3 +215,5 @@ Sempre que receber um prompt que contenha dois pontos finais “..” Revise o a
 - Foreground: `#01304A` (Dark Blue/Navy)
 - Accent: `#FBB849` (Light Orange/Gold)
 (Estas cores estão implementadas em `src/app/globals.css`)
+
+    

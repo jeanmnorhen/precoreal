@@ -1,3 +1,4 @@
+
 {
   "appTitle": "Preço Real",
   "appDescription": "Encontre os melhores preços locais para produtos e serviços.",
@@ -318,6 +319,13 @@
     "noCanonicalProducts": "Nenhum produto canônico encontrado no catálogo ainda.",
     "addManuallyTitle": "Adicionar Novo Produto Canônico Manualmente",
     "addManuallyDescription": "Adicione diretamente um novo produto ao catálogo canônico sem uma sugestão prévia.",
-    "toBeImplemented": "Esta seção será implementada em breve."
+    "toBeImplemented": "Esta seção será implementada em breve.",
+    "deleteConfirmDialogTitle": "Confirmar Exclusão",
+    "deleteConfirmDialogDescription": "Tem certeza de que deseja excluir o produto '{productName}'? Esta ação não pode ser desfeita.",
+    "confirmDeleteButton": "Confirmar Exclusão",
+    "toastCanonicalDeletedTitle": "Produto Excluído",
+    "toastCanonicalDeletedDesc": "O produto '{productName}' foi excluído com sucesso do catálogo."
   }
 }
+
+    

@@ -1,3 +1,4 @@
+
 {
   "appTitle": "RealPrice Finder",
   "appDescription": "Find the best local prices for products and services.",
@@ -318,6 +319,13 @@
     "noCanonicalProducts": "No canonical products found in the catalog yet.",
     "addManuallyTitle": "Add New Canonical Product Manually",
     "addManuallyDescription": "Directly add a new product to the canonical catalog without a prior suggestion.",
-    "toBeImplemented": "This section will be implemented soon."
+    "toBeImplemented": "This section will be implemented soon.",
+    "deleteConfirmDialogTitle": "Confirm Deletion",
+    "deleteConfirmDialogDescription": "Are you sure you want to delete the product '{productName}'? This action cannot be undone.",
+    "confirmDeleteButton": "Confirm Delete",
+    "toastCanonicalDeletedTitle": "Product Deleted",
+    "toastCanonicalDeletedDesc": "Product '{productName}' has been successfully deleted from the catalog."
   }
 }
+
+    
