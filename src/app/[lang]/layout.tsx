@@ -8,6 +8,7 @@ import BottomNavbar from '@/components/layout/bottom-navbar';
 import { Toaster } from '@/components/ui/toaster';
 import { getDictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
+import QueryClientProvider from '@/components/providers/query-provider'; // Import QueryClientProvider
 
 // If you have a preferred way to load fonts, you can use it here.
 // For example, using next/font:
@@ -38,15 +39,17 @@ export default async function LangLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <div className="flex min-h-screen flex-col">
-          <Navbar lang={lang} dictionary={dictionary.navbar} localeSwitcherDictionary={dictionary.localeSwitcher} />
-          <main className="flex-grow container mx-auto px-4 py-8 pb-20 md:pb-8">
-            {children}
-          </main>
-          <Footer lang={lang} dictionary={dictionary.footer} />
-          <BottomNavbar lang={lang} dictionary={dictionary.bottomNavbar} />
-        </div>
-        <Toaster />
+        <QueryClientProvider> {/* Wrap with QueryClientProvider */}
+          <div className="flex min-h-screen flex-col">
+            <Navbar lang={lang} dictionary={dictionary.navbar} localeSwitcherDictionary={dictionary.localeSwitcher} />
+            <main className="flex-grow container mx-auto px-4 py-8 pb-20 md:pb-8">
+              {children}
+            </main>
+            <Footer lang={lang} dictionary={dictionary.footer} />
+            <BottomNavbar lang={lang} dictionary={dictionary.bottomNavbar} />
+          </div>
+          <Toaster />
+        </QueryClientProvider>
       </body>
     </html>
   );

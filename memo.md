@@ -44,9 +44,9 @@ Integrar com Firebase Realtime Database para:
 
 Manter um catálogo de produtos canônicos (para referência.)
 
-Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Em progresso, forma salva em /stores)
+Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores)
 
-Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, validade e localização. (UC4 - Em progresso, forma salva em /advertisements)
+Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, validade e localização. (UC4 - Concluído, forma salva em /advertisements)
 
 Rastrear o histórico de preços dos produtos, alimentado pelos anúncios expirados.
 
@@ -68,7 +68,7 @@ O usuário (consumidor) abre o aplicativo Preço Real.
 
 O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil.
 
-O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Atualmente usa mock data, precisa buscar de /advertisements)
+O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Em progresso - Busca dados de /advertisements, filtra expirados. StoreName e Distance são placeholders/mock)
 
 Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância (calculada se localizações disponíveis).
 
@@ -80,7 +80,7 @@ UC2 (Principal): Filtragem e Busca de Produto Específico por Proximidade:
 
 O usuário utiliza um filtro de categoria (ex: toca no ícone "hot dog") ou uma barra de busca.
 
-O sistema exibe uma lista de todas as lojas próximas que anunciaram "hot dogs" (ou o produto buscado), ordenadas pela proximidade em relação ao usuário.
+O sistema exibe uma lista de todas as lojas próximas que anunciaram "hot dogs" (ou o produto buscado), ordenadas pela proximidade em relação ao usuário. (Depende de dados reais em UC1)
 
 Cada item da lista mostra o nome da loja, o produto, o preço anunciado e a distância.
 
@@ -88,24 +88,24 @@ UC3 (Lojista): Cadastro e Gerenciamento de Perfil de Loja:
 
 Um proprietário de loja se cadastra no Preço Real como "lojista".
 
-O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica. (Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}`)
+O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica. (Concluído - Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}`)
 
 UC4 (Lojista): Publicação de Anúncios/Ofertas:
 
 O lojista autenticado acessa a interface para criar um novo anúncio. 
 
-Ele informa o nome do produto, preço, categoria, opcionalmente uma descrição e imagem. (Formulário de listagem de produto implementado, salvando em Firebase RTDB em `/advertisements/{advertisementId}`)
+Ele informa o nome do produto, preço, categoria, opcionalmente uma descrição e imagem. (Concluído - Formulário de listagem de produto implementado, salvando em Firebase RTDB em `/advertisements/{advertisementId}`)
 
 
 O anúncio publicado aparece no feed de usuários próximos que se encaixam na categoria do produto.
 
 UC5 (Sistema): Gerenciamento de Anúncios e Histórico de Preços:
 
-Anúncios publicados têm um tempo de vida limitado de entre 1 a 7 dias. (Implementado no formulário de listagem, `validUntil` é calculado)
+Anúncios publicados têm um tempo de vida limitado de entre 1 a 7 dias. (Implementado no formulário de listagem, `validUntil` é calculado. Filtragem de expirados implementada no feed UC1)
 
 Após a expiração, o anúncio desaparece do feed ativo dos usuários. 
 
-Os dados do anúncio expirado (produto, preço, loja, data) são registrados no sistema de histórico de preços associado ao produto (se for um produto catalogado) e/ou à loja. 
+Os dados do anúncio expirado (produto, preço, loja, data) são registrados no sistema de histórico de preços associado ao produto (se for um produto catalogado) e/ou à loja. (Coleta de dados expirados para histórico pendente)
 
 UC6: Análise de Imagem (Upload ou Câmera) para Busca de Ofertas:
 
@@ -115,9 +115,9 @@ Ele abre o app Preço Real, que atualiza o feed de ofertas locais.
 
 O usuário pode opcionalmente tocar no ícone da câmera, tirar uma foto de um hot dog (ou selecionar uma imagem do seu dispositivo). 
 
-O sistema identifica "hot dog" na imagem. (Fluxo Genkit `analyzeImageOffers` implementado para identificação)
+O sistema identifica "hot dog" na imagem. (Fluxo Genkit `analyzeImageOffers` implementado para identificação do produto)
 
-O sistema então busca e exibe uma lista de todas as lojas que vendem "hot dogs", ordenadas por proximidade (esta busca de lojas ainda precisa ser adaptada para usar o feed de anúncios /advertisements em vez do antigo productAvailability). (BUSCA DE LOJAS USA findProductStoresFlow QUE CONSULTA productAvailability).
+O sistema então busca e exibe uma lista de todas as lojas que vendem "hot dogs", ordenadas por proximidade (esta busca de lojas ainda precisa ser adaptada para usar o feed de anúncios /advertisements em vez do antigo productAvailability). (Busca de ofertas após identificação pendente - deve usar o feed /advertisements)
 
 UC7 (Apoio à busca via imagem): Descoberta de Produtos Relacionados (IA):
 
@@ -131,7 +131,7 @@ UC9 (Para análise de imagem): Feedback Visual do Processamento:
 
 O usuário visualiza o progresso da análise da imagem em etapas. 
 
-O usuário recebe notificações (toasts) sobre o status e erros. 
+O usuário recebe notificações (toasts) sobre o status e erros. (Implementado no ImageAnalysisTool)
 
 UC10: Consulta de Produtos no Banco de Dados (Catálogo - via análise de imagem):
 
@@ -181,25 +181,28 @@ A imagem capturada é usada para identificar o objeto ("hot dog").
 O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas por proximidade. 
 
 3. Plano para versão atual 
-- Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Em progresso)
-- Atualizar feed de ofertas para buscar dados do Firebase.
+- Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído)
+- Atualizar feed de ofertas para buscar dados do Firebase. (Em progresso - Busca de /advertisements implementada, filtragem de expirados feita. StoreName e Distance são placeholders)
 - Implementar funcionalidade de câmera para análise de imagem.
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada.
 - Layout responsivo com navegação superior para desktop e inferior para mobile.
-- Página de feed de ofertas (UC1) com dados mockados e filtros básicos.
-- Página de análise de imagem (UC6) com upload de arquivo e integração com Genkit para identificação do produto (sem busca de ofertas ainda).
-- Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) criados e agora salvando no Firebase RTDB.
+- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements`).
+- Página de análise de imagem (UC6) com upload de arquivo e integração com Genkit para identificação do produto.
+- Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB.
 - Paleta de cores atualizada conforme PRD.
+- `QueryClientProvider` configurado para `react-query`.
 
 5. Planejamento para próximas versões
-- Implementar busca de ofertas usando dados do Firebase.
-- Adicionar funcionalidade de câmera para a análise de imagem.
+- Implementar busca real de nome da loja para os anúncios (atualmente mostra ID).
+- Implementar cálculo de distância real ou permitir que o usuário salve uma localização.
+- Adicionar funcionalidade de câmera para a análise de imagem (UC15).
+- Conectar a identificação de imagem (UC6) à busca de ofertas no feed principal.
 - Implementar autenticação para lojistas.
-- Desenvolver histórico de preços.
-- Adicionar localização GPS e ordenação por proximidade.
-- Criar página de monitoramento.
+- Desenvolver histórico de preços (UC5 - parte de salvar dados expirados).
+- Adicionar localização GPS e ordenação por proximidade real.
+- Criar página de monitoramento (UC13).
 
 6. Rotinas de manutenção 
 

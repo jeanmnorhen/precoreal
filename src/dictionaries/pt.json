@@ -24,7 +24,10 @@
     "price": "Preço",
     "allCategories": "Todas",
     "noOffersFound": "Nenhuma Oferta Encontrada",
-    "noOffersAdvice": "Tente ajustar sua busca ou filtros."
+    "noOffersAdvice": "Tente ajustar sua busca ou filtros. Nenhum anúncio ativo disponível.",
+    "loadingOffersText": "Carregando ofertas...",
+    "errorLoadingOffersTitle": "Erro ao Carregar Ofertas",
+    "errorLoadingOffersMessage": "Não foi possível buscar as ofertas no momento. Por favor, tente novamente mais tarde."
   },
   "localeSwitcher": {
     "label": "Mudar idioma:",

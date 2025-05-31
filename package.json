@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@opentelemetry/exporter-jaeger": "^1.26.0",
+    "@tanstack/react-query-devtools": "^5.66.0",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20",
     "@types/react": "^18",

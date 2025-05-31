@@ -24,7 +24,10 @@
     "price": "Price",
     "allCategories": "All",
     "noOffersFound": "No Offers Found",
-    "noOffersAdvice": "Try adjusting your search or filters."
+    "noOffersAdvice": "Try adjusting your search or filters. No active advertisements available.",
+    "loadingOffersText": "Loading offers...",
+    "errorLoadingOffersTitle": "Error Loading Offers",
+    "errorLoadingOffersMessage": "Could not fetch offers at this time. Please try again later."
   },
   "localeSwitcher": {
     "label": "Change language:",
