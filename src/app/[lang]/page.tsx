@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, use } from 'react'; // Added 'use'
 import OfferCard from '@/components/offer-card';
 import CategoryFilter from '@/components/category-filter';
 import { mockOffers, productCategories } from '@/lib/mock-data';
@@ -21,15 +21,13 @@ import type { Locale } from '@/i18n-config';
 // Let's make it a client component that receives the dictionary.
 
 interface HomePageProps {
-  params: { lang: Locale };
-  // It's better to fetch dictionary in the component if it's client-side,
-  // or pass pre-fetched dictionary for server components.
-  // For now, let's simulate fetching or assume it's passed.
-  // dictionary: Dictionary['homePage']; // This would be ideal if passed from parent server component
+  params: Promise<{ lang: Locale }>; // params is a Promise
 }
 
 
-export default function HomePage({ params: { lang } }: HomePageProps) {
+export default function HomePage(props: HomePageProps) { // Accept props
+  const { lang } = use(props.params); // Unwrap params using React.use()
+
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'distance' | 'price'>('distance');
