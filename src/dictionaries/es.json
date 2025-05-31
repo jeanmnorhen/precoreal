@@ -34,5 +34,26 @@
     "pt": "Portugués",
     "en": "Inglés",
     "es": "Español"
+  },
+  "imageAnalysisTool": {
+    "title": "Analizar Imagen para ID de Producto",
+    "description": "Sube una foto de un producto y lo identificaremos por ti.",
+    "uploadLabel": "Subir Imagen",
+    "uploadButton": "Subir un archivo",
+    "dragAndDrop": "o arrastra y suelta",
+    "fileTypes": "PNG, JPG, GIF, WebP hasta 10MB",
+    "clearImage": "Limpiar imagen",
+    "errorTitle": "Error",
+    "errorSelectImage": "Por favor, selecciona un archivo de imagen (JPEG, PNG, GIF, WebP).",
+    "errorSelectImageFirst": "Por favor, selecciona una imagen primero.",
+    "errorFailedAnalysis": "No se pudo analizar la imagen. Por favor, inténtalo de nuevo.",
+    "analyzeButton": "Identificar Producto",
+    "analyzingButton": "Identificando...",
+    "analysisCompleteToastTitle": "Análisis Completo",
+    "analysisCompleteToastDesc": "Identificado: {productIdentification}",
+    "analysisFailedToastTitle": "Análisis Fallido",
+    "analysisFailedToastDesc": "Ocurrió un error durante el análisis de la imagen.",
+    "productIdentifiedTitle": "Producto Identificado",
+    "searchOffersFor": "Buscar ofertas para \"{productIdentification}\""
   }
 }

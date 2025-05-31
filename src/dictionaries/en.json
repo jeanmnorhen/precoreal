@@ -34,5 +34,26 @@
     "pt": "Portuguese",
     "en": "English",
     "es": "Spanish"
+  },
+  "imageAnalysisTool": {
+    "title": "Analyze Image for Product ID",
+    "description": "Upload a picture of a product, and we'll identify it for you.",
+    "uploadLabel": "Upload Image",
+    "uploadButton": "Upload a file",
+    "dragAndDrop": "or drag and drop",
+    "fileTypes": "PNG, JPG, GIF, WebP up to 10MB",
+    "clearImage": "Clear image",
+    "errorTitle": "Error",
+    "errorSelectImage": "Please select an image file (JPEG, PNG, GIF, WebP).",
+    "errorSelectImageFirst": "Please select an image first.",
+    "errorFailedAnalysis": "Failed to analyze image. Please try again.",
+    "analyzeButton": "Identify Product",
+    "analyzingButton": "Identifying...",
+    "analysisCompleteToastTitle": "Analysis Complete",
+    "analysisCompleteToastDesc": "Identified: {productIdentification}",
+    "analysisFailedToastTitle": "Analysis Failed",
+    "analysisFailedToastDesc": "An error occurred during image analysis.",
+    "productIdentifiedTitle": "Product Identified",
+    "searchOffersFor": "Search offers for \"{productIdentification}\""
   }
 }

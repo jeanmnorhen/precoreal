@@ -1,9 +1,10 @@
+
 'use server';
 
 /**
- * @fileOverview Image analysis flow to identify products in an image and find nearby offers.
+ * @fileOverview Image analysis flow to identify products in an image.
  *
- * - analyzeImageOffers - A function that handles the image analysis and offer finding process.
+ * - analyzeImageOffers - A function that handles the image analysis.
  * - AnalyzeImageOffersInput - The input type for the analyzeImageOffers function.
  * - AnalyzeImageOffersOutput - The return type for the analyzeImageOffers function.
  */
@@ -21,14 +22,7 @@ const AnalyzeImageOffersInputSchema = z.object({
 export type AnalyzeImageOffersInput = z.infer<typeof AnalyzeImageOffersInputSchema>;
 
 const AnalyzeImageOffersOutputSchema = z.object({
-  productIdentification: z.string().describe('The identified product in the image.'),
-  nearbyOffers: z.array(
-    z.object({
-      storeName: z.string().describe('The name of the store offering the product.'),
-      price: z.number().describe('The price of the product at the store.'),
-      distance: z.number().describe('The distance to the store from the user.'),
-    })
-  ).describe('A list of nearby offers for the identified product.'),
+  productIdentification: z.string().describe('The most specific identification of the product in the image. For example, "red t-shirt" or "iPhone 15 Pro".'),
 });
 export type AnalyzeImageOffersOutput = z.infer<typeof AnalyzeImageOffersOutputSchema>;
 
@@ -40,9 +34,9 @@ const analyzeImageOffersPrompt = ai.definePrompt({
   name: 'analyzeImageOffersPrompt',
   input: {schema: AnalyzeImageOffersInputSchema},
   output: {schema: AnalyzeImageOffersOutputSchema},
-  prompt: `You are an AI assistant designed to identify products in images and find nearby offers.
-
-  Analyze the image provided and identify the product shown.  Then, find a list of nearby offers for that product, including the store name, price, and distance to the store.
+  prompt: `You are an AI assistant designed to identify products in images.
+  Analyze the image provided and identify the main product shown.
+  Provide a concise and specific identification of the product.
 
   Image: {{media url=photoDataUri}}
   `,

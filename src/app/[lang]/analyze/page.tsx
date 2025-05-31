@@ -1,12 +1,13 @@
 
 import ImageAnalysisTool from '@/components/image-analysis-tool';
 import type { Locale } from '@/i18n-config';
+import { getDictionary } from '@/lib/get-dictionary';
 
-// TODO: Internationalize this page content using getDictionary
-export default function AnalyzePage({ params: { lang } }: { params: { lang: Locale } }) {
+export default async function AnalyzePage({ params: { lang } }: { params: { lang: Locale } }) {
+  const dictionary = await getDictionary(lang);
   return (
     <div className="animate-fadeIn">
-      <ImageAnalysisTool /> {/* This component will need lang/dictionary for its text */}
+      <ImageAnalysisTool dictionary={dictionary.imageAnalysisTool} />
     </div>
   );
 }
