@@ -52,13 +52,13 @@
   },
   "localeSwitcher": {
     "label": "Change language:",
-    "pt": "Portuguese",
+    "pt": "Português",
     "en": "English",
-    "es": "Spanish",
-    "ru": "Russian",
-    "zh-CN": "Chinese (Simplified)",
-    "es-CL": "Spanish (Chile)",
-    "es-MX": "Spanish (Mexico)"
+    "es": "Español",
+    "ru": "Русский",
+    "zh-CN": "中文 (简体)",
+    "es-CL": "Español (Chile)",
+    "es-MX": "Español (México)"
   },
   "imageAnalysisTool": {
     "title": "Analyze Image for Product ID",

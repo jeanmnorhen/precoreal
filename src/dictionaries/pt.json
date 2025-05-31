@@ -54,7 +54,11 @@
     "label": "Mudar idioma:",
     "pt": "Português",
     "en": "Inglês",
-    "es": "Espanhol"
+    "es": "Espanhol",
+    "ru": "Russo",
+    "zh-CN": "Chinês (Simplificado)",
+    "es-CL": "Espanhol (Chile)",
+    "es-MX": "Espanhol (México)"
   },
   "imageAnalysisTool": {
     "title": "Analisar Imagem para ID de Produto",

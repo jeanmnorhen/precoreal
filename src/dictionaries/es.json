@@ -54,7 +54,11 @@
     "label": "Cambiar idioma:",
     "pt": "Portugués",
     "en": "Inglés",
-    "es": "Español"
+    "es": "Español",
+    "ru": "Ruso",
+    "zh-CN": "Chino (Simplificado)",
+    "es-CL": "Español (Chile)",
+    "es-MX": "Español (México)"
   },
   "imageAnalysisTool": {
     "title": "Analizar Imagen para ID de Producto",
@@ -240,7 +244,7 @@
     "advertisingFailedMessage": "Hubo un error al publicar tu anuncio. Por favor, inténtalo de nuevo.",
     "formLoadingText": "Cargando formulario..."
   },
-  "monitoringPage": {
+   "monitoringPage": {
     "title": "Monitoreo de Precios",
     "description": "Vea datos agregados y tendencias del historial de anuncios de productos.",
     "loadingText": "Cargando datos de monitoreo...",
