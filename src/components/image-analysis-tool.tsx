@@ -3,23 +3,96 @@
 
 import { useState, type ChangeEvent, type FormEvent, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation'; // Import useRouter
-import type { Locale } from '@/i18n-config'; // Import Locale
+import { useRouter } from 'next/navigation';
+import type { Locale } from '@/i18n-config';
 import { analyzeImageOffers, type AnalyzeImageOffersOutput } from '@/ai/flows/analyze-image-offers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { UploadCloud, FileImage, Wand2, AlertCircle, ShoppingBag, Search, Camera, Video, CameraOff } from 'lucide-react';
+import { UploadCloud, FileImage, Wand2, AlertCircle, ShoppingBag, Search, Camera, Video, CameraOff, CheckCircle } from 'lucide-react';
 import LoadingSpinner from './loading-spinner';
 import { useToast } from '@/hooks/use-toast';
 import type { Dictionary } from '@/lib/get-dictionary';
 import { cn } from '@/lib/utils';
+import { db } from '@/lib/firebase';
+import { ref, query, orderByChild, equalTo, get, push, serverTimestamp, set } from 'firebase/database';
+import type { CanonicalProduct, SuggestedNewProduct } from '@/types';
 
 interface ImageAnalysisToolProps {
   dictionary: Dictionary['imageAnalysisTool'];
-  lang: Locale; // Add lang prop
+  lang: Locale;
 }
+
+// Helper function to normalize product names for comparison
+const normalizeProductName = (name: string): string => {
+  return name.trim().toLowerCase();
+};
+
+// Function to check canonical products and suggest new ones
+const checkAndSuggestProduct = async (
+  productName: string,
+  source: 'image-analysis' | 'search-bar',
+  lang: Locale,
+  toastFn: (options: any) => void,
+  dictionary: Dictionary['imageAnalysisTool'] | Dictionary['homePage']
+) => {
+  if (!productName) return;
+
+  const normalizedName = normalizeProductName(productName);
+  const canonicalProductsRef = ref(db, 'canonicalProducts');
+  const q = query(canonicalProductsRef, orderByChild('name'), equalTo(normalizedName));
+
+  try {
+    const snapshot = await get(q);
+    let productExistsInCanonical = false;
+    if (snapshot.exists()) {
+      // Further check if any of the returned items truly match (Firebase equalTo can be broad with indexing)
+      snapshot.forEach((childSnapshot) => {
+        const product = childSnapshot.val() as CanonicalProduct;
+        if (normalizeProductName(product.name) === normalizedName) {
+          productExistsInCanonical = true;
+        }
+      });
+    }
+
+    if (!productExistsInCanonical) {
+      const suggestedProductsRef = ref(db, 'suggestedNewProducts');
+      const newSuggestionRef = push(suggestedProductsRef);
+      const newSuggestion: Omit<SuggestedNewProduct, 'id'> = {
+        productName: productName, // Store original searched/identified name
+        normalizedName: normalizedName, // Store normalized name for easier querying
+        source: source,
+        timestamp: serverTimestamp() as unknown as number,
+        status: 'pending',
+        lang: lang,
+      };
+      await set(newSuggestionRef, newSuggestion);
+      
+      // Use a more specific dictionary type if possible or cast
+      const toastMessages = dictionary as Dictionary['imageAnalysisTool']; // Or common type
+      if (toastMessages.suggestionLoggedToastTitle && toastMessages.suggestionLoggedToastDesc) {
+        toastFn({
+          title: toastMessages.suggestionLoggedToastTitle,
+          description: toastMessages.suggestionLoggedToastDesc.replace('{productName}', productName),
+          variant: 'default',
+          duration: 5000, 
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error checking/suggesting product:', error);
+    const toastMessages = dictionary as Dictionary['imageAnalysisTool'];
+     if (toastMessages.suggestionErrorToastTitle){
+        toastFn({
+            title: toastMessages.suggestionErrorToastTitle,
+            description: (error as Error).message,
+            variant: 'destructive',
+        });
+     }
+  }
+};
+
 
 export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToolProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -28,7 +101,7 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -37,9 +110,7 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-
   useEffect(() => {
-    // Cleanup stream on component unmount or when camera is closed
     return () => {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
@@ -126,7 +197,7 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
         setImagePreview(dataUri);
       }
       closeCamera();
-      setAnalysisResult(null); // Clear previous results
+      setAnalysisResult(null);
     }
   };
   
@@ -159,6 +230,11 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
         title: dictionary.analysisCompleteToastTitle,
         description: dictionary.analysisCompleteToastDesc.replace('{productIdentification}', result.productIdentification),
       });
+      // After successful analysis, check/suggest product
+      if (result.productIdentification) {
+        await checkAndSuggestProduct(result.productIdentification, 'image-analysis', lang, toast, dictionary);
+      }
+
     } catch (err) {
       console.error('Error analyzing image:', err);
       setError(dictionary.errorFailedAnalysis);

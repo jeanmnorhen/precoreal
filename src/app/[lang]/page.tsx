@@ -1,21 +1,21 @@
 
 'use client';
 
-import React, { useState, useMemo, useEffect, use } from 'react';
+import React, { useState, useMemo, useEffect, use, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import OfferCard from '@/components/offer-card';
 import CategoryFilter from '@/components/category-filter';
 import { productCategories } from '@/lib/mock-data';
-import type { Offer, ListedProduct, Store, PriceHistoryEntry, ProductCategory } from '@/types';
+import type { Offer, ListedProduct, Store, PriceHistoryEntry, ProductCategory, CanonicalProduct, SuggestedNewProduct } from '@/types';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, MapPin, Tag, LocateFixed, AlertTriangle } from 'lucide-react';
+import { Search, MapPin, Tag, LocateFixed, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import LoadingSpinner from '@/components/loading-spinner';
 import { getDictionary, type Dictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { db } from '@/lib/firebase';
-import { ref, get, update, push, serverTimestamp } from 'firebase/database';
+import { ref, get, update, push, serverTimestamp, query as firebaseQuery, orderByChild, equalTo, set } from 'firebase/database';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
@@ -28,6 +28,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { useToast } from '@/hooks/use-toast';
 
 
 interface HomePageProps {
@@ -40,6 +41,74 @@ interface UserLocation {
 }
 
 type LocationError = 'PERMISSION_DENIED' | 'POSITION_UNAVAILABLE' | 'TIMEOUT' | 'UNKNOWN_ERROR' | null;
+
+const normalizeProductName = (name: string): string => {
+  return name.trim().toLowerCase();
+};
+
+const checkAndSuggestProductFromSearch = async (
+  productName: string,
+  lang: Locale,
+  toastFn: (options: any) => void,
+  dictionary: Dictionary['homePage']
+): Promise<{ existsInCanonical: boolean, suggested: boolean }> => {
+  if (!productName) return { existsInCanonical: false, suggested: false };
+
+  const normalizedName = normalizeProductName(productName);
+  const canonicalProductsRef = ref(db, 'canonicalProducts');
+  const q = firebaseQuery(canonicalProductsRef, orderByChild('normalizedName'), equalTo(normalizedName)); // Query by normalizedName
+
+  try {
+    const snapshot = await get(q);
+    let productExistsInCanonical = false;
+    if (snapshot.exists()) {
+       snapshot.forEach((childSnapshot) => {
+        const product = childSnapshot.val() as CanonicalProduct;
+        if (normalizeProductName(product.name) === normalizedName) { // Double check actual name if needed
+          productExistsInCanonical = true;
+        }
+      });
+    }
+
+    if (productExistsInCanonical) {
+      return { existsInCanonical: true, suggested: false };
+    }
+
+    // If not in canonical, suggest it
+    const suggestedProductsRef = ref(db, 'suggestedNewProducts');
+    const newSuggestionRef = push(suggestedProductsRef);
+    const newSuggestion: Omit<SuggestedNewProduct, 'id'> = {
+      productName: productName,
+      normalizedName: normalizedName,
+      source: 'search-bar',
+      timestamp: serverTimestamp() as unknown as number,
+      status: 'pending',
+      lang: lang,
+    };
+    await set(newSuggestionRef, newSuggestion);
+    
+    if (dictionary.suggestionLoggedToastTitle && dictionary.suggestionLoggedToastDesc) {
+        toastFn({
+          title: dictionary.suggestionLoggedToastTitle,
+          description: dictionary.suggestionLoggedToastDesc.replace('{productName}', productName),
+          variant: 'default',
+          duration: 5000,
+        });
+    }
+    return { existsInCanonical: false, suggested: true };
+
+  } catch (error) {
+    console.error('Error checking/suggesting product from search:', error);
+     if (dictionary.suggestionErrorToastTitle) {
+        toastFn({
+            title: dictionary.suggestionErrorToastTitle,
+            description: (error as Error).message,
+            variant: 'destructive',
+        });
+     }
+    return { existsInCanonical: false, suggested: false };
+  }
+};
 
 
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -92,12 +161,12 @@ const archiveExpiredAds = async ({ advertisements, storesMap }: { advertisements
     if (ad.validUntil < now && !ad.archived) {
       const priceHistoryEntry: Omit<PriceHistoryEntry, 'id'> = {
         advertisementId: ad.id,
-        productId: ad.name, // Assuming name is unique enough for now, or use a dedicated productId if available
+        productId: ad.name, 
         productName: ad.name,
         price: ad.price,
         storeId: ad.storeId,
         storeName: storesMap[ad.storeId]?.name || 'Unknown Store',
-        archivedAt: serverTimestamp() as unknown as number, // Firebase will set this
+        archivedAt: serverTimestamp() as unknown as number, 
         originalValidUntil: ad.validUntil,
         category: ad.category,
       };
@@ -114,7 +183,7 @@ const archiveExpiredAds = async ({ advertisements, storesMap }: { advertisements
   if (Object.keys(updates).length > 0) {
     await update(ref(db), updates);
   }
-  return activeAds; // Return only active, non-archived ads
+  return activeAds;
 };
 
 
@@ -122,6 +191,7 @@ export default function HomePage(props: HomePageProps) {
   const { lang } = use(props.params);
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -133,6 +203,9 @@ export default function HomePage(props: HomePageProps) {
   const [isRequestingLocation, setIsRequestingLocation] = useState(false);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
+  
+  const [lastCheckedSearchTerm, setLastCheckedSearchTerm] = useState<string | null>(null);
+  const [searchProductStatus, setSearchProductStatus] = useState<{term: string; existsInCanonical: boolean; suggested: boolean} | null>(null);
 
 
   useEffect(() => {
@@ -159,8 +232,6 @@ export default function HomePage(props: HomePageProps) {
     mutationFn: archiveExpiredAds,
     onSuccess: (activeAds) => {
       queryClient.setQueryData(['activeAdvertisements'], activeAds);
-      // Optionally, invalidate queries if you want to refetch everything from scratch
-      // queryClient.invalidateQueries({ queryKey: ['advertisementsAndStores'] });
     },
     onError: (error) => {
       console.error("Error archiving ads:", error);
@@ -176,14 +247,11 @@ export default function HomePage(props: HomePageProps) {
   const { data: activeAdvertisements } = useQuery<ListedProduct[]>({
     queryKey: ['activeAdvertisements'],
     queryFn: () => {
-      // This query initially returns an empty array or stale data
-      // It will be populated by the onSuccess callback of the archiveMutation
       const currentActive = queryClient.getQueryData<ListedProduct[]>(['activeAdvertisements']);
       return currentActive || [];
     },
-    enabled: !!fetchedData, // Only enable once initial data is fetched
+    enabled: !!fetchedData,
   });
-
 
   const requestUserLocation = () => {
     if (!navigator.geolocation) {
@@ -238,9 +306,8 @@ export default function HomePage(props: HomePageProps) {
 
   const cancelLocationDialog = () => {
     setShowLocationDialog(false);
-    setHasRequestedLocation(true); // User has made a choice
+    setHasRequestedLocation(true); 
   };
-
 
   const displayedOffers = useMemo(() => {
     if (!activeAdvertisements || !fetchedData?.storesMap) return [];
@@ -256,13 +323,12 @@ export default function HomePage(props: HomePageProps) {
         price: ad.price,
         storeId: ad.storeId,
         storeName: storeInfo?.name || `Lojista ID: ${ad.storeId.substring(0,6)}...`,
-        distance: null, // Will be calculated in the next step
+        distance: null,
         category: ad.category,
         description: ad.description,
       };
     });
   }, [activeAdvertisements, fetchedData?.storesMap]);
-
 
   const filteredAndSortedOffers = useMemo(() => {
     let offersWithDetails = displayedOffers.map(offer => {
@@ -283,7 +349,6 @@ export default function HomePage(props: HomePageProps) {
     });
 
     if (selectedCategory) {
-      // Find the English category name corresponding to the selectedCategory ID
       const categoryDetails = productCategories.find(cat => cat.id === selectedCategory);
       if (categoryDetails) {
         offersWithDetails = offersWithDetails.filter(
@@ -314,6 +379,22 @@ export default function HomePage(props: HomePageProps) {
     return offersWithDetails;
   }, [selectedCategory, searchTerm, sortBy, displayedOffers, userLocation, fetchedData?.storesMap]);
 
+  // Effect for checking canonical product when search yields no offers
+  useEffect(() => {
+    if (searchTerm && filteredAndSortedOffers.length === 0 && !isLoadingData && !dataError && dictionary && searchTerm !== lastCheckedSearchTerm) {
+      setLastCheckedSearchTerm(searchTerm); // Mark as checked for current term
+      setSearchProductStatus(null); // Reset previous status
+
+      checkAndSuggestProductFromSearch(searchTerm, lang, toast, dictionary.homePage)
+        .then(status => {
+          setSearchProductStatus({ term: searchTerm, ...status });
+        });
+    } else if (!searchTerm) {
+      setLastCheckedSearchTerm(null); // Reset if search term is cleared
+      setSearchProductStatus(null);
+    }
+  }, [searchTerm, filteredAndSortedOffers.length, isLoadingData, dataError, lang, dictionary, toast, lastCheckedSearchTerm]);
+
 
   if (!dictionary || isLoadingData) {
     return (
@@ -337,7 +418,6 @@ export default function HomePage(props: HomePageProps) {
       </div>
     );
   }
-
 
   return (
     <div className="animate-fadeIn pt-8">
@@ -429,13 +509,22 @@ export default function HomePage(props: HomePageProps) {
         <div className="py-12 text-center">
           <Search className="mx-auto mb-4 h-16 w-16 text-muted-foreground/50" />
           <h3 className="text-xl font-semibold">{dictionary.homePage.noOffersFound}</h3>
-          <p className="text-muted-foreground">
-            {searchTerm ? dictionary.homePage.noOffersFoundForSearch?.replace('{searchTerm}', searchTerm) || `No offers found for "${searchTerm}". Try a different search.` : dictionary.homePage.noOffersAdvice}
+          {searchTerm && searchProductStatus?.term === searchTerm && searchProductStatus.existsInCanonical && (
+            <Alert variant="default" className="mt-4 max-w-md mx-auto text-left">
+              <Info className="h-4 w-4" />
+              <AlertTitle>{dictionary.homePage.productInCatalogTitle || "Product Information"}</AlertTitle>
+              <AlertDescription>
+                {dictionary.homePage.productInCatalogButNoOffers?.replace('{searchTerm}', searchTerm) || `No current offers for "${searchTerm}", but it's in our catalog!`}
+              </AlertDescription>
+            </Alert>
+          )}
+          <p className="text-muted-foreground mt-2">
+            {searchTerm && (!searchProductStatus || searchProductStatus.term !== searchTerm || !searchProductStatus.existsInCanonical)
+              ? dictionary.homePage.noOffersFoundForSearch?.replace('{searchTerm}', searchTerm) || `No offers found for "${searchTerm}". Try a different search.`
+              : !searchTerm ? dictionary.homePage.noOffersAdvice : ''}
           </p>
         </div>
       )}
     </div>
   );
 }
-
-    

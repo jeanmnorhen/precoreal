@@ -65,6 +65,7 @@ export interface PriceHistoryEntry {
 export interface CanonicalProduct {
   id: string; // Firebase key
   name: string; // Unique product name, e.g., "iPhone 15 Pro". This should be the English name.
+  normalizedName?: string; // Lowercase, trimmed name for querying
   category: string; // Category ID, e.g., "electronics". Matches ProductCategory.id
   description?: string; // Detailed description (potentially multi-lingual in future or AI generated)
   defaultImageUrl?: string; // URL to a representative, high-quality image
@@ -74,6 +75,7 @@ export interface CanonicalProduct {
 export interface SuggestedNewProduct {
   id: string; // Firebase key
   productName: string; // Name identified (from image analysis) or searched by user
+  normalizedName?: string; // Lowercase, trimmed name for querying
   source: 'image-analysis' | 'search-bar'; // Origin of the suggestion
   timestamp: number; // When the suggestion was made
   status: 'pending' | 'reviewed' | 'added-to-catalog' | 'rejected'; // For administrative review

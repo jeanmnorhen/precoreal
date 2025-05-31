@@ -40,7 +40,12 @@
     "confirmLocationAccessTitle": "¿Usar Tu Ubicación?",
     "confirmLocationAccessMessage": "Para ordenar las ofertas por proximidad y mostrar distancias, necesitamos tu permiso para acceder a tu ubicación actual. Tus datos de ubicación se utilizan solo para este propósito.",
     "allowLocationButton": "Permitir",
-    "cancelLocationButton": "Cancelar"
+    "cancelLocationButton": "Cancelar",
+    "productInCatalogTitle": "Información del Producto",
+    "productInCatalogButNoOffers": "No hay ofertas actuales para \"{searchTerm}\", ¡pero está en nuestro catálogo! Mantente atento a futuras publicaciones.",
+    "suggestionLoggedToastTitle": "¡Gracias por la Sugerencia!",
+    "suggestionLoggedToastDesc": "\"{productName}\" será revisado para nuestro catálogo. ¡Esto nos ayuda a crecer!",
+    "suggestionErrorToastTitle": "Error en la Sugerencia"
   },
   "productCategoryNames": {
     "electronics": "Electrónicos",
@@ -87,7 +92,10 @@
     "analysisFailedToastTitle": "Análisis Fallido",
     "analysisFailedToastDesc": "Ocurrió un error durante el análisis de la imagen.",
     "productIdentifiedTitle": "Producto Identificado",
-    "searchOffersFor": "Buscar ofertas para \"{productIdentification}\""
+    "searchOffersFor": "Buscar ofertas para \"{productIdentification}\"",
+    "suggestionLoggedToastTitle": "¡Gracias por la Sugerencia!",
+    "suggestionLoggedToastDesc": "\"{productName}\" será revisado para nuestro catálogo. ¡Esto nos ayuda a crecer!",
+    "suggestionErrorToastTitle": "Error en la Sugerencia"
   },
   "auth": {
     "signInLink": "Iniciar Sesión",

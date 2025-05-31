@@ -40,7 +40,12 @@
     "confirmLocationAccessTitle": "Use Your Location?",
     "confirmLocationAccessMessage": "To sort offers by proximity and show distances, we need your permission to access your current location. Your location data is used only for this purpose.",
     "allowLocationButton": "Allow",
-    "cancelLocationButton": "Cancel"
+    "cancelLocationButton": "Cancel",
+    "productInCatalogTitle": "Product Information",
+    "productInCatalogButNoOffers": "No current offers for \"{searchTerm}\", but this product is in our catalog! Keep an eye out for future listings.",
+    "suggestionLoggedToastTitle": "Thanks for the Tip!",
+    "suggestionLoggedToastDesc": "\"{productName}\" will be reviewed for our catalog. This helps us grow!",
+    "suggestionErrorToastTitle": "Suggestion Error"
   },
   "productCategoryNames": {
     "electronics": "Electronics",
@@ -87,7 +92,10 @@
     "analysisFailedToastTitle": "Analysis Failed",
     "analysisFailedToastDesc": "An error occurred during image analysis.",
     "productIdentifiedTitle": "Product Identified",
-    "searchOffersFor": "Search offers for \"{productIdentification}\""
+    "searchOffersFor": "Search offers for \"{productIdentification}\"",
+    "suggestionLoggedToastTitle": "Thanks for the Tip!",
+    "suggestionLoggedToastDesc": "\"{productName}\" will be reviewed for our catalog. This helps us grow!",
+    "suggestionErrorToastTitle": "Suggestion Error"
   },
   "auth": {
     "signInLink": "Sign In",
