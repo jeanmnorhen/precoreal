@@ -4,13 +4,14 @@
 import type { ProductCategory } from '@/types';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import type { Dictionary } from '@/lib/get-dictionary';
 
 interface CategoryFilterProps {
   categories: ProductCategory[];
   selectedCategory: string | null;
   onSelectCategory: (categoryId: string | null) => void;
   allCategoriesText: string;
-  // filterByCategoryText: string; // Removed this prop
+  categoryNames: Dictionary['productCategoryNames']; // Prop para os nomes traduzidos
 }
 
 export default function CategoryFilter({
@@ -18,11 +19,10 @@ export default function CategoryFilter({
   selectedCategory,
   onSelectCategory,
   allCategoriesText,
-  // filterByCategoryText, // Removed this prop
+  categoryNames,
 }: CategoryFilterProps) {
   return (
     <div className="mb-8">
-      {/* <h2 className="mb-3 text-xl font-semibold">{filterByCategoryText}</h2> */}
       <ScrollArea className="w-full whitespace-nowrap rounded-md">
         <div className="flex space-x-3 pb-3">
           <Button
@@ -40,7 +40,7 @@ export default function CategoryFilter({
               className="rounded-full px-4 py-2 shadow-sm"
             >
               {category.icon && <category.icon className="mr-2 h-5 w-5" />}
-              {category.name} {/* Category names are not yet internationalized */}
+              {categoryNames[category.id as keyof typeof categoryNames] || category.name}
             </Button>
           ))}
         </div>
@@ -49,3 +49,5 @@ export default function CategoryFilter({
     </div>
   );
 }
+
+    

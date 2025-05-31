@@ -39,7 +39,19 @@
     "locationUnknownError": "Ocorreu um erro desconhecido ao tentar obter sua localização.",
     "distanceAway": "de distância",
     "distanceUnknown": "Distância desconhecida",
-    "viewDealButton": "Ver Oferta"
+    "viewDealButton": "Ver Oferta",
+    "confirmLocationAccessTitle": "Usar Sua Localização?",
+    "confirmLocationAccessMessage": "Para ordenar as ofertas por proximidade e mostrar distâncias, precisamos da sua permissão para acessar sua localização atual. Seus dados de localização são usados apenas para este fim.",
+    "allowLocationButton": "Permitir",
+    "cancelLocationButton": "Cancelar"
+  },
+  "productCategoryNames": {
+    "electronics": "Eletrônicos",
+    "clothing": "Vestuário",
+    "home-kitchen": "Casa e Cozinha",
+    "books": "Livros",
+    "groceries": "Alimentos",
+    "other": "Outros"
   },
   "localeSwitcher": {
     "label": "Mudar idioma:",
@@ -161,7 +173,7 @@
     "longitudePlaceholder": "Ex: -46.6333",
     "latitudeInvalidError": "Latitude deve estar entre -90 e 90.",
     "longitudeInvalidError": "Longitude deve estar entre -180 e 180.",
-    "coordinatesHint": "Opcional. Ajuda usuários a encontrarem sua loja.",
+    "coordinatesHint": "Opcional. Ajuda usuários a encontrarem sua loja. Você pode usar o Google Maps para encontrar a latitude e longitude do seu endereço.",
     "categoryLabel": "Categoria da Loja",
     "categoryPlaceholder": "Selecione uma categoria para sua loja",
     "categoryRequiredError": "Por favor, selecione uma categoria para a loja.",
@@ -246,3 +258,5 @@
     "noDataForProduct": "Não há dados de histórico para o produto selecionado."
   }
 }
+
+    

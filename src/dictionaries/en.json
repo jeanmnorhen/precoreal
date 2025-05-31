@@ -39,7 +39,19 @@
     "locationUnknownError": "An unknown error occurred while trying to get your location.",
     "distanceAway": "away",
     "distanceUnknown": "Distance unknown",
-    "viewDealButton": "View Deal"
+    "viewDealButton": "View Deal",
+    "confirmLocationAccessTitle": "Use Your Location?",
+    "confirmLocationAccessMessage": "To sort offers by proximity and show distances, we need your permission to access your current location. Your location data is used only for this purpose.",
+    "allowLocationButton": "Allow",
+    "cancelLocationButton": "Cancel"
+  },
+  "productCategoryNames": {
+    "electronics": "Electronics",
+    "clothing": "Clothing",
+    "home-kitchen": "Home & Kitchen",
+    "books": "Books",
+    "groceries": "Groceries",
+    "other": "Other"
   },
   "localeSwitcher": {
     "label": "Change language:",
@@ -161,7 +173,7 @@
     "longitudePlaceholder": "e.g., -118.2437",
     "latitudeInvalidError": "Latitude must be between -90 and 90.",
     "longitudeInvalidError": "Longitude must be between -180 and 180.",
-    "coordinatesHint": "Optional. Helps users find your store.",
+    "coordinatesHint": "Optional. Helps users find your store. You can use Google Maps to find the latitude and longitude of your address.",
     "categoryLabel": "Store Category",
     "categoryPlaceholder": "Select a category for your store",
     "categoryRequiredError": "Please select a store category.",
@@ -246,3 +258,5 @@
     "noDataForProduct": "No price history data available for the selected product."
   }
 }
+
+    
