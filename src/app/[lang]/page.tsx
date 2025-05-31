@@ -2,11 +2,11 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, use } from 'react';
-import { useSearchParams } from 'next/navigation'; // Import useSearchParams
+import { useSearchParams } from 'next/navigation';
 import OfferCard from '@/components/offer-card';
 import CategoryFilter from '@/components/category-filter';
-import { productCategories } from '@/lib/mock-data'; // Keep for category filter UI
-import type { Offer, ListedProduct } from '@/types';
+import { productCategories } from '@/lib/mock-data';
+import type { Offer, ListedProduct, Store } from '@/types';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, MapPin, Tag } from 'lucide-react';
@@ -15,7 +15,7 @@ import { getDictionary, type Dictionary } from '@/lib/get-dictionary';
 import type { Locale } from '@/i18n-config';
 import { useQuery } from '@tanstack/react-query';
 import { db } from '@/lib/firebase';
-import { ref, get } from 'firebase/database'; // Removed unused query, orderByChild, endAt
+import { ref, get } from 'firebase/database';
 
 interface HomePageProps {
   params: Promise<{ lang: Locale }>;
@@ -41,7 +41,8 @@ const fetchAdvertisements = async (): Promise<Offer[]> => {
           productImage: listedProduct.imageUrl || `https://placehold.co/600x400.png`,
           dataAiHint: listedProduct.dataAiHint || productNameWords.join(' '),
           price: listedProduct.price,
-          storeName: `Loja: ${listedProduct.storeId.substring(0,6)}...`, // Placeholder for store name
+          storeId: listedProduct.storeId, // Keep storeId for lookup
+          storeName: `Lojista ID: ${listedProduct.storeId.substring(0,6)}...`, // Placeholder, will be updated
           distance: Math.round(Math.random() * 10 * 10)/10, // Mock distance
           category: listedProduct.category,
           description: listedProduct.description,
@@ -53,10 +54,24 @@ const fetchAdvertisements = async (): Promise<Offer[]> => {
   return [];
 };
 
+const fetchStoresMap = async (): Promise<Record<string, string>> => {
+  const storesRef = ref(db, 'stores');
+  const snapshot = await get(storesRef);
+  if (snapshot.exists()) {
+    const storesData = snapshot.val() as Record<string, Omit<Store, 'id'>>;
+    const map: Record<string, string> = {};
+    for (const storeId in storesData) {
+      map[storeId] = storesData[storeId].name;
+    }
+    return map;
+  }
+  return {};
+};
+
 
 export default function HomePage(props: HomePageProps) {
   const { lang } = use(props.params);
-  const searchParams = useSearchParams(); // Get searchParams
+  const searchParams = useSearchParams();
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,7 +86,6 @@ export default function HomePage(props: HomePageProps) {
     fetchDict();
   }, [lang]);
 
-  // Effect to set searchTerm from URL query parameter
   useEffect(() => {
     const querySearchTerm = searchParams.get('search');
     if (querySearchTerm) {
@@ -85,19 +99,29 @@ export default function HomePage(props: HomePageProps) {
     queryFn: fetchAdvertisements,
   });
 
+  const { data: storesMap, isLoading: isLoadingStores, error: storesError } = useQuery<Record<string, string>>({
+    queryKey: ['storesMap'],
+    queryFn: fetchStoresMap,
+    staleTime: 1000 * 60 * 15, // Cache stores data for 15 minutes
+  });
+
   const displayedOffers = fetchedOffers || [];
 
   const filteredAndSortedOffers = useMemo(() => {
-    let offers = [...displayedOffers];
+    let offersWithStoreNames = displayedOffers.map(offer => ({
+      ...offer,
+      storeName: (storesMap && storesMap[offer.storeId]) || offer.storeName,
+    }));
+
 
     if (selectedCategory) {
-      offers = offers.filter(
+      offersWithStoreNames = offersWithStoreNames.filter(
         (offer) => productCategories.find(cat => cat.id === selectedCategory)?.name === offer.category
       );
     }
 
     if (searchTerm) {
-      offers = offers.filter((offer) =>
+      offersWithStoreNames = offersWithStoreNames.filter((offer) =>
         offer.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (offer.storeName && offer.storeName.toLowerCase().includes(searchTerm.toLowerCase())) || 
         offer.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -105,16 +129,16 @@ export default function HomePage(props: HomePageProps) {
     }
 
     if (sortBy === 'distance') {
-      offers.sort((a, b) => a.distance - b.distance);
+      offersWithStoreNames.sort((a, b) => a.distance - b.distance);
     } else if (sortBy === 'price') {
-      offers.sort((a, b) => a.price - b.price);
+      offersWithStoreNames.sort((a, b) => a.price - b.price);
     }
 
-    return offers;
-  }, [selectedCategory, searchTerm, sortBy, displayedOffers]);
+    return offersWithStoreNames;
+  }, [selectedCategory, searchTerm, sortBy, displayedOffers, storesMap]);
 
 
-  if (!dictionary || isLoadingOffers) {
+  if (!dictionary || isLoadingOffers || isLoadingStores) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <LoadingSpinner size={48} />
@@ -123,7 +147,8 @@ export default function HomePage(props: HomePageProps) {
     );
   }
 
-  if (offersError) {
+  const combinedError = offersError || storesError;
+  if (combinedError) {
      return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
         <Search className="mx-auto mb-4 h-16 w-16 text-destructive/50" />
@@ -131,7 +156,7 @@ export default function HomePage(props: HomePageProps) {
         <p className="text-muted-foreground">
           {dictionary.errorLoadingOffersMessage || 'Could not fetch offers. Please try again later.'}
           <br />
-          <span className="text-xs">{(offersError as Error)?.message}</span>
+          <span className="text-xs">{(combinedError as Error)?.message}</span>
         </p>
       </div>
     );

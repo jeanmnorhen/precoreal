@@ -60,6 +60,8 @@ Implementar um sistema de Retrieval Augmented Generation (RAG) geospacial para c
 
 Desenvolver "Superagentes" de IA para funcionalidades avançadas (ver seção 8).
 
+Proposta: Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por novos produtos na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo.
+
 2. Casos de Uso
 
 UC1 (Principal): Descoberta de Ofertas Próximas (Feed Geolocalizado):
@@ -68,7 +70,7 @@ O usuário (consumidor) abre o aplicativo Preço Real.
 
 O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil.
 
-O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados. StoreName e Distance são placeholders/mock)
+O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Parcialmente Concluído - Busca dados de /advertisements, filtra expirados. Nome real da loja agora é buscado de /stores. Cálculo de distância ainda é mock.)
 
 Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância (calculada se localizações disponíveis).
 
@@ -182,32 +184,31 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 
 3. Plano para versão atual 
 - Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído)
-- Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements implementada, filtragem de expirados feita. StoreName e Distance são placeholders)
+- Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements e /stores implementada, filtragem de expirados feita. Nome real da loja é exibido. Distância ainda é mock/placeholder.)
 - Implementar funcionalidade de câmera para análise de imagem. (Concluído)
-- Paleta de cores atualizada (Azul Médio Primário, Laranja Brilhante Secundário, Fundo Bege/Creme, depois Fundo Branco). (Concluído)
+- Paleta de cores atualizada (Azul Médio Primário, Laranja Brilhante Secundário, Fundo Branco). (Concluído)
 - Conectar análise de imagem (UC6) à busca de ofertas no feed principal. (Concluído - Análise de imagem redireciona para o feed com o produto identificado como termo de busca).
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada.
 - Layout responsivo com navegação superior para desktop e inferior para mobile.
-- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements`).
+- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB.
 - Paleta de cores atualizada conforme solicitação do usuário (Azul Médio, Laranja, com Fundo Branco).
 - `QueryClientProvider` configurado para `react-query`.
 
 5. Planejamento para próximas versões
-- Implementar busca real de nome da loja para os anúncios (atualmente mostra ID).
 - Implementar cálculo de distância real ou permitir que o usuário salve uma localização.
 - Implementar autenticação para lojistas.
 - Desenvolver histórico de preços (UC5 - parte de salvar dados expirados).
 - Adicionar localização GPS e ordenação por proximidade real.
 - Criar página de monitoramento (UC13).
+- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo (conforme nova proposta).
 
 6. Rotinas de manutenção 
 
 Sempre que receber um prompt que contenha ponto final “.” Revise o arquivo memo.md.
 
 Sempre que receber um prompt que contenha dois pontos finais “..” Revise o arquivo memo.md. e continue implementando.
-
-    
+```

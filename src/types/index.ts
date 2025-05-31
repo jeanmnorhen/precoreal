@@ -10,7 +10,8 @@ export interface Offer {
   productName: string;
   productImage: string; // URL
   price: number;
-  storeName: string;
+  storeId: string; // Added to link to the store
+  storeName: string; // Will be populated with the real name
   distance: number; // in miles or km
   category: string; // Category name or ID
   description?: string;
