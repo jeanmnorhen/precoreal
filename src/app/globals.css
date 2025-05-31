@@ -1,20 +1,21 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 56 43% 90%; /* #f5f4d7 - Color 2 */
+    --background: 0 0% 98%; /* Branco Gelo / Off-white */
     --foreground: 58 22% 26%; /* #535233 - Color 5 */
 
-    --card: 56 43% 93%; /* Lighter version of Color 2 */
+    --card: 0 0% 100%; /* White */
     --card-foreground: 58 22% 26%; /* #535233 - Color 5 */
 
-    --popover: 56 43% 93%; /* Same as card */
+    --popover: 0 0% 100%; /* White */
     --popover-foreground: 58 22% 26%; /* #535233 - Color 5 */
 
     --primary: 353 66% 35%; /* #951f2b - Color 1 */
-    --primary-foreground: 56 43% 95%; /* Light beige for contrast on dark red */
+    --primary-foreground: 0 0% 98%; /* Off-white for contrast */
 
     --secondary: 58 21% 53%; /* #a5a36c - Color 4 */
     --secondary-foreground: 58 22% 20%; /* Dark olive for contrast on Color 4 */
@@ -26,10 +27,10 @@
     --accent-foreground: 58 22% 26%; /* #535233 - Color 5 */
     
     --destructive: 353 66% 45%; /* Brighter red than primary */
-    --destructive-foreground: 56 43% 95%; /* Light beige */
+    --destructive-foreground: 0 0% 98%; /* Off-white for contrast */
 
-    --border: 58 33% 70%; /* Derived from Color 3 */
-    --input: 58 33% 75%; /* Derived from Color 3 */
+    --border: 0 0% 88%; /* Neutral light gray border */
+    --input: 0 0% 85%; /* Neutral gray input border */
     --ring: 353 66% 40%; /* Primary color, slightly brighter for ring */
 
     --chart-1: 12 76% 61%;
@@ -40,13 +41,13 @@
     --radius: 0.5rem;
 
     /* Sidebar specific theme variables */
-    --sidebar-background: 56 43% 92%; /* Similar to background, slightly brighter */
+    --sidebar-background: 0 0% 97%; /* Slightly darker/different off-white for sidebar */
     --sidebar-foreground: 58 22% 26%; /* #535233 - Color 5 */
     --sidebar-primary: 353 66% 35%; /* #951f2b - Color 1 */
-    --sidebar-primary-foreground: 56 43% 95%;
+    --sidebar-primary-foreground: 0 0% 98%; /* Off-white for contrast */
     --sidebar-accent: 58 33% 78%; /* #e0dfb1 - Color 3 */
     --sidebar-accent-foreground: 58 22% 26%; /* #535233 - Color 5 */
-    --sidebar-border: 58 33% 70%;
+    --sidebar-border: 0 0% 88%; /* Consistent neutral light gray border */
     --sidebar-ring: 353 66% 40%;
   }
 
@@ -61,7 +62,7 @@
     --popover-foreground: 56 43% 85%;
 
     --primary: 353 70% 55%; /* Brighter red from Color 1 */
-    --primary-foreground: 56 43% 96%; /* Almost white for contrast */
+    --primary-foreground: 0 0% 96%; /* Light gray for contrast */
 
     --secondary: 58 30% 45%; /* Dark mode version of Color 4 */
     --secondary-foreground: 56 43% 90%; /* Light text for dark secondary */
@@ -73,7 +74,7 @@
     --accent-foreground: 58 15% 10%; /* Very dark text on accent */
 
     --destructive: 353 75% 60%; /* Brighter destructive red */
-    --destructive-foreground: 56 43% 96%;
+    --destructive-foreground: 0 0% 96%; /* Light gray for contrast */
 
     --border: 58 20% 30%; /* Dark border */
     --input: 58 20% 35%; /* Dark input */
@@ -89,7 +90,7 @@
     --sidebar-background: 58 15% 12%; /* Slightly different from main dark bg */
     --sidebar-foreground: 56 43% 85%;
     --sidebar-primary: 353 70% 55%;
-    --sidebar-primary-foreground: 56 43% 96%;
+    --sidebar-primary-foreground: 0 0% 96%; /* Light gray for contrast */
     --sidebar-accent: 58 30% 60%;
     --sidebar-accent-foreground: 58 15% 10%;
     --sidebar-border: 58 20% 30%;
