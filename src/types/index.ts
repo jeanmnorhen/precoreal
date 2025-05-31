@@ -31,13 +31,15 @@ export interface Store {
 }
 
 export interface ListedProduct {
-  id: string;
+  id: string; // Firebase key
   storeId: string;
   name: string;
   description: string;
   price: number;
-  category: string;
+  category: string; // Category name
   imageUrl?: string;
   stock?: number;
-  dataAiHint?: string;
+  createdAt: number; // Timestamp
+  validUntil: number; // Timestamp
+  dataAiHint?: string; // Optional, not in form yet
 }

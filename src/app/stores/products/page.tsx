@@ -1,10 +1,13 @@
+
 import ProductListingForm from '@/components/product-listing-form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 
 export default function StoreProductsPage() {
-  // In a real app, you'd check if the user is a logged-in store owner.
+  // In a real app, you'd check if the user is a logged-in store owner
+  // and fetch their storeId.
   const isStoreOwner = true; // Placeholder
+  const mockStoreId = "store_123_abc"; // Placeholder for actual store ID
 
   if (!isStoreOwner) {
     return (
@@ -22,8 +25,8 @@ export default function StoreProductsPage() {
 
   return (
     <div className="animate-fadeIn">
-      {/* Here you could also list existing products for management */}
-      <ProductListingForm />
+      {/* Here you could also list existing products/advertisements for management */}
+      <ProductListingForm storeId={mockStoreId} />
     </div>
   );
 }
