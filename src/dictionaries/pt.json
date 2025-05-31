@@ -1,4 +1,3 @@
-
 {
   "appTitle": "Preço Real",
   "appDescription": "Encontre os melhores preços locais para produtos e serviços.",
@@ -6,12 +5,14 @@
     "offers": "Ofertas",
     "analyzeImage": "Analisar Imagem",
     "forStores": "Para Lojas",
-    "appName": "Preço Real"
+    "appName": "Preço Real",
+    "monitoring": "Monitoramento"
   },
   "bottomNavbar": {
     "offers": "Ofertas",
     "analyze": "Analisar",
-    "stores": "Lojas"
+    "stores": "Lojas",
+    "monitoring": "Monitorar"
   },
   "footer": {
     "copy": "© {year} Preço Real. Todos os direitos reservados.",
@@ -226,5 +227,22 @@
     "productAdvertisedMessage": "{productName} foi anunciado com sucesso.",
     "advertisingFailedTitle": "Falha ao Anunciar",
     "advertisingFailedMessage": "Houve um erro ao postar seu anúncio. Por favor, tente novamente."
+  },
+   "monitoringPage": {
+    "title": "Monitoramento de Preços",
+    "description": "Visualize dados agregados e tendências do histórico de anúncios de produtos.",
+    "loadingText": "Carregando dados de monitoramento...",
+    "errorLoadingTitle": "Erro ao Carregar Dados de Monitoramento",
+    "errorLoadingMessage": "Não foi possível buscar os dados do histórico de preços. Por favor, tente novamente mais tarde.",
+    "noHistoryFound": "Nenhum Dado de Histórico de Preços",
+    "noHistoryFoundMessage": "Ainda não há dados de histórico de preços para exibir. Anúncios expirados aparecerão aqui.",
+    "selectProductPlaceholder": "Selecione um produto para ver o histórico",
+    "tableTitle": "Histórico de Preços para: {productName}",
+    "productColumn": "Produto",
+    "priceColumn": "Preço",
+    "storeColumn": "Loja",
+    "dateColumn": "Data do Arquivamento",
+    "priceTrendChartTitle": "Tendência de Preço para {productName}",
+    "noDataForProduct": "Não há dados de histórico para o produto selecionado."
   }
 }

@@ -1,4 +1,3 @@
-
 Relatório do Projeto: Preço Real
 
 1. Objetivos do Projeto
@@ -23,20 +22,20 @@ GEMINI_API_KEY=AIzaSyByrggmNnonVbCBaqoXCEbB2Jb1JwIEz8M
 
 Permitir que usuários filtrem produtos por categoria.
 
-Apresentar lojas que vendem um produto específico, ordenadas por proximidade. (Parcialmente concluído - Cálculo de distância implementado, falta entrada de localização da loja via mapa e melhorias na UX da permissão de localização do usuário.)
+Apresentar lojas que vendem um produto específico, ordenadas por proximidade. (Concluído - Cálculo de distância implementado. Entrada de localização da loja via campos numéricos. UX da permissão de localização do usuário funcional.)
 
 Permitir que lojistas (outro tipo de cliente do aplicativo) cadastrem seus estabelecimentos e anunciem seus produtos na plataforma. (Concluído - Implementada autenticação para lojistas. Lojas incluem agora latitude e longitude.)
 
-Anúncios de produtos terão um tempo de validade definido entre 1 e 7 dias.
+Anúncios de produtos terão um tempo de validade definido entre 1 e 7 dias. (Concluído)
 
-Os dados dos anúncios expirados serão registrados para compor um histórico de preços.
+Os dados dos anúncios expirados serão registrados para compor um histórico de preços. (Concluído - Anúncios expirados e não arquivados são movidos para /priceHistory e marcados como `archived: true` em /advertisements.)
 
-Utilizar a localização GPS do usuário (com consentimento) para otimizar a busca por ofertas e lojas. (Parcialmente Concluído - Usuário pode fornecer localização. Distância real calculada.)
+Utilizar a localização GPS do usuário (com consentimento) para otimizar a busca por ofertas e lojas. (Concluído - Usuário pode fornecer localização. Distância real calculada e usada para ordenação.)
 
 Oferecer uma interface de usuário intuitiva e responsiva.
-    - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Para Lojas) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade. (Ajustado para incluir autenticação)
+    - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Monitoramento, Para Lojas/Meus Produtos) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade. (Ajustado para incluir autenticação e Monitoramento)
 
-Funcionalidade Secundária: Permitir que os usuários façam upload de imagens ou tirem fotos com a câmera do dispositivo para análise (identificar objetos). Essa funcionalidade pode ser usada para ajudar o usuário a identificar um item sobre o qual deseja buscar ofertas no feed principal.
+Funcionalidade Secundária: Permitir que os usuários façam upload de imagens ou tirem fotos com a câmera do dispositivo para análise (identificar objetos). Essa funcionalidade pode ser usada para ajudar o usuário a identificar um item sobre o qual deseja buscar ofertas no feed principal. (Concluído)
 
 Integrar com Firebase Realtime Database para:
 
@@ -46,11 +45,11 @@ Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perf
 
 Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, validade e localização. (UC4 - Concluído, forma salva em /advertisements, vinculada a um storeId.)
 
-Rastrear o histórico de preços dos produtos, alimentado pelos anúncios expirados.
+Rastrear o histórico de preços dos produtos, alimentado pelos anúncios expirados. (UC5 - Concluído, dados salvos em /priceHistory, anúncios originais marcados como arquivados.)
 
 Manter perfis de usuário (consumidores) com preferences e dados como localização. (Autenticação de Lojistas implementada, perfis de consumidor ainda não.)
 
-Fornecer uma página de monitoramento para visualizar dados agregados (ex: valor médio de um produto por região/país, tendências de preço).
+Fornecer uma página de monitoramento para visualizar dados agregados (ex: valor médio de um produto por região/país, tendências de preço). (UC13 - Concluído - Exibe histórico de preços de produtos selecionados com tabela e gráfico de tendência.)
 
 Visão Futura:
 
@@ -66,7 +65,7 @@ UC1 (Principal): Descoberta de Ofertas Próximas (Feed Geolocalizado):
 
 O usuário (consumidor) abre o aplicativo Preço Real.
 O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil e permitir. (Concluído - Usuário pode fornecer localização via botão; cálculo de distância agora é real se coordenadas estiverem disponíveis.)
-O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados. Nome real da loja buscado de /stores. Distância real calculada se localizações disponíveis.)
+O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados e arquivados. Nome real da loja buscado de /stores. Distância real calculada se localizações disponíveis.)
 Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância.
 O usuário pode rolar o feed para ver mais ofertas.
 
@@ -94,8 +93,8 @@ O anúncio publicado aparece no feed de usuários próximos que se encaixam na c
 UC5 (Sistema): Gerenciamento de Anúncios e Histórico de Preços:
 
 Anúncios publicados têm um tempo de vida limitado de entre 1 a 7 dias. (Implementado no formulário de listagem, `validUntil` é calculado. Filtragem de expirados implementada no feed UC1)
-Após a expiração, o anúncio desaparece do feed ativo dos usuários. 
-Os dados do anúncio expirado (produto, preço, loja, data) são registrados no sistema de histórico de preços associado ao produto (se for um produto catalogado) e/ou à loja. (Coleta de dados expirados para histórico pendente)
+Após a expiração, o anúncio desaparece do feed ativo dos usuários. (Implementado - anúncios expirados e não arquivados são processados)
+Os dados do anúncio expirado (produto, preço, loja, data) são registrados no sistema de histórico de preços em `/priceHistory`. O anúncio original em `/advertisements` é marcado com `archived: true`. (Concluído)
 
 UC6: Análise de Imagem (Upload ou Câmera) para Busca de Ofertas:
 
@@ -136,8 +135,8 @@ As rotas incluirão o código do idioma (ex: /pt/ofertas, /en/offers).
 UC13: Monitoramento de Dados Agregados:
 
 O usuário (administrador ou analista do Preço Real) acessa uma página de monitoramento. 
-O usuário seleciona um produto ou categoria.
-O sistema exibe o valor médio desse produto/categoria em diferentes regiões/países onde há anúncios registrados, com base nos dados de anúncios expirados e perfis de lojas. (PÁGINA DE MONITORAMENTO USA productAvailability, PRECISA ADAPTAR PARA /advertisements E HISTÓRICO)
+O usuário seleciona um produto.
+O sistema exibe o valor médio desse produto/categoria em diferentes regiões/países onde há anúncios registrados, com base nos dados de anúncios expirados e perfis de lojas. (Concluído - Página de monitoramento exibe histórico de preços de produtos de `/priceHistory` com tabela e gráfico.)
 
 UC14 (Administrador): Interação com Superagente de Análise via Chat:
 
@@ -156,28 +155,30 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 
 3. Plano para versão atual 
 - Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído, com autenticação de lojista)
-- Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements e /stores implementada, filtragem de expirados feita. Nome real da loja é exibido. Distância real calculada se coordenadas disponíveis.)
+- Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements e /stores implementada, filtragem de expirados e arquivados feita. Nome real da loja é exibido. Distância real calculada se coordenadas disponíveis.)
 - Implementar funcionalidade de câmera para análise de imagem. (Concluído)
-- Paleta de cores atualizada para Azul Médio Primário, Laranja Brilhante Secundário, Fundo Branco, Texto Azul Escuro e Acento Laranja Claro/Dourado. (Concluído)
+- Paleta de cores atualizada para Azul Médio Primário, Laranja Brilhante Secundário, Fundo Branco, Texto Azul Escuro e Acento Laranja Claro/Dourado. (Concluído - Usuário definiu nova paleta: Primária: #026296 (Azul Médio), Secundária: #F27F00 (Laranja Brilhante), Fundo: #FFFFFF (Branco), Foreground: #01304A (Azul Escuro/Marinho), Acento: #FBB849 (Laranja Claro/Dourado)).
 - Conectar análise de imagem (UC6) à busca de ofertas no feed principal. (Concluído - Análise de imagem redireciona para o feed com o produto identificado como termo de busca).
 - Implementar autenticação para lojistas (Email/Senha) e proteger as rotas de cadastro de loja e listagem de produtos. (Concluído)
 - Implementar cálculo de distância real ou permitir que o usuário salve uma localização (GPS). (Concluído - Lojistas podem adicionar lat/lon. Usuários podem fornecer localização para cálculo de distância.)
+- Implementar sistema de histórico de preços (UC5). (Concluído - Anúncios expirados são arquivados e movidos para `/priceHistory`).
+- Criar página de monitoramento de preços (UC13). (Concluído - Exibe histórico de preços e gráfico de tendência).
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada.
 - Layout responsivo com navegação superior para desktop e inferior para mobile.
-- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização e as lojas tiverem coordenadas.
+- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude`. Produtos são listados sob o `storeId` da loja do usuário.
-- Paleta de cores atualizada conforme solicitação do usuário.
+- Paleta de cores atualizada conforme solicitação do usuário (Primária: Azul Médio `#026296`, Secundária: Laranja Brilhante `#F27F00`, Fundo: Branco `#FFFFFF`, Foreground: Azul Escuro `#01304A`, Acento: Laranja Claro `#FBB849`).
 - `QueryClientProvider` e `AuthProvider` configurados.
 - Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
+- Sistema de histórico de preços (UC5) implementado: anúncios expirados e não arquivados são movidos para `/priceHistory` e marcados como `archived: true` em `/advertisements`.
+- Página de monitoramento de preços (UC13) implementada, exibindo histórico de preços com tabela e gráfico de tendência.
 
 5. Planejamento para próximas versões
 - Melhorar UX do cadastro de localização da loja (ex: usar um mapa interativo).
 - Melhorar UX da solicitação de permissão de localização do usuário (ex: explicar o motivo, permitir salvar preferência).
-- Desenvolver histórico de preços (UC5 - parte de salvar dados expirados).
-- Criar página de monitoramento (UC13).
 - Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo (conforme nova proposta).
 - Considerar fluxo para lojista editar informações da loja e produtos.
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
@@ -195,3 +196,4 @@ Sempre que receber um prompt que contenha dois pontos finais “..” Revise o a
 - Foreground: `#01304A` (Dark Blue/Navy)
 - Accent: `#FBB849` (Light Orange/Gold)
 (Estas cores estão implementadas em `src/app/globals.css`)
+```

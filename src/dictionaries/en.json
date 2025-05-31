@@ -1,4 +1,3 @@
-
 {
   "appTitle": "RealPrice Finder",
   "appDescription": "Find the best local prices for products and services.",
@@ -6,12 +5,14 @@
     "offers": "Offers",
     "analyzeImage": "Analyze Image",
     "forStores": "For Stores",
-    "appName": "RealPrice Finder"
+    "appName": "RealPrice Finder",
+    "monitoring": "Monitoring"
   },
   "bottomNavbar": {
     "offers": "Offers",
     "analyze": "Analyze",
-    "stores": "Stores"
+    "stores": "Stores",
+    "monitoring": "Monitor"
   },
   "footer": {
     "copy": "© {year} RealPrice Finder. All rights reserved.",
@@ -226,5 +227,22 @@
     "productAdvertisedMessage": "{productName} has been successfully advertised.",
     "advertisingFailedTitle": "Advertising Failed",
     "advertisingFailedMessage": "There was an error posting your advertisement. Please try again."
+  },
+  "monitoringPage": {
+    "title": "Price Monitoring",
+    "description": "View aggregated price data and trends from product advertisement history.",
+    "loadingText": "Loading monitoring data...",
+    "errorLoadingTitle": "Error Loading Monitoring Data",
+    "errorLoadingMessage": "Could not fetch price history data. Please try again later.",
+    "noHistoryFound": "No Price History Data",
+    "noHistoryFoundMessage": "There is no price history data available to display yet. Expired advertisements will appear here.",
+    "selectProductPlaceholder": "Select a product to view history",
+    "tableTitle": "Price History for: {productName}",
+    "productColumn": "Product",
+    "priceColumn": "Price",
+    "storeColumn": "Store",
+    "dateColumn": "Date Archived",
+    "priceTrendChartTitle": "Price Trend for {productName}",
+    "noDataForProduct": "No price history data available for the selected product."
   }
 }

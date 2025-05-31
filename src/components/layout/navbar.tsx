@@ -1,8 +1,7 @@
-
 'use client';
 
 import Link from 'next/link';
-import { Home, Camera, Store, LogOut, UserPlus, LogIn, ShoppingBag } from 'lucide-react';
+import { Home, Camera, Store, LogOut, UserPlus, LogIn, ShoppingBag, LineChart as LineChartIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import React from 'react';
@@ -40,12 +39,14 @@ export default function Navbar({ lang, dictionary, localeSwitcherDictionary, aut
         description: error.message,
         variant: 'destructive',
       });
+      router.push(`/${lang}/`);
     }
   };
 
   const navItems = [
     { href: `/${lang}`, label: dictionary.offers, icon: Home, key: 'offers' },
     { href: `/${lang}/analyze`, label: dictionary.analyzeImage, icon: Camera, key: 'analyze' },
+    { href: `/${lang}/monitoring`, label: dictionary.monitoring || "Monitoring", icon: LineChartIcon, key: 'monitoring' },
   ];
 
   const storeRelatedLink = user 

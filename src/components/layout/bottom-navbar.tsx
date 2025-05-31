@@ -1,9 +1,8 @@
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Camera, Store, UserCircle, LogOut } from 'lucide-react';
+import { Home, Camera, Store, UserCircle, LogOut, LineChart as LineChartIcon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import type { Locale } from '@/i18n-config';
@@ -40,6 +39,7 @@ export default function BottomNavbar({ lang, dictionary, authDictionary }: Botto
         description: error.message,
         variant: 'destructive',
       });
+      router.push(`/${lang}/`);
     }
   };
 
@@ -51,6 +51,7 @@ export default function BottomNavbar({ lang, dictionary, authDictionary }: Botto
   const commonNavItems = [
     { href: `/${lang}`, label: dictionary.offers, icon: Home, key: 'offers' },
     { href: `/${lang}/analyze`, label: dictionary.analyze, icon: Camera, key: 'analyze' },
+    { href: `/${lang}/monitoring`, label: dictionary.monitoring || "Monitor", icon: LineChartIcon, key: 'monitoring' },
   ];
 
   // "Stores" or "My Account/Sign Out"
