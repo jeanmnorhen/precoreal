@@ -10,7 +10,7 @@ interface CategoryFilterProps {
   selectedCategory: string | null;
   onSelectCategory: (categoryId: string | null) => void;
   allCategoriesText: string;
-  filterByCategoryText: string;
+  // filterByCategoryText: string; // Removed this prop
 }
 
 export default function CategoryFilter({
@@ -18,11 +18,11 @@ export default function CategoryFilter({
   selectedCategory,
   onSelectCategory,
   allCategoriesText,
-  filterByCategoryText,
+  // filterByCategoryText, // Removed this prop
 }: CategoryFilterProps) {
   return (
     <div className="mb-8">
-      <h2 className="mb-3 text-xl font-semibold">{filterByCategoryText}</h2>
+      {/* <h2 className="mb-3 text-xl font-semibold">{filterByCategoryText}</h2> */}
       <ScrollArea className="w-full whitespace-nowrap rounded-md">
         <div className="flex space-x-3 pb-3">
           <Button

@@ -124,7 +124,7 @@ export default function HomePage(props: HomePageProps) { // Accept props
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
         allCategoriesText={dictionary.allCategories}
-        filterByCategoryText={dictionary.filterByCategory}
+        // filterByCategoryText={dictionary.filterByCategory} // Removed this prop
       />
 
       {filteredAndSortedOffers.length > 0 ? (
