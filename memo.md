@@ -35,13 +35,13 @@ Utilizar a localização GPS do usuário (com consentimento) para otimizar a bus
 
 Oferecer uma interface de usuário intuitiva e responsiva.
     - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Monitoramento, Para Lojas/Meus Produtos) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade. (Ajustado para incluir autenticação e Monitoramento)
-    - Rodapé removido do aplicativo.
+    - Rodapé removido do aplicativo. (Concluído)
 
 Funcionalidade Secundária: Permitir que os usuários façam upload de imagens ou tirem fotos com a câmera do dispositivo para análise (identificar objetos). Essa funcionalidade pode ser usada para ajudar o usuário a identificar um item sobre o qual deseja buscar ofertas no feed principal. (Concluído)
 
 Integrar com Firebase Realtime Database para:
 
-Manter um catálogo de produtos canônicos (para referência.)
+Manter um catálogo de produtos canônicos (para referência.) (Iniciando implementação)
 
 Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores com ownerId vinculado ao usuário autenticado e campos para latitude/longitude.)
 
@@ -59,7 +59,7 @@ Implementar um sistema de Retrieval Augmented Generation (RAG) geospacial para c
 
 Desenvolver "Superagentes" de IA para funcionalidades avançadas (ver seção 8).
 
-Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por new products na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo.
+Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por new products na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo. (Iniciando implementação - Tipos definidos)
 
 2. Casos de Uso
 
@@ -105,6 +105,7 @@ Ele abre o app Preço Real, que atualiza o feed de ofertas locais.
 O usuário pode opcionalmente tocar no ícone da câmera, tirar uma foto de um hot dog (ou selecionar uma imagem do seu dispositivo). 
 O sistema identifica "hot dog" na imagem. (Fluxo Genkit `analyzeImageOffers` implementado para identificação do produto. Upload de imagem funcional. Funcionalidade de câmera (UC15) implementada.)
 O sistema então busca e exibe uma lista de todas as lojas que vendem "hot dogs", ordenadas por proximidade. A busca é feita no feed principal de `/advertisements` usando o nome do produto identificado como termo de busca. (Concluído - Análise de imagem redireciona para o feed com termo de busca).
+    - *Próximo passo: Verificar se produto identificado existe em `/canonicalProducts` e, se não, sugerir adição.*
 
 UC7 (Apoio à busca via imagem): Descoberta de Produtos Relacionados (IA):
 
@@ -123,11 +124,12 @@ UC10: Consulta de Produtos no Banco de Dados (Catálogo - via análise de imagem
 
 O usuário (ou o sistema através da análise de imagem) pode pesquisar produtos existentes no catálogo de produtos canônicos do Preço Real.
 O sistema exibe informações do produto, incluindo dados multilíngues e, potencialmente, um resumo do histórico de preços. Esta busca é atualmente feita pelo findStoresTool com base em um canonicalName.
+    - *Próximo passo: Integrar busca em `/canonicalProducts` na `HomePage` e `ImageAnalysisTool`.*
 
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
 
 Implementada autenticação para lojistas (cadastro, login, logout). As lojas são vinculadas aos UIDs dos lojistas.
-Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Ainda não implementado)
+Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Ainda não implementado - Estrutura para `suggestedNewProducts` definida)
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
@@ -165,10 +167,12 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Implementar cálculo de distância real ou permitir que o usuário salve uma localização (GPS). (Concluído - Lojistas podem adicionar lat/lon. Usuários podem fornecer localização para cálculo de distância. UX da permissão melhorada.)
 - Implementar sistema de histórico de preços (UC5). (Concluído - Anúncios expirados são arquivados e movidos para `/priceHistory`).
 - Criar página de monitoramento de preços (UC13). (Concluído - Exibe histórico de preços e gráfico de tendência).
+- Melhorar UX do cadastro de localização da loja e da solicitação de permissão de localização do usuário. (Concluído - Adicionadas dicas e AlertDialog para permissão).
+- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Em andamento - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos).
 
 4. Estado Atual
-- Estrutura básica do Next.js com internacionalização (i18n) configurada. Nomes das categorias no filtro internacionalizados.
-- Layout responsivo com navegação superior para desktop e inferior para mobile. Rodapé removido.
+- Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
+- Layout responsivo com navegação superior para desktop e inferior para mobile. Rodapé removido. (Concluído)
 - Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização (com diálogo de confirmação) e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude` (com dicas de UX melhoradas). Produtos são listados sob o `storeId` da loja do usuário.
@@ -177,13 +181,19 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
 - Sistema de histórico de preços (UC5) implementado: anúncios expirados e não arquivados são movidos para `/priceHistory` e marcados como `archived: true` em `/advertisements`.
 - Página de monitoramento de preços (UC13) implementada, exibindo histórico de preços com tabela e gráfico de tendência.
+- Melhorias de UX na solicitação de permissão de localização do usuário (AlertDialog) e dicas nos campos de coordenadas do cadastro de loja. (Concluído)
+- Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos em `src/types/index.ts` como parte da funcionalidade de catálogo de produtos. (Concluído)
 
 5. Planejamento para próximas versões
 - Melhorar UX do cadastro de localização da loja (ex: usar um mapa interativo).
 - Permitir que o usuário salve sua preferência de localização (ou uma localização manual como "casa" ou "trabalho") no perfil do usuário.
-- Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo (conforme nova proposta - PRÓXIMO PASSO).
+- **PRÓXIMO PASSO:** Continuar implementação do catálogo de produtos canônicos:
+    - Integrar verificação do catálogo e registro de sugestões na Análise de Imagem (UC6, UC10).
+    - Integrar verificação do catálogo e registro de sugestões na Busca da HomePage (UC10).
 - Considerar fluxo para lojista editar informações da loja e produtos.
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
+- Implementar interface de administração para gerenciar `/canonicalProducts` e `/suggestedNewProducts` (UC11).
+- Integrar fluxos de IA para enriquecimento e adição automática de produtos ao catálogo.
 
 6. Rotinas de manutenção 
 
@@ -198,4 +208,3 @@ Sempre que receber um prompt que contenha dois pontos finais “..” Revise o a
 - Foreground: `#01304A` (Dark Blue/Navy)
 - Accent: `#FBB849` (Light Orange/Gold)
 (Estas cores estão implementadas em `src/app/globals.css`)
-```
