@@ -10,8 +10,8 @@ export interface Offer {
   productName: string;
   productImage: string; // URL
   price: number;
-  storeId: string; // Added to link to the store
-  storeName: string; // Will be populated with the real name
+  storeId: string; 
+  storeName: string; 
   distance: number; // in miles or km
   category: string; // Category name or ID
   description?: string;
@@ -20,6 +20,7 @@ export interface Offer {
 
 export interface Store {
   id: string; // Firebase key for the store
+  ownerId: string; // Firebase Auth User UID of the store owner
   name: string;
   address: string;
   city: string;
@@ -29,14 +30,13 @@ export interface Store {
   phone: string;
   category: string; // Type of store (e.g., "Restaurant", "Retail")
   description?: string;
-  // Geolocation is important for proximity features
   latitude?: number; 
   longitude?: number;
 }
 
 export interface ListedProduct {
   id: string; // Firebase key for the advertisement
-  storeId: string; // ID of the store that listed this product
+  storeId: string; // ID of the Store document in Firebase
   name: string;
   description: string;
   price: number;

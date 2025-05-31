@@ -1,7 +1,7 @@
 
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
-// import { getAuth } from 'firebase/auth';
+import { getAuth } from 'firebase/auth'; // Descomentado
 // import { getStorage } from 'firebase/storage';
 // import { getFirestore } from 'firebase/firestore';
 // import { getFunctions } from 'firebase/functions';
@@ -21,7 +21,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getDatabase(app);
-// const auth = getAuth(app);
+const auth = getAuth(app); // Inicializado
 // const storage = getStorage(app);
 // const firestore = getFirestore(app);
 // const functions = getFunctions(app);
@@ -30,4 +30,4 @@ const db = getDatabase(app);
 //   analytics = getAnalytics(app);
 // }
 
-export { app, db /*, auth, storage, firestore, functions, analytics */ };
+export { app, db, auth /*, storage, firestore, functions, analytics */ };

@@ -24,41 +24,53 @@ import { productCategories } from '@/lib/mock-data';
 import { db } from '@/lib/firebase';
 import { ref, push, set } from 'firebase/database';
 import type { ListedProduct } from '@/types';
-
-const productListingSchema = z.object({
-  productName: z.string().min(3, { message: 'Product name must be at least 3 characters.' }),
-  description: z.string().min(10, { message: 'Description must be at least 10 characters.' }).optional(),
-  price: z.coerce.number().positive({ message: 'Price must be a positive number.' }),
-  category: z.string({ required_error: 'Please select a product category.' }),
-  imageUrl: z.string().url({ message: 'Please enter a valid image URL.' }).optional().or(z.literal('')),
-  stock: z.coerce.number().int().min(0, { message: 'Stock quantity cannot be negative.' }).optional(),
-  validityDurationDays: z.coerce.number().int().min(1, {message: 'Validity must be at least 1 day.'}).max(7, { message: 'Validity must be at most 7 days.' }),
-});
-
-type ProductListingFormValues = z.infer<typeof productListingSchema>;
+import type { Dictionary } from '@/lib/get-dictionary';
+import type { Locale } from '@/i18n-config';
+import LoadingSpinner from './loading-spinner';
+import { useState } from 'react';
 
 interface ProductListingFormProps {
-  storeId: string; // ID of the store listing this product
+  storeId: string; 
+  dictionary: Dictionary['productListingForm'];
+  lang: Locale;
 }
 
-export default function ProductListingForm({ storeId }: ProductListingFormProps) {
+export default function ProductListingForm({ storeId, dictionary, lang }: ProductListingFormProps) {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const productListingSchema = z.object({
+    productName: z.string().min(3, { message: dictionary.productNameMinLengthError.replace('{length}', '3') }),
+    description: z.string().min(10, { message: dictionary.descriptionMinLengthError.replace('{length}', '10') }).optional(),
+    price: z.coerce.number().positive({ message: dictionary.pricePositiveError }),
+    category: z.string({ required_error: dictionary.categoryRequiredError }),
+    imageUrl: z.string().url({ message: dictionary.imageUrlInvalidError }).optional().or(z.literal('')),
+    dataAiHint: z.string().max(30, {message: dictionary.dataAiHintMaxLengthError.replace('{length}', '30')}).optional(),
+    stock: z.coerce.number().int().min(0, { message: dictionary.stockNonNegativeError }).optional(),
+    validityDurationDays: z.coerce.number().int().min(1, {message: dictionary.validityMinDaysError.replace('{days}', '1')}).max(7, { message: dictionary.validityMaxDaysError.replace('{days}', '7') }),
+  });
+
+  type ProductListingFormValues = z.infer<typeof productListingSchema>;
+
+
   const form = useForm<ProductListingFormValues>({
     resolver: zodResolver(productListingSchema),
     defaultValues: {
       productName: '',
       description: '',
-      price: 0,
+      price: undefined,
       imageUrl: '',
-      stock: undefined, // Optional, so undefined is better than 0 if not provided
-      validityDurationDays: 7, // Default to 7 days
+      dataAiHint: '',
+      stock: undefined, 
+      validityDurationDays: 7, 
     },
   });
 
   async function onSubmit(data: ProductListingFormValues) {
+    setIsSubmitting(true);
     const { validityDurationDays, ...productData } = data;
     const createdAt = Date.now();
-    const validUntil = createdAt + validityDurationDays * 24 * 60 * 60 * 1000; // days to ms
+    const validUntil = createdAt + validityDurationDays * 24 * 60 * 60 * 1000; 
 
     const advertisementPayload: Omit<ListedProduct, 'id'> = {
       storeId: storeId,
@@ -68,34 +80,37 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
       category: productData.category,
       createdAt,
       validUntil,
-      // dataAiHint is not collected in this form yet
     };
 
     if (productData.imageUrl) {
       advertisementPayload.imageUrl = productData.imageUrl;
     }
+     if (productData.dataAiHint) {
+      advertisementPayload.dataAiHint = productData.dataAiHint;
+    }
     if (productData.stock !== undefined && productData.stock !== null) {
       advertisementPayload.stock = productData.stock;
     }
     
-
     try {
       const advertisementsRef = ref(db, 'advertisements');
-      const newAdvertisementRef = push(advertisementsRef); // Generates a unique ID for the advertisement
+      const newAdvertisementRef = push(advertisementsRef); 
       await set(newAdvertisementRef, advertisementPayload);
 
       toast({
-        title: 'Product Advertised!',
-        description: `${data.productName} has been successfully advertised.`,
+        title: dictionary.productAdvertisedTitle,
+        description: dictionary.productAdvertisedMessage.replace('{productName}', data.productName),
       });
       form.reset();
     } catch (error) {
       console.error('Error saving advertisement:', error);
       toast({
-        title: 'Advertising Failed',
-        description: 'There was an error posting your advertisement. Please try again.',
+        title: dictionary.advertisingFailedTitle,
+        description: dictionary.advertisingFailedMessage,
         variant: 'destructive',
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -104,10 +119,10 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
       <CardHeader>
         <CardTitle className="flex items-center text-2xl font-headline">
           <PackagePlus className="mr-2 h-7 w-7 text-primary" />
-          Advertise a New Product
+          {dictionary.formTitle}
         </CardTitle>
         <CardDescription>
-          Add products to your store's advertisements on RealPrice Finder.
+          {dictionary.formDescription.replace('{storeId}', storeId.substring(0,8))}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -118,9 +133,9 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
               name="productName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center"><Tag className="mr-2 h-4 w-4 text-muted-foreground" />Product Name</FormLabel>
+                  <FormLabel className="flex items-center"><Tag className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.productNameLabel}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Handcrafted Leather Wallet" {...field} />
+                    <Input placeholder={dictionary.productNamePlaceholder} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -132,9 +147,9 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Product Description (Optional)</FormLabel>
+                  <FormLabel>{dictionary.descriptionLabel}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Describe your product in detail..." {...field} rows={3} />
+                    <Textarea placeholder={dictionary.descriptionPlaceholder} {...field} rows={3} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,9 +162,9 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center"><DollarSign className="mr-2 h-4 w-4 text-muted-foreground" />Price</FormLabel>
+                    <FormLabel className="flex items-center"><DollarSign className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.priceLabel}</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="0.00" {...field} step="0.01" />
+                      <Input type="number" placeholder="0.00" {...field} step="0.01" onChange={e => field.onChange(parseFloat(e.target.value))} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -160,18 +175,18 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center"><Layers className="mr-2 h-4 w-4 text-muted-foreground" />Category</FormLabel>
+                    <FormLabel className="flex items-center"><Layers className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.categoryLabel}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select product category" />
+                          <SelectValue placeholder={dictionary.categoryPlaceholder} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {productCategories.map(category => (
-                           <SelectItem key={category.id} value={category.name}> {/* Saving category name for now */}
+                           <SelectItem key={category.id} value={category.name}>
                              {category.icon && <category.icon className="mr-2 h-4 w-4 inline-block" />}
-                             {category.name}
+                             {category.name} {/* TODO: Internationalize category names */}
                            </SelectItem>
                         ))}
                       </SelectContent>
@@ -187,15 +202,30 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center"><ImageIcon className="mr-2 h-4 w-4 text-muted-foreground" />Product Image URL (Optional)</FormLabel>
+                  <FormLabel className="flex items-center"><ImageIcon className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.imageUrlLabel}</FormLabel>
                   <FormControl>
                     <Input type="url" placeholder="https://placehold.co/600x400.png" {...field} />
                   </FormControl>
-                  <FormDescription>Link to an image of your product. Use https://placehold.co for placeholders.</FormDescription>
+                  <FormDescription>{dictionary.imageUrlHint}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+             <FormField
+              control={form.control}
+              name="dataAiHint"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center"><Layers className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.dataAiHintLabel}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={dictionary.dataAiHintPlaceholder} {...field} />
+                  </FormControl>
+                   <FormDescription>{dictionary.dataAiHintDescription}</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
@@ -203,12 +233,11 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
                 name="stock"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Stock Quantity (Optional)</FormLabel>
+                    <FormLabel>{dictionary.stockLabel}</FormLabel>
                     <FormControl>
-                      {/* Ensure field.value is correctly handled if it's undefined */}
-                      <Input type="number" placeholder="Leave blank if not tracking" {...field} value={field.value ?? ''} />
+                      <Input type="number" placeholder={dictionary.stockPlaceholder} {...field} onChange={e => field.onChange(parseInt(e.target.value))} value={field.value ?? ''} />
                     </FormControl>
-                    <FormDescription>Number of items currently in stock.</FormDescription>
+                    <FormDescription>{dictionary.stockHint}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -218,30 +247,31 @@ export default function ProductListingForm({ storeId }: ProductListingFormProps)
                 name="validityDurationDays"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center"><Clock className="mr-2 h-4 w-4 text-muted-foreground" />Advertisement Validity</FormLabel>
+                    <FormLabel className="flex items-center"><Clock className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.validityLabel}</FormLabel>
                     <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={String(field.value)}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select validity period" />
+                          <SelectValue placeholder={dictionary.validityPlaceholder} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {[...Array(7)].map((_, i) => (
                           <SelectItem key={i + 1} value={String(i + 1)}>
-                            {i + 1} day{i + 1 > 1 ? 's' : ''}
+                            {i + 1} { (i + 1) > 1 ? dictionary.days : dictionary.day}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormDescription>How long this ad will be active (1-7 days).</FormDescription>
+                    <FormDescription>{dictionary.validityHint.replace('{minDays}', '1').replace('{maxDays}', '7')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
             
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Advertising...' : 'Advertise Product'}
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={isSubmitting}>
+              {isSubmitting ? <LoadingSpinner size={20} className="mr-2"/> : null}
+              {isSubmitting ? dictionary.submittingButton : dictionary.submitButton}
             </Button>
           </form>
         </Form>

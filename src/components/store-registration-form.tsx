@@ -18,30 +18,41 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase } from 'lucide-react'; // Renamed Store import
+import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { productCategories } from '@/lib/mock-data'; // Assuming store categories can reuse productCategories for now
+import { productCategories } from '@/lib/mock-data';
 import { db } from '@/lib/firebase';
 import { ref, push, set } from 'firebase/database';
 import type { Store } from '@/types';
+import type { Locale } from '@/i18n-config';
+import type { Dictionary } from '@/lib/get-dictionary';
+import LoadingSpinner from './loading-spinner';
+import { useState } from 'react';
 
-const storeRegistrationSchema = z.object({
-  storeName: z.string().min(2, { message: 'Store name must be at least 2 characters.' }),
-  address: z.string().min(5, { message: 'Address must be at least 5 characters.' }),
-  city: z.string().min(2, { message: 'City must be at least 2 characters.' }),
-  state: z.string().min(2, { message: 'State must be at least 2 characters.' }),
-  zipCode: z.string().min(5, { message: 'Zip code must be at least 5 digits.' }).max(10), // Allow for zip+4
-  email: z.string().email({ message: 'Invalid email address.' }),
-  phone: z.string().min(10, { message: 'Phone number must be at least 10 digits.' }),
-  storeCategory: z.string({ required_error: "Please select a store category." }),
-  description: z.string().optional(),
-  // TODO: Add latitude/longitude fields, ideally auto-filled from address or map picker
-});
+interface StoreRegistrationFormProps {
+  userId: string; // Firebase Auth User UID
+  dictionary: Dictionary['storeRegistrationForm'];
+  lang: Locale;
+}
 
-type StoreRegistrationFormValues = z.infer<typeof storeRegistrationSchema>;
-
-export default function StoreRegistrationForm() {
+export default function StoreRegistrationForm({ userId, dictionary, lang }: StoreRegistrationFormProps) {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const storeRegistrationSchema = z.object({
+    storeName: z.string().min(2, { message: dictionary.storeNameMinLengthError.replace('{length}', '2') }),
+    address: z.string().min(5, { message: dictionary.addressMinLengthError.replace('{length}', '5') }),
+    city: z.string().min(2, { message: dictionary.cityMinLengthError.replace('{length}', '2') }),
+    state: z.string().min(2, { message: dictionary.stateMinLengthError.replace('{length}', '2') }),
+    zipCode: z.string().min(5, { message: dictionary.zipCodeMinLengthError.replace('{length}', '5') }).max(10),
+    email: z.string().email({ message: dictionary.emailInvalidError }),
+    phone: z.string().min(10, { message: dictionary.phoneMinLengthError.replace('{length}', '10') }),
+    storeCategory: z.string({ required_error: dictionary.categoryRequiredError }),
+    description: z.string().optional(),
+  });
+  
+  type StoreRegistrationFormValues = z.infer<typeof storeRegistrationSchema>;
+
   const form = useForm<StoreRegistrationFormValues>({
     resolver: zodResolver(storeRegistrationSchema),
     defaultValues: {
@@ -57,16 +68,18 @@ export default function StoreRegistrationForm() {
   });
 
   async function onSubmit(data: StoreRegistrationFormValues) {
+    setIsSubmitting(true);
     try {
       const storesRef = ref(db, 'stores');
-      const newStoreRef = push(storesRef); // Generates a unique ID
+      const newStoreRef = push(storesRef);
       const newStoreId = newStoreRef.key;
 
       if (!newStoreId) {
-        throw new Error('Failed to generate store ID.');
+        throw new Error(dictionary.genericError); // Or a more specific error
       }
 
-      const storeData: Omit<Store, 'id'> = { // id will be the Firebase key
+      const storeData: Omit<Store, 'id'> = {
+        ownerId: userId, // Link store to the authenticated user
         name: data.storeName,
         address: data.address,
         city: data.city,
@@ -76,25 +89,27 @@ export default function StoreRegistrationForm() {
         phone: data.phone,
         category: data.storeCategory,
         description: data.description || '',
-        // In a real app, you'd get lat/lng here, possibly from a geocoding service
-        // latitude: 0, // Placeholder
-        // longitude: 0, // Placeholder
+        // latitude and longitude would be added here if collected
       };
 
       await set(newStoreRef, storeData);
 
       toast({
-        title: 'Registration Submitted!',
-        description: `Thank you, ${data.storeName}, for registering. Your store data has been saved.`,
+        title: dictionary.registrationSuccessTitle,
+        description: dictionary.registrationSuccessMessage.replace('{storeName}', data.storeName),
       });
       form.reset();
+      // Potentially redirect to product listing page or dashboard
+      // router.push(`/${lang}/stores/products`);
     } catch (error) {
       console.error('Error saving store registration data:', error);
       toast({
-        title: 'Registration Failed',
-        description: 'There was an error submitting your registration. Please try again.',
+        title: dictionary.registrationErrorTitle,
+        description: dictionary.genericError,
         variant: 'destructive',
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -103,10 +118,10 @@ export default function StoreRegistrationForm() {
       <CardHeader>
         <CardTitle className="flex items-center text-2xl font-headline">
           <StoreIconLucide className="mr-2 h-7 w-7 text-primary" />
-          Register Your Store
+          {dictionary.formTitle}
         </CardTitle>
         <CardDescription>
-          Join RealPrice Finder to list your products and reach more customers.
+          {dictionary.formDescription}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -117,9 +132,9 @@ export default function StoreRegistrationForm() {
               name="storeName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center"><Building className="mr-2 h-4 w-4 text-muted-foreground" />Store Name</FormLabel>
+                  <FormLabel className="flex items-center"><Building className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.storeNameLabel}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., The Corner Cafe" {...field} />
+                    <Input placeholder={dictionary.storeNamePlaceholder} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -132,9 +147,9 @@ export default function StoreRegistrationForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center"><Mail className="mr-2 h-4 w-4 text-muted-foreground" />Contact Email</FormLabel>
+                    <FormLabel className="flex items-center"><Mail className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.emailLabel}</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="you@example.com" {...field} />
+                      <Input type="email" placeholder={dictionary.emailPlaceholder} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -145,9 +160,9 @@ export default function StoreRegistrationForm() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center"><Phone className="mr-2 h-4 w-4 text-muted-foreground" />Contact Phone</FormLabel>
+                    <FormLabel className="flex items-center"><Phone className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.phoneLabel}</FormLabel>
                     <FormControl>
-                      <Input type="tel" placeholder="(555) 123-4567" {...field} />
+                      <Input type="tel" placeholder={dictionary.phonePlaceholder} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -160,9 +175,9 @@ export default function StoreRegistrationForm() {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center"><MapPin className="mr-2 h-4 w-4 text-muted-foreground" />Street Address</FormLabel>
+                  <FormLabel className="flex items-center"><MapPin className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.addressLabel}</FormLabel>
                   <FormControl>
-                    <Input placeholder="123 Main St" {...field} />
+                    <Input placeholder={dictionary.addressPlaceholder} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -174,9 +189,9 @@ export default function StoreRegistrationForm() {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City</FormLabel>
+                    <FormLabel>{dictionary.cityLabel}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Anytown" {...field} />
+                      <Input placeholder={dictionary.cityPlaceholder} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -187,9 +202,9 @@ export default function StoreRegistrationForm() {
                 name="state"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>State</FormLabel>
+                    <FormLabel>{dictionary.stateLabel}</FormLabel>
                     <FormControl>
-                      <Input placeholder="CA" {...field} />
+                      <Input placeholder={dictionary.statePlaceholder} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -200,9 +215,9 @@ export default function StoreRegistrationForm() {
                 name="zipCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Zip Code</FormLabel>
+                    <FormLabel>{dictionary.zipCodeLabel}</FormLabel>
                     <FormControl>
-                      <Input placeholder="90210" {...field} />
+                      <Input placeholder={dictionary.zipCodePlaceholder} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -215,25 +230,26 @@ export default function StoreRegistrationForm() {
               name="storeCategory"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center"><Briefcase className="mr-2 h-4 w-4 text-muted-foreground" />Store Category</FormLabel>
+                  <FormLabel className="flex items-center"><Briefcase className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.categoryLabel}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a category for your store" />
+                        <SelectValue placeholder={dictionary.categoryPlaceholder} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {/* Using productCategories for store types, consider a separate list for actual store types */}
+                      {/* TODO: Internationalize category names if they come from a dynamic source or make these static options internationalized */}
                       {productCategories.map(category => (
                         <SelectItem key={category.id} value={category.name}>
                           {category.icon && <category.icon className="mr-2 h-4 w-4 inline-block" />}
                           {category.name}
                         </SelectItem>
                       ))}
-                       <SelectItem value="Restaurant">Restaurant</SelectItem>
-                       <SelectItem value="Retail">Retail</SelectItem>
-                       <SelectItem value="Services">Services</SelectItem>
-                       <SelectItem value="Other">Other</SelectItem>
+                       <SelectItem value="Restaurant">{dictionary.categoryOptions.Restaurant}</SelectItem>
+                       <SelectItem value="Retail">{dictionary.categoryOptions.Retail}</SelectItem>
+                       <SelectItem value="Services">{dictionary.categoryOptions.Services}</SelectItem>
+                       <SelectItem value="Other">{dictionary.categoryOptions.Other}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -246,17 +262,18 @@ export default function StoreRegistrationForm() {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Store Description (Optional)</FormLabel>
+                  <FormLabel>{dictionary.descriptionLabel}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Tell us a bit about your store..." {...field} />
+                    <Textarea placeholder={dictionary.descriptionPlaceholder} {...field} />
                   </FormControl>
-                  <FormDescription>A brief description of your store and what you offer.</FormDescription>
+                  <FormDescription>{dictionary.descriptionHint}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Registering...' : 'Register Store'}
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={isSubmitting}>
+              {isSubmitting ? <LoadingSpinner size={20} className="mr-2"/> : null}
+              {isSubmitting ? dictionary.submittingButton : dictionary.submitButton}
             </Button>
           </form>
         </Form>

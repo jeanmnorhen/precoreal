@@ -27,7 +27,7 @@ Permitir que usuários filtrem produtos por categoria.
 
 Apresentar lojas que vendem um produto específico, ordenadas por proximidade.
 
-Permitir que lojistas (outro tipo de cliente do aplicativo) cadastrem seus estabelecimentos e anunciem seus produtos na plataforma.
+Permitir que lojistas (outro tipo de cliente do aplicativo) cadastrem seus estabelecimentos e anunciem seus produtos na plataforma. (Parcialmente Concluído - Implementada autenticação para lojistas)
 
 Anúncios de produtos terão um tempo de validade definido entre 1 e 7 dias.
 
@@ -36,7 +36,7 @@ Os dados dos anúncios expirados serão registrados para compor um histórico de
 Utilizar a localização GPS do usuário (com consentimento) para otimizar a busca por ofertas e lojas.
 
 Oferecer uma interface de usuário intuitiva e responsiva.
-    - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Para Lojas) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade.
+    - Em dispositivos móveis, os links de navegação principais (Ofertas, Analisar Imagem, Para Lojas) são apresentados em uma barra de navegação inferior fixa, similar à interface do WhatsApp, para melhor usabilidade. (Ajustado para incluir autenticação)
 
 Funcionalidade Secundária: Permitir que os usuários façam upload de imagens ou tirem fotos com a câmera do dispositivo para análise (identificar objetos). Essa funcionalidade pode ser usada para ajudar o usuário a identificar um item sobre o qual deseja buscar ofertas no feed principal.
 
@@ -44,13 +44,13 @@ Integrar com Firebase Realtime Database para:
 
 Manter um catálogo de produtos canônicos (para referência.)
 
-Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores)
+Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores com ownerId vinculado ao usuário autenticado.)
 
-Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, validade e localização. (UC4 - Concluído, forma salva em /advertisements)
+Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, validade e localização. (UC4 - Concluído, forma salva em /advertisements, vinculada a um storeId.)
 
 Rastrear o histórico de preços dos produtos, alimentado pelos anúncios expirados.
 
-Manter perfis de usuário (consumidores) com preferences e dados como localização.
+Manter perfis de usuário (consumidores) com preferences e dados como localização. (Autenticação de Lojistas implementada, perfis de consumidor ainda não.)
 
 Fornecer uma página de monitoramento para visualizar dados agregados (ex: valor médio de um produto por região/país, tendências de preço).
 
@@ -60,7 +60,7 @@ Implementar um sistema de Retrieval Augmented Generation (RAG) geospacial para c
 
 Desenvolver "Superagentes" de IA para funcionalidades avançadas (ver seção 8).
 
-Proposta: Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por novos produtos na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo.
+Proposta (Adicionada): Busca ativa por produtos para registrar no catálogo canônico: A identificação de objetos por imagem ou buscas por novos produtos na barra de pesquisa (que não retornam resultados do catálogo) podem servir como gatilhos para sugerir/adicionar novos produtos ao catálogo canônico do Preço Real. Isso pode envolver um fluxo de IA para enriquecer os dados do produto antes de adicioná-lo.
 
 2. Casos de Uso
 
@@ -70,7 +70,7 @@ O usuário (consumidor) abre o aplicativo Preço Real.
 
 O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil.
 
-O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Parcialmente Concluído - Busca dados de /advertisements, filtra expirados. Nome real da loja agora é buscado de /stores. Cálculo de distância ainda é mock.)
+O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados. Nome real da loja buscado de /stores. Cálculo de distância ainda é mock.)
 
 Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância (calculada se localizações disponíveis).
 
@@ -88,16 +88,15 @@ Cada item da lista mostra o nome da loja, o produto, o preço anunciado e a dist
 
 UC3 (Lojista): Cadastro e Gerenciamento de Perfil de Loja:
 
-Um proprietário de loja se cadastra no Preço Real como "lojista".
-
-O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica. (Concluído - Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}`)
+Um proprietário de loja se cadastra no Preço Real como "lojista". (Implementada funcionalidade de cadastro de usuário lojista com email/senha.)
+O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica. (Concluído - Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}` com `ownerId` vinculado ao UID do lojista.)
+A página de cadastro de loja agora requer que o usuário esteja autenticado.
 
 UC4 (Lojista): Publicação de Anúncios/Ofertas:
 
 O lojista autenticado acessa a interface para criar um novo anúncio. 
-
-Ele informa o nome do produto, preço, categoria, opcionalmente uma descrição e imagem. (Concluído - Formulário de listagem de produto implementado, salvando em Firebase RTDB em `/advertisements/{advertisementId}`)
-
+Ele informa o nome do produto, preço, categoria, opcionalmente uma descrição e imagem. (Concluído - Formulário de listagem de produto implementado, salvando em Firebase RTDB em `/advertisements/{advertisementId}`.)
+A página de listagem de produtos agora requer que o usuário esteja autenticado e possua uma loja cadastrada. O `storeId` do anúncio é o ID da loja do usuário.
 
 O anúncio publicado aparece no feed de usuários próximos que se encaixam na categoria do produto.
 
@@ -143,9 +142,8 @@ O sistema exibe informações do produto, incluindo dados multilíngues e, poten
 
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
 
-Usuários consumidores autenticados poderão salvar preferências, locais frequentes, etc. 
-
-Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. 
+Implementada autenticação para lojistas (cadastro, login, logout). As lojas são vinculadas aos UIDs dos lojistas.
+Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Ainda não implementado)
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
@@ -183,32 +181,41 @@ A imagem capturada é usada para identificar o objeto ("hot dog").
 O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas por proximidade. (Concluído via UC6)
 
 3. Plano para versão atual 
-- Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído)
+- Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído, com autenticação de lojista)
 - Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements e /stores implementada, filtragem de expirados feita. Nome real da loja é exibido. Distância ainda é mock/placeholder.)
 - Implementar funcionalidade de câmera para análise de imagem. (Concluído)
-- Paleta de cores atualizada (Azul Médio Primário, Laranja Brilhante Secundário, Fundo Branco). (Concluído)
+- Paleta de cores definida pelo usuário (Azul Médio Primário, Laranja Brilhante Secundário, Fundo Branco). (Concluído)
 - Conectar análise de imagem (UC6) à busca de ofertas no feed principal. (Concluído - Análise de imagem redireciona para o feed com o produto identificado como termo de busca).
+- Implementar autenticação para lojistas (Email/Senha) e proteger as rotas de cadastro de loja e listagem de produtos. (Concluído)
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada.
 - Layout responsivo com navegação superior para desktop e inferior para mobile.
 - Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca.
-- Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB.
+- Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId`. Produtos são listados sob o `storeId` da loja do usuário.
 - Paleta de cores atualizada conforme solicitação do usuário (Azul Médio, Laranja, com Fundo Branco).
-- `QueryClientProvider` configurado para `react-query`.
+- `QueryClientProvider` e `AuthProvider` configurados.
+- Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
 
 5. Planejamento para próximas versões
-- Implementar cálculo de distância real ou permitir que o usuário salve uma localização.
-- Implementar autenticação para lojistas.
+- Implementar cálculo de distância real ou permitir que o usuário salve uma localização (GPS).
 - Desenvolver histórico de preços (UC5 - parte de salvar dados expirados).
-- Adicionar localização GPS e ordenação por proximidade real.
 - Criar página de monitoramento (UC13).
 - Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo (conforme nova proposta).
+- Considerar fluxo para lojista editar informações da loja e produtos.
+- Permitir que lojistas tenham múltiplas lojas (se necessário).
 
 6. Rotinas de manutenção 
 
 Sempre que receber um prompt que contenha ponto final “.” Revise o arquivo memo.md.
 
 Sempre que receber um prompt que contenha dois pontos finais “..” Revise o arquivo memo.md. e continue implementando.
-```
+
+7. Definição de Cores Atual (Conforme solicitado pelo usuário)
+- Primary Color: `#026296` (Medium Blue)
+- Secondary Color: `#F27F00` (Bright Orange)
+- Background: `#FFFFFF` (White)
+- Foreground: `#01304A` (Dark Blue/Navy)
+- Accent: `#FBB849` (Light Orange/Gold)
+(Estas cores estão implementadas em `src/app/globals.css`)
