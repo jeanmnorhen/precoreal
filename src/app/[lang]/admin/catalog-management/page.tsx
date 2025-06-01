@@ -374,7 +374,7 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
                     <TableCell>{suggestion.timestamp ? format(new Date(suggestion.timestamp), 'dd/MM/yyyy HH:mm') : '-'}</TableCell>
                     <TableCell>{suggestion.lang || '-'}</TableCell>
                     <TableCell><Badge variant={suggestion.status === 'pending' ? 'outline' : 'default'}>{suggestion.status}</Badge></TableCell>
-                    <TableCell className="space-x-2">
+                    <TableCell className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-2">
                       <Button
                         variant="outline"
                         size="sm"
@@ -630,7 +630,7 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
                         </a>
                       ) : '-'}
                     </TableCell>
-                    <TableCell className="space-x-2">
+                    <TableCell className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-2">
                        <Button
                         variant="outline"
                         size="sm"
