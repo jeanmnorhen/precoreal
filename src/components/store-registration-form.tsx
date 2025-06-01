@@ -18,9 +18,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase, Globe2 } from 'lucide-react';
+import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase, Globe2, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { productCategories } from '@/lib/mock-data'; // Ensure this is consistent with category needs
+import { productCategories } from '@/lib/mock-data'; 
 import { db } from '@/lib/firebase';
 import { ref, push, set } from 'firebase/database';
 import type { Store } from '@/types';
@@ -79,6 +79,20 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
       longitude: undefined,
     },
   });
+
+  const handleFindOnMap = () => {
+    const { address, city, state, zipCode } = form.getValues();
+    if (address && city && state) {
+      const query = encodeURIComponent(`${address}, ${city}, ${state}, ${zipCode}`);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+    } else {
+      toast({
+        title: dictionary.fillAddressFirstTitle || "Address Needed",
+        description: dictionary.fillAddressFirstMessage || "Please fill in the address, city, and state fields first to use this feature.",
+        variant: "default",
+      });
+    }
+  };
 
   async function onSubmit(data: StoreRegistrationFormValues) {
     setIsSubmitting(true);
@@ -240,6 +254,14 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                 )}
               />
             </div>
+            
+            <div className="space-y-2">
+                <Button type="button" variant="outline" size="sm" onClick={handleFindOnMap} className="w-full sm:w-auto">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  {dictionary.findOnMapButton || "Help find coordinates"}
+                </Button>
+              <FormDescription>{dictionary.coordinatesHint}</FormDescription>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
@@ -251,7 +273,6 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                     <FormControl>
                       <Input type="number" placeholder={dictionary.latitudePlaceholder} {...field} step="any" onChange={e => field.onChange(parseFloat(e.target.value))} />
                     </FormControl>
-                    <FormDescription>{dictionary.coordinatesHint}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -265,7 +286,6 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                     <FormControl>
                       <Input type="number" placeholder={dictionary.longitudePlaceholder} {...field} step="any" onChange={e => field.onChange(parseFloat(e.target.value))} />
                     </FormControl>
-                     <FormDescription>{dictionary.coordinatesHint}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -321,3 +341,4 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
     </Card>
   );
 }
+
