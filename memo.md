@@ -165,7 +165,6 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Configurar Firebase e integrar formulários de cadastro de loja e listagem de produtos. (Concluído, com autenticação de lojista)
 - Atualizar feed de ofertas para buscar dados do Firebase. (Concluído - Busca de /advertisements e /stores implementada, filtragem de expirados e arquivados feita. Nome real da loja é exibido. Distância real calculada se coordenadas disponíveis.)
 - Implementar funcionalidade de câmera para análise de imagem. (Concluído)
-- Paleta de cores atualizada. (Fundo branco, Primária: #026296, Secundária: #F27F00, Foreground: #01304A, Acento: #FBB849).
 - Conectar análise de imagem (UC6) à busca de ofertas no feed principal. (Concluído - Análise de imagem redireciona para o feed com o produto identificado como termo de busca).
 - Implementar autenticação para lojistas (Email/Senha) e proteger as rotas de cadastro de loja e listagem de produtos. (Concluído)
 - Implementar cálculo de distância real ou permitir que o usuário salve uma localização (GPS). (Concluído - Lojistas podem adicionar lat/lon. Usuários podem fornecer localização para cálculo de distância. UX da permissão melhorada.)
@@ -173,16 +172,16 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Criar página de monitoramento de preços (UC13). (Concluído - Exibe histórico de preços e gráfico de tendência).
 - Melhorar UX do cadastro de localização da loja e da solicitação de permissão de localização do usuário. (Concluído - Adicionadas dicas, AlertDialog para permissão, e botão "Ajudar a encontrar coordenadas" no formulário de cadastro de loja.)
 - Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Concluído - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões, criar/editar/excluir e adicionar manualmente produtos canônicos a partir de sugestões ou manualmente implementada.)
+- Paleta de cores atualizada para Laranja Vibrante (Primária), Verde Calmante (Secundária) e Cinza Escuro (Acento), conforme PRD. (Concluído)
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
 - Layout responsivo com navegação superior para desktop e inferior para mobile. Rodapé removido. (Concluído)
 - **Prioridade Alta:** Garantir excelente responsividade e usabilidade em dispositivos smartphone. (Melhorias na tabela de ações da página de admin.)
-- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização (com diálogo de confirmação) e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados. Símbolo de moeda ajustado para R$.
+- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização (com diálogo de confirmação) e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados. Símbolo de moeda ajustado para R$. Botão "Ver Oferta" funcional com diálogo de detalhes.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca. Se o produto não estiver no catálogo canônico, uma sugestão é registrada.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude` (com dicas de UX melhoradas e botão para auxiliar na busca de coordenadas). Produtos são listados sob o `storeId` da loja do usuário.
-- Paleta de cores atualizada (Fundo branco, Primária: Azul Médio `#026296`, Secundária: Laranja Brilhante `#F27F00`, Foreground: Azul Escuro `#01304A`, Acento: Laranja Claro `#FBB849`).
-- `QueryClientProvider` e `AuthProvider` configurados.
+- `QueryClientProvider` e `AuthProvider` configurados. Tipo do AuthProvider refinado.
 - Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
 - Sistema de histórico de preços (UC5) implementado: anúncios expirados são arquivados e movidos para `/priceHistory` e marcados como `archived: true` em `/advertisements`.
 - Página de monitoramento de preços (UC13) implementada, exibindo histórico de preços com tabela e gráfico de tendência.
@@ -195,6 +194,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
     - Exibe produtos canônicos existentes com opção de "Editar", "Excluir".
     - Funcionalidade de "Adicionar Novo Produto Canônico Manualmente" implementada.
     - Melhorada responsividade dos botões de ação nas tabelas para dispositivos móveis.
+- Paleta de cores do aplicativo atualizada em `src/app/globals.css` para Laranja Vibrante (#FFA500) como primária, Verde Calmante (#32CD32) como secundária e Cinza Escuro (#4A4A4A) como acento, conforme definido no PRD.
 
 5. Planejamento para próximas versões
 - Permitir que o usuário salve sua preferência de localização (ou uma localização manual como "casa" ou "trabalho") no perfil do usuário.
@@ -209,15 +209,14 @@ Sempre que receber um prompt que contenha ponto final “.” Revise o arquivo m
 
 Sempre que receber um prompt que contenha dois pontos finais “..” Revise o arquivo memo.md. e continue implementando.
 
-7. Definição de Cores Atual (Conforme solicitado pelo usuário)
+7. Definição de Cores Atual (Conforme PRD e implementado em `src/app/globals.css`)
 - Background: `#FFFFFF` (White)
-- Primary Color: `#026296` (Medium Blue)
-- Secondary Color: `#F27F00` (Bright Orange)
-- Foreground: `#01304A` (Dark Blue/Navy)
-- Accent: `#FBB849` (Light Orange/Gold)
-(Estas cores estão implementadas em `src/app/globals.css`)
-
+- Foreground: `#333333` (Dark Gray - HSL 0 0% 20%)
+- Primary Color: `#FFA500` (Vibrant Orange - HSL 39 100% 50%)
+- Secondary Color: `#32CD32` (Calming Green - HSL 120 61% 50%)
+- Accent Color: `#4A4A4A` (Dark Gray - HSL 0 0% 29%)
     
 
     
+
 
