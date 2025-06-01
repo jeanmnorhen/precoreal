@@ -18,24 +18,32 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase, Globe2, ExternalLink } from 'lucide-react';
+import { Store as StoreIconLucide, Building, Mail, Phone, MapPin, Briefcase, Globe2, ExternalLink, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { productCategories } from '@/lib/mock-data'; 
 import { db } from '@/lib/firebase';
-import { ref, push, set } from 'firebase/database';
+import { ref, push, set, update } from 'firebase/database';
 import type { Store } from '@/types';
 import type { Locale } from '@/i18n-config';
 import type { Dictionary } from '@/lib/get-dictionary';
 import LoadingSpinner from './loading-spinner';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 interface StoreRegistrationFormProps {
   userId: string;
   dictionary: Dictionary['storeRegistrationForm'];
   lang: Locale;
+  mode?: 'register' | 'edit';
+  existingStoreData?: Store | null; // Store object includes id
 }
 
-export default function StoreRegistrationForm({ userId, dictionary, lang }: StoreRegistrationFormProps) {
+export default function StoreRegistrationForm({ 
+  userId, 
+  dictionary, 
+  lang, 
+  mode = 'register', 
+  existingStoreData 
+}: StoreRegistrationFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -48,7 +56,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
     );
   }
 
-  const storeRegistrationSchema = z.object({
+  const storeRegistrationSchema = useMemo(() => z.object({
     storeName: z.string().min(2, { message: dictionary.storeNameMinLengthError.replace('{length}', '2') }),
     address: z.string().min(5, { message: dictionary.addressMinLengthError.replace('{length}', '5') }),
     city: z.string().min(2, { message: dictionary.cityMinLengthError.replace('{length}', '2') }),
@@ -60,13 +68,25 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
     description: z.string().optional(),
     latitude: z.coerce.number().min(-90, {message: dictionary.latitudeInvalidError}).max(90, {message: dictionary.latitudeInvalidError}).optional(),
     longitude: z.coerce.number().min(-180, {message: dictionary.longitudeInvalidError}).max(180, {message: dictionary.longitudeInvalidError}).optional(),
-  });
+  }), [dictionary]);
 
   type StoreRegistrationFormValues = z.infer<typeof storeRegistrationSchema>;
 
   const form = useForm<StoreRegistrationFormValues>({
     resolver: zodResolver(storeRegistrationSchema),
-    defaultValues: {
+    defaultValues: mode === 'edit' && existingStoreData ? {
+      storeName: existingStoreData.name,
+      address: existingStoreData.address,
+      city: existingStoreData.city,
+      state: existingStoreData.state,
+      zipCode: existingStoreData.zipCode,
+      email: existingStoreData.email,
+      phone: existingStoreData.phone,
+      storeCategory: existingStoreData.category,
+      description: existingStoreData.description || '',
+      latitude: existingStoreData.latitude,
+      longitude: existingStoreData.longitude,
+    } : {
       storeName: '',
       address: '',
       city: '',
@@ -79,6 +99,25 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
       longitude: undefined,
     },
   });
+  
+  useEffect(() => {
+    if (mode === 'edit' && existingStoreData) {
+      form.reset({
+        storeName: existingStoreData.name,
+        address: existingStoreData.address,
+        city: existingStoreData.city,
+        state: existingStoreData.state,
+        zipCode: existingStoreData.zipCode,
+        email: existingStoreData.email,
+        phone: existingStoreData.phone,
+        storeCategory: existingStoreData.category,
+        description: existingStoreData.description || '',
+        latitude: existingStoreData.latitude,
+        longitude: existingStoreData.longitude,
+      });
+    }
+  }, [mode, existingStoreData, form]);
+
 
   const handleFindOnMap = () => {
     const { address, city, state, zipCode } = form.getValues();
@@ -97,16 +136,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
   async function onSubmit(data: StoreRegistrationFormValues) {
     setIsSubmitting(true);
     try {
-      const storesRef = ref(db, 'stores');
-      const newStoreRef = push(storesRef);
-      const newStoreId = newStoreRef.key;
-
-      if (!newStoreId) {
-        throw new Error(dictionary.genericError);
-      }
-
-      const storeData: Omit<Store, 'id'> = {
-        ownerId: userId,
+      const storeDataPayload: Omit<Store, 'id' | 'ownerId'> & { ownerId?: string } = {
         name: data.storeName,
         address: data.address,
         city: data.city,
@@ -117,24 +147,36 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
         category: data.storeCategory,
         description: data.description || '',
       };
-
+      
       if (data.latitude !== undefined && data.longitude !== undefined) {
-        storeData.latitude = data.latitude;
-        storeData.longitude = data.longitude;
+        storeDataPayload.latitude = data.latitude;
+        storeDataPayload.longitude = data.longitude;
       }
 
+      if (mode === 'register') {
+        storeDataPayload.ownerId = userId;
+        const storesRef = ref(db, 'stores');
+        const newStoreRef = push(storesRef);
+        await set(newStoreRef, storeDataPayload);
+        toast({
+          title: dictionary.registrationSuccessTitle,
+          description: dictionary.registrationSuccessMessage.replace('{storeName}', data.storeName),
+        });
+        form.reset(); 
+      } else if (mode === 'edit' && existingStoreData?.id) {
+        // ownerId is not updated during edit
+        const storeRef = ref(db, `stores/${existingStoreData.id}`);
+        await update(storeRef, storeDataPayload);
+        toast({
+          title: dictionary.editSuccessTitle || "Store Updated",
+          description: dictionary.editSuccessMessage?.replace('{storeName}', data.storeName) || `Store ${data.storeName} updated successfully.`,
+        });
+      }
 
-      await set(newStoreRef, storeData);
-
-      toast({
-        title: dictionary.registrationSuccessTitle,
-        description: dictionary.registrationSuccessMessage.replace('{storeName}', data.storeName),
-      });
-      form.reset();
     } catch (error) {
-      console.error('Error saving store registration data:', error);
+      console.error('Error saving store data:', error);
       toast({
-        title: dictionary.registrationErrorTitle,
+        title: mode === 'register' ? dictionary.registrationErrorTitle : (dictionary.editErrorTitle || "Update Failed"),
         description: dictionary.genericError,
         variant: 'destructive',
       });
@@ -143,15 +185,21 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
     }
   }
 
+  const cardTitle = mode === 'edit' ? dictionary.editFormTitle : dictionary.formTitle;
+  const cardDescription = mode === 'edit' ? dictionary.editFormDescription : dictionary.formDescription;
+  const submitButtonText = mode === 'edit' ? (dictionary.saveChangesButton || "Save Changes") : dictionary.submitButton;
+  const submittingButtonText = mode === 'edit' ? (dictionary.savingChangesButton || "Saving...") : dictionary.submittingButton;
+
+
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-xl">
       <CardHeader>
         <CardTitle className="flex items-center text-2xl font-headline">
           <StoreIconLucide className="mr-2 h-7 w-7 text-primary" />
-          {dictionary.formTitle}
+          {cardTitle}
         </CardTitle>
         <CardDescription>
-          {dictionary.formDescription}
+          {cardDescription}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -271,7 +319,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                   <FormItem>
                     <FormLabel className="flex items-center"><Globe2 className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.latitudeLabel}</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder={dictionary.latitudePlaceholder} {...field} step="any" onChange={e => field.onChange(parseFloat(e.target.value))} />
+                      <Input type="number" placeholder={dictionary.latitudePlaceholder} {...field} step="any" onChange={e => field.onChange(parseFloat(e.target.value))} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -284,7 +332,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
                   <FormItem>
                     <FormLabel className="flex items-center"><Globe2 className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.longitudeLabel}</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder={dictionary.longitudePlaceholder} {...field} step="any" onChange={e => field.onChange(parseFloat(e.target.value))} />
+                      <Input type="number" placeholder={dictionary.longitudePlaceholder} {...field} step="any" onChange={e => field.onChange(parseFloat(e.target.value))} value={field.value ?? ''}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -299,7 +347,7 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center"><Briefcase className="mr-2 h-4 w-4 text-muted-foreground" />{dictionary.categoryLabel}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder={dictionary.categoryPlaceholder} />
@@ -332,8 +380,8 @@ export default function StoreRegistrationForm({ userId, dictionary, lang }: Stor
               )}
             />
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3" disabled={isSubmitting}>
-              {isSubmitting ? <LoadingSpinner size={20} className="mr-2"/> : null}
-              {isSubmitting ? dictionary.submittingButton : dictionary.submitButton}
+              {isSubmitting ? <LoadingSpinner size={20} className="mr-2"/> : <Save className="mr-2 h-5 w-5"/>}
+              {isSubmitting ? submittingButtonText : submitButtonText}
             </Button>
           </form>
         </Form>

@@ -165,6 +165,8 @@
   "storeRegistrationForm": {
     "formTitle": "Register Your Store",
     "formDescription": "Join RealPrice Finder to list your products and reach more customers.",
+    "editFormTitle": "Edit Your Store Details",
+    "editFormDescription": "Update the information for your store.",
     "storeNameLabel": "Store Name",
     "storeNamePlaceholder": "e.g., The Corner Cafe",
     "storeNameMinLengthError": "Store name must be at least {length} characters.",
@@ -210,11 +212,22 @@
     "descriptionHint": "A brief description of your store and what you offer.",
     "submitButton": "Register Store",
     "submittingButton": "Registering...",
+    "saveChangesButton": "Save Changes",
+    "savingChangesButton": "Saving...",
     "registrationSuccessTitle": "Registration Submitted!",
     "registrationSuccessMessage": "Thank you, {storeName}, for registering. Your store data has been saved.",
     "registrationErrorTitle": "Registration Failed",
+    "editSuccessTitle": "Store Updated!",
+    "editSuccessMessage": "The details for {storeName} have been successfully updated.",
+    "editErrorTitle": "Update Failed",
     "genericError": "An error occurred. Please try again.",
-    "formLoadingText": "Form loading..."
+    "formLoadingText": "Form loading...",
+    "loadingEditText": "Loading store details...",
+    "errorFetchingStoreTitle": "Error Fetching Store",
+    "errorFetchingStoreMessage": "Could not load your store data. Please try again.",
+    "noStoreFoundTitle": "No Store Found",
+    "noStoreFoundMessage": "You don't seem to have a store registered. Please register one to edit it.",
+    "registerStoreButtonText": "Register a Store"
   },
   "productListingPage": {
     "loadingProductPageText": "Loading...",

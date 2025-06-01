@@ -25,7 +25,7 @@ Permitir que usuários filtrem produtos por categoria.
 
 Apresentar lojas que vendem um produto específico, ordenadas por proximidade. (Concluído - Cálculo de distância implementado. Entrada de localização da loja via campos numéricos. UX da permissão de localização do usuário funcional.)
 
-Permitir que lojistas (outro tipo de cliente do aplicativo) cadastrem seus estabelecimentos e anunciem seus produtos na plataforma. (Concluído - Implementada autenticação para lojistas. Lojas incluem agora latitude e longitude.)
+Permitir que lojistas (outro tipo de cliente do aplicativo) cadastrem seus estabelecimentos e anunciem seus produtos na plataforma. (Concluído - Implementada autenticação para lojistas. Lojas incluem agora latitude e longitude. **Em Andamento:** Implementar edição de informações da loja.)
 
 Anúncios de produtos terão um tempo de validade definido entre 1 e 7 dias. (Concluído)
 
@@ -44,13 +44,13 @@ Integrar com Firebase Realtime Database para:
 
 Manter um catálogo de produtos canônicos (para referência.) (Concluído - Tipos `CanonicalProduct` e `SuggestedNewProduct` definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de Admin para gerenciamento implementada: exibição de sugestões pendentes e revisadas, dispensar sugestão, criar produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição, exclusão e adição manual de produtos canônicos funcional.)
 
-Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores com ownerId vinculado ao usuário autenticado e campos para latitude/longitude.)
+Registrar lojas/estabelecimentos, incluindo sua localização geográfica e perfis. (UC3 - Concluído, forma salva em /stores com ownerId vinculado ao usuário autenticado e campos para latitude/longitude. **Em Andamento:** Implementar edição de informações da loja.)
 
 Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, validade e localização. (UC4 - Concluído, forma salva em /advertisements, vinculada a um storeId.)
 
 Rastrear o histórico de preços dos produtos, alimentado pelos anúncios expirados. (UC5 - Concluído, dados salvos em /priceHistory, anúncios originais marcados como arquivados.)
 
-Manter perfis de usuário (consumidores) com preferences e dados como localização. (Autenticação de Lojistas implementada. Implementada página de perfil para salvar localização preferida. Localização preferida integrada na `HomePage`. **Concluído:** Links de navegação para `/profile` adicionados.)
+Manter perfis de usuário (consumidores) com preferences e dados como localização. (Autenticação de Lojistas implementada. Implementada página de perfil para salvar localização preferida. Localização preferida integrada na `HomePage`. Links de navegação para `/profile` adicionados. Concluído.)
 
 Fornecer uma página de monitoramento para visualizar dados agregados (ex: valor médio de um produto por região/país, tendências de preço). (UC13 - Concluído - Exibe histórico de preços de produtos selecionados com tabela e gráfico de tendência.)
 
@@ -82,7 +82,7 @@ Cada item da lista mostra o nome da loja, o produto, o preço anunciado e a dist
 UC3 (Lojista): Cadastro e Gerenciamento de Perfil de Loja:
 
 Um proprietário de loja se cadastra no Preço Real como "lojista". (Implementada funcionalidade de cadastro de usuário lojista com email/senha.)
-O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica (latitude e longitude). (Concluído - Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}` com `ownerId` vinculado ao UID do lojista e campos para lat/lon. UX dos campos de coordenadas melhorada com dicas e botão "Ajudar a encontrar coordenadas".)
+O lojista preenche o perfil da sua loja, incluindo nome, endereço, tipo de estabelecimento e, crucialmente, define sua localização geográfica (latitude e longitude). (Concluído - Formulário de cadastro implementado, salvando em Firebase RTDB em `/stores/{storeId}` com `ownerId` vinculado ao UID do lojista e campos para lat/lon. UX dos campos de coordenadas melhorada com dicas e botão "Ajudar a encontrar coordenadas". **Em Andamento:** Implementar formulário/página para lojista editar os dados da sua loja.)
 A página de cadastro de loja agora requer que o usuário esteja autenticado.
 
 UC4 (Lojista): Publicação de Anúncios/Ofertas:
@@ -129,7 +129,7 @@ Se uma busca na `HomePage` não encontrar ofertas ativas:
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
 Implementada autenticação para lojistas (cadastro, login, logout). As lojas são vinculadas aos UIDs dos lojistas.
 Administradores do Preço Real poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar/editar/excluir/adicionar manualmente produtos canônicos a partir de sugestões ou manualmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição, exclusão e adição manual de produtos canônicos funcional. Responsividade da tabela de ações melhorada.)
-Perfis de usuário: criada página `/profile` e formulário para usuários logados salvarem uma localização preferencial em `/userSettings/{userId}/preferredLocation`. Localização preferida integrada na `HomePage`. **Concluído:** Links de navegação para `/profile` adicionados na Navbar e BottomNavbar.
+Perfis de usuário: criada página `/profile` e formulário para usuários logados salvarem uma localização preferencial em `/userSettings/{userId}/preferredLocation`. Localização preferida integrada na `HomePage`. Links de navegação para `/profile` adicionados na Navbar e BottomNavbar. (Concluído)
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
@@ -166,7 +166,8 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Melhorar UX do cadastro de localização da loja e da solicitação de permissão de localização do usuário. (Concluído - Adicionadas dicas, AlertDialog para permissão, e botão "Ajudar a encontrar coordenadas" no formulário de cadastro de loja.)
 - Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Concluído - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões, criar/editar/excluir e adicionar manualmente produtos canônicos a partir de sugestões ou manualmente implementada.)
 - Paleta de cores atualizada para Laranja Vibrante (Primária), Verde Calmante (Secundária) e Cinza Escuro (Acento), conforme PRD. (Concluído)
-- Implementar perfis de usuário consumidor (UC11): Criada página de perfil e formulário para salvar localização preferida. Localização preferida integrada na `HomePage`. **Concluído:** Adicionar links de navegação para `/profile` na Navbar e BottomNavbar para usuários logados.
+- Implementar perfis de usuário consumidor (UC11): Criada página de perfil e formulário para salvar localização preferida. Localização preferida integrada na `HomePage`. Links de navegação para `/profile` adicionados. (Concluído)
+- **Em Andamento:** Implementar fluxo para lojista editar informações da sua loja (UC3).
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
@@ -175,6 +176,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização (com diálogo de confirmação) ou tiver localização preferida salva, e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados. Símbolo de moeda ajustado para R$. Botão "Ver Oferta" funcional com diálogo de detalhes.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca. Se o produto não estiver no catálogo canônico, uma sugestão é registrada.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude` (com dicas de UX melhoradas e botão para auxiliar na busca de coordenadas). Produtos são listados sob o `storeId` da loja do usuário.
+- **Em Andamento:** `StoreRegistrationForm` adaptado para modo de edição. Página `/stores/edit` criada para permitir que lojistas editem os dados da sua loja.
 - `QueryClientProvider` e `AuthProvider` configurados. Tipo do AuthProvider refinado.
 - Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
 - Sistema de histórico de preços (UC5) implementado: anúncios expirados são arquivados e movidos para `/priceHistory` e marcados como `archived: true` em `/advertisements`.
@@ -189,11 +191,11 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
     - Funcionalidade de "Adicionar Novo Produto Canônico Manualmente" implementada.
     - Melhorada responsividade dos botões de ação nas tabelas para dispositivos móveis.
 - Paleta de cores do aplicativo atualizada em `src/app/globals.css` para Laranja Vibrante (#FFA500) como primária, Verde Calmante (#32CD32) como secundária e Cinza Escuro (#4A4A4A) como acento, conforme definido no PRD.
-- Página de Perfil do Usuário (`/profile`) criada, permitindo que usuários logados salvem uma localização preferida (endereço, lat, lon) em `/userSettings/{userId}/preferredLocation`. A localização preferida agora é buscada e pode ser usada na `HomePage`.
-- **Concluído:** Links de navegação para a página `/profile` foram adicionados na Navbar (desktop) e BottomNavbar (mobile) para usuários autenticados.
+- Página de Perfil do Usuário (`/profile`) criada, permitindo que usuários logados salvem uma localização preferida (endereço, lat, lon) em `/userSettings/{userId}/preferredLocation`. A localização preferida agora é buscada e pode ser usada na `HomePage`. Links de navegação para a página `/profile` adicionados na Navbar (desktop) e BottomNavbar (mobile) para usuários autenticados. (Concluído)
 
 5. Planejamento para próximas versões
-- Considerar fluxo para lojista editar informações da loja e produtos.
+- Concluir fluxo para lojista editar informações da loja. (Adicionar navegação para a página de edição).
+- Considerar fluxo para lojista editar produtos.
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
 - Integrar fluxos de IA para enriquecimento e adição automática de produtos ao catálogo (implementar UC7 e UC8).
 - Implementar mais funcionalidades para perfis de usuário consumidor (além da localização salva, ex: preferências de categoria).
@@ -212,3 +214,4 @@ Sempre que receber um prompt que contenha dois pontos finais “..” Revise o a
 - Secondary Color: `#32CD32` (Calming Green - HSL 120 61% 50%)
 - Accent Color: `#4A4A4A` (Dark Gray - HSL 0 0% 29%)
     
+
