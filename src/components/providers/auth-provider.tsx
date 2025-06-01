@@ -2,7 +2,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { Auth, User, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { Auth, User, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, type UserCredential } from 'firebase/auth';
 import { auth as firebaseAuth } from '@/lib/firebase'; // Renomeado para evitar conflito
 import LoadingSpinner from '@/components/loading-spinner';
 
@@ -10,8 +10,8 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
-  signUp: typeof createUserWithEmailAndPassword;
-  signIn: typeof signInWithEmailAndPassword;
+  signUp: (email: string, password: string) => Promise<UserCredential>;
+  signIn: (email: string, password: string) => Promise<UserCredential>;
   signOutUser: () => Promise<void>;
 }
 
@@ -34,17 +34,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string): Promise<UserCredential> => {
     setError(null);
     return createUserWithEmailAndPassword(firebaseAuth, email, password);
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<UserCredential> => {
     setError(null);
     return signInWithEmailAndPassword(firebaseAuth, email, password);
   };
 
-  const signOutUser = async () => {
+  const signOutUser = async (): Promise<void> => {
     setError(null);
     return signOut(firebaseAuth);
   };
@@ -54,10 +54,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     loading,
     error,
-    // Cast to any to satisfy createUserWithEmailAndPassword and signInWithEmailAndPassword types for now
-    // as they expect Auth instance as first arg, which we are providing implicitly from firebaseAuth
-    signUp: signUp as any, 
-    signIn: signIn as any,
+    signUp, 
+    signIn,
     signOutUser,
   };
 
@@ -80,3 +78,4 @@ export const useAuth = () => {
   }
   return context;
 };
+
