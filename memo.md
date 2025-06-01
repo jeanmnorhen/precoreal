@@ -50,7 +50,7 @@ Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, v
 
 Rastrear o histórico de preços dos produtos, alimentado pelos anúncios expirados. (UC5 - Concluído, dados salvos em /priceHistory, anúncios originais marcados como arquivados.)
 
-Manter perfis de usuário (consumidores) com preferences e dados como localização. (Autenticação de Lojistas implementada, perfis de consumidor ainda não.)
+Manter perfis de usuário (consumidores) com preferences e dados como localização. (Autenticação de Lojistas implementada. Iniciada implementação de perfis de consumidor com salvamento de localização preferencial.)
 
 Fornecer uma página de monitoramento para visualizar dados agregados (ex: valor médio de um produto por região/país, tendências de preço). (UC13 - Concluído - Exibe histórico de preços de produtos selecionados com tabela e gráfico de tendência.)
 
@@ -108,21 +108,17 @@ O sistema identifica "hot dog" na imagem. (Fluxo Genkit `analyzeImageOffers` imp
 O sistema então busca e exibe uma lista de todas as lojas que vendem "hot dogs", ordenadas por proximidade. A busca é feita no feed principal de `/advertisements` usando o nome do produto identificado como termo de busca. (Concluído - Análise de imagem redireciona para o feed com termo de busca).
 Se o produto identificado não existir em `/canonicalProducts`, uma sugestão é registrada em `/suggestedNewProducts`. (Concluído)
 
-UC7 (Apoio à busca via imagem): Descoberta de Produtos Relacionados (IA):
-
+UC7 (Apoio à busca via imagem): Descoberta de Produtos Relacionados (IA): (Ainda não implementado - O fluxo atual identifica o produto principal, mas não sugere produtos relacionados comercialmente a ele)
 Após a identificação de objetos (UC6), se o usuário desejar, o sistema (via IA) pode sugerir produtos comercialmente disponíveis que são relevantes (usando nomes em inglês/idioma base). 
 
-UC8 (Apoio à informação via imagem): Extração de Propriedades de Produtos (IA):
-
+UC8 (Apoio à informação via imagem): Extração de Propriedades de Produtos (IA): (Ainda não implementado - O fluxo atual identifica o produto, mas não extrai propriedades detalhadas como cor, marca, material)
 Para produtos identificados (UC6) ou encontrados (UC7), o sistema (via IA) pode extrair e apresentar características importantes (ex: cor, material, marca), se aplicável e útil para o contexto de "Preço Real". 
 
 UC9 (Para análise de imagem): Feedback Visual do Processamento:
-
 O usuário visualiza o progresso da análise da imagem em etapas. 
 O usuário recebe notificações (toasts) sobre o status e erros. (Implementado no ImageAnalysisTool)
 
 UC10: Consulta de Produtos no Banco de Dados (Catálogo):
-
 O usuário (ou o sistema através da análise de imagem) pode pesquisar produtos existentes no catálogo de produtos canônicos do Preço Real.
 O sistema exibe informações do produto, incluindo dados multilíngues e, potencialmente, um resumo do histórico de preços. 
 Se uma busca na `HomePage` não encontrar ofertas ativas:
@@ -131,9 +127,9 @@ Se uma busca na `HomePage` não encontrar ofertas ativas:
   - Se não existir nem nos anúncios nem no catálogo, uma sugestão é registrada em `/suggestedNewProducts`. (Concluído)
 
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
-
 Implementada autenticação para lojistas (cadastro, login, logout). As lojas são vinculadas aos UIDs dos lojistas.
-Administradores do Preço Real (se houver) poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar/editar/excluir/adicionar manualmente produtos canônicos a partir de sugestões ou manualmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição, exclusão e adição manual de produtos canônicos funcional. Responsividade da tabela de ações melhorada.)
+Administradores do Preço Real poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar/editar/excluir/adicionar manualmente produtos canônicos a partir de sugestões ou manualmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição, exclusão e adição manual de produtos canônicos funcional. Responsividade da tabela de ações melhorada.)
+Iniciada a implementação de perfis de usuário: criada página `/profile` e formulário para usuários logados salvarem uma localização preferencial em `/userSettings/{userId}/preferredLocation`.
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
@@ -141,18 +137,15 @@ O sistema permite ao usuário alternar o idioma da interface (ex: Português, In
 As rotas incluirão o código do idioma (ex: /pt/ofertas, /en/offers).
 
 UC13: Monitoramento de Dados Agregados:
-
 O usuário (administrador ou analista do Preço Real) acessa uma página de monitoramento. 
 O usuário seleciona um produto.
 O sistema exibe o valor médio desse produto/categoria em diferentes regiões/países onde há anúncios registrados, com base nos dados de anúncios expirados e perfis de lojas. (Concluído - Página de monitoramento exibe histórico de preços de produtos de `/priceHistory` com tabela e gráfico.)
 
-UC14 (Administrador): Interação com Superagente de Análise via Chat:
-
+UC14 (Administrador): Interação com Superagente de Análise via Chat: (Ainda não implementado)
 O administrador acessa uma página de chat dedicada (ex: /admin/super-agent-chat).
 O administrador interage com o "Superagente de Análise e Relatórios" para obter insights sobre o projeto, uso do banco de dados, atividade de usuários, possíveis falhas ou pontos de atenção. 
 
 UC15 (Variação de UC6): Uso da Câmera para Identificação e Busca Rápida: (Concluído)
-
 Um usuário abre o Preço Real.
 O aplicativo exibe o feed de ofertas locais.
 O usuário toca no ícone da câmera (na aba "Identificar").
@@ -173,6 +166,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Melhorar UX do cadastro de localização da loja e da solicitação de permissão de localização do usuário. (Concluído - Adicionadas dicas, AlertDialog para permissão, e botão "Ajudar a encontrar coordenadas" no formulário de cadastro de loja.)
 - Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Concluído - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões, criar/editar/excluir e adicionar manualmente produtos canônicos a partir de sugestões ou manualmente implementada.)
 - Paleta de cores atualizada para Laranja Vibrante (Primária), Verde Calmante (Secundária) e Cinza Escuro (Acento), conforme PRD. (Concluído)
+- **Em Progresso:** Implementar perfis de usuário consumidor (UC11): Iniciada a criação da página de perfil e formulário para salvar localização preferida.
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
@@ -195,13 +189,16 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
     - Funcionalidade de "Adicionar Novo Produto Canônico Manualmente" implementada.
     - Melhorada responsividade dos botões de ação nas tabelas para dispositivos móveis.
 - Paleta de cores do aplicativo atualizada em `src/app/globals.css` para Laranja Vibrante (#FFA500) como primária, Verde Calmante (#32CD32) como secundária e Cinza Escuro (#4A4A4A) como acento, conforme definido no PRD.
+- **Novo:** Página de Perfil do Usuário (`/profile`) criada, permitindo que usuários logados salvem uma localização preferida (endereço, lat, lon) em `/userSettings/{userId}/preferredLocation`.
 
 5. Planejamento para próximas versões
-- Permitir que o usuário salve sua preferência de localização (ou uma localização manual como "casa" ou "trabalho") no perfil do usuário.
+- **Próximo:** Integrar a localização preferida salva pelo usuário (de `/userSettings/{userId}/preferredLocation`) na lógica de exibição e ordenação de ofertas na `HomePage`.
+- **Próximo:** Adicionar links de navegação para a página `/profile` na Navbar e BottomNavbar para usuários logados.
 - Considerar fluxo para lojista editar informações da loja e produtos.
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
-- Integrar fluxos de IA para enriquecimento e adição automática de produtos ao catálogo.
-- Implementar perfis de usuário consumidor (autenticação, preferências, localização salva).
+- Integrar fluxos de IA para enriquecimento e adição automática de produtos ao catálogo (implementar UC7 e UC8).
+- Implementar mais funcionalidades para perfis de usuário consumidor (além da localização salva, ex: preferências de categoria).
+- Implementar UC14 (Superagente de Análise via Chat).
 
 6. Rotinas de manutenção 
 
@@ -216,7 +213,3 @@ Sempre que receber um prompt que contenha dois pontos finais “..” Revise o a
 - Secondary Color: `#32CD32` (Calming Green - HSL 120 61% 50%)
 - Accent Color: `#4A4A4A` (Dark Gray - HSL 0 0% 29%)
     
-
-    
-
-

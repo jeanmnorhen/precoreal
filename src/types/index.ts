@@ -83,3 +83,17 @@ export interface SuggestedNewProduct {
   lang?: string; // Optional: Language of the app when suggestion was made
   // Optional: notes from admin, etc.
 }
+
+export interface PreferredLocation {
+  address: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface UserSettings {
+  id: string; // Corresponds to Firebase Auth User UID
+  preferredLocation?: PreferredLocation;
+  // Other future preferences can be added here
+  // e.g., preferredCategories: string[];
+  // e.g., notificationSettings: { ... };
+}

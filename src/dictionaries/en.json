@@ -8,13 +8,15 @@
     "forStores": "For Stores",
     "appName": "RealPrice Finder",
     "monitoring": "Monitoring",
-    "adminCatalog": "Admin Catalog"
+    "adminCatalog": "Admin Catalog",
+    "profileLink": "My Profile"
   },
   "bottomNavbar": {
     "offers": "Offers",
     "analyze": "Analyze",
     "stores": "Stores",
-    "monitoring": "Monitor"
+    "monitoring": "Monitor",
+    "profile": "Profile"
   },
   "homePage": {
     "searchPlaceholder": "Search for products, stores, or categories...",
@@ -336,5 +338,37 @@
     "confirmDeleteButton": "Confirm Delete",
     "toastCanonicalDeletedTitle": "Product Deleted",
     "toastCanonicalDeletedDesc": "Product '{productName}' has been successfully deleted from the catalog."
+  },
+  "profilePage": {
+    "loadingText": "Loading profile...",
+    "title": "My Profile",
+    "description": "Manage your account settings and preferences.",
+    "mustBeLoggedInTitle": "Access Restricted",
+    "mustBeLoggedInMessage": "You must be logged in to view your profile. Please sign in or sign up."
+  },
+  "preferredLocationForm": {
+    "formTitle": "Preferred Location",
+    "formDescription": "Set a default location to see relevant offers without using GPS each time.",
+    "addressLabel": "Full Address",
+    "addressPlaceholder": "e.g., 1600 Amphitheatre Parkway, Mountain View, CA",
+    "addressHint": "Enter your preferred address for offer searches.",
+    "addressMinLengthError": "Address must be at least {length} characters.",
+    "findOnMapButton": "Help find coordinates",
+    "coordinatesHint": "Optional. Enter latitude and longitude if you know them, or use the button above after filling the address.",
+    "latitudeLabel": "Latitude",
+    "latitudePlaceholder": "e.g., 37.422",
+    "longitudeLabel": "Longitude",
+    "longitudePlaceholder": "e.g., -122.084",
+    "latitudeInvalidError": "Latitude must be between -90 and 90.",
+    "longitudeInvalidError": "Longitude must be between -180 and 180.",
+    "saveButton": "Save Preferred Location",
+    "savingButton": "Saving...",
+    "saveSuccessTitle": "Location Saved",
+    "saveSuccessMessage": "Your preferred location has been updated.",
+    "saveErrorTitle": "Error Saving Location",
+    "genericError": "An error occurred. Please try again.",
+    "loadingLocationText": "Loading your saved location...",
+    "fillAddressFirstTitle": "Address Required",
+    "fillAddressFirstMessage": "Please enter an address first to use the map helper."
   }
 }
