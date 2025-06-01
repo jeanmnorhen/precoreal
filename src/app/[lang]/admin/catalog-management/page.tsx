@@ -41,7 +41,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { ListChecks, PlusCircle, XCircle, Edit, Trash2, Info, BookOpen, CheckSquare, Edit3 } from 'lucide-react';
+import { ListChecks, PlusCircle, XCircle, Edit, Trash2, Info, BookOpen, CheckSquare, Edit3, PackagePlus } from 'lucide-react';
 import LoadingSpinner from '@/components/loading-spinner';
 import { useToast } from '@/hooks/use-toast';
 import { getDictionary, type Dictionary } from '@/lib/get-dictionary';
@@ -265,8 +265,9 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     updateSuggestionStatusMutation.mutate({ suggestionId, status: 'rejected' });
   };
 
-  const handleOpenCreateCanonicalDialog = (suggestion: SuggestedNewProduct) => {
+  const handleOpenCreateCanonicalDialogFromSuggestion = (suggestion: SuggestedNewProduct) => {
     setCurrentSuggestion(suggestion);
+    setCurrentCanonicalProduct(null); 
     setCanonicalValue('productName', suggestion.productName);
     const suggestedCategory = productCategories.find(cat => cat.name.toLowerCase() === suggestion.normalizedName?.split(' ')[0]);
     if (suggestedCategory) {
@@ -278,9 +279,18 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
     setCanonicalValue('defaultImageUrl', '');
     setIsCreateCanonicalDialogOpen(true);
   };
+  
+  const handleOpenCreateCanonicalDialogManually = () => {
+    setCurrentSuggestion(null);
+    setCurrentCanonicalProduct(null);
+    resetCanonicalForm(); // Clear form for manual entry
+    setIsCreateCanonicalDialogOpen(true); 
+  };
+
 
   const handleOpenEditCanonicalDialog = (product: CanonicalProduct) => {
     setCurrentCanonicalProduct(product);
+    setCurrentSuggestion(null); 
     setCanonicalValue('productName', product.name);
     setCanonicalValue('category', product.category);
     setCanonicalValue('description', product.description || '');
@@ -304,7 +314,7 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
   const onSubmitCanonicalProduct = (data: CanonicalProductFormValues) => {
     if (currentCanonicalProduct && isEditCanonicalDialogOpen) {
       editCanonicalProductMutation.mutate({ productId: currentCanonicalProduct.id, data });
-    } else {
+    } else { // Handles both creation from suggestion and manual creation
       createCanonicalProductMutation.mutate(data);
     }
   };
@@ -368,7 +378,7 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleOpenCreateCanonicalDialog(suggestion)}
+                        onClick={() => handleOpenCreateCanonicalDialogFromSuggestion(suggestion)}
                         disabled={updateSuggestionStatusMutation.isPending || createCanonicalProductMutation.isPending}
                       >
                         <PlusCircle className="mr-1 h-4 w-4" /> {dictionary.adminCatalogPage.createCanonicalButton}
@@ -394,12 +404,17 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
       
       {/* Dialog for Creating/Editing Canonical Product */}
       <Dialog open={isCreateCanonicalDialogOpen || isEditCanonicalDialogOpen} onOpenChange={(open) => {
-          if (isCreateCanonicalDialogOpen) setIsCreateCanonicalDialogOpen(open);
-          if (isEditCanonicalDialogOpen) setIsEditCanonicalDialogOpen(open);
-          if (!open) {
+          if (!open) { // Reset states when dialog closes for any reason
+            setIsCreateCanonicalDialogOpen(false);
+            setIsEditCanonicalDialogOpen(false);
             resetCanonicalForm();
             setCurrentSuggestion(null);
             setCurrentCanonicalProduct(null);
+          } else {
+            // This part is tricky as open is true for both create and edit initially
+            // The specific handlers (handleOpen...Dialog) will set these states
+            if (isCreateCanonicalDialogOpen) setIsCreateCanonicalDialogOpen(open);
+            if (isEditCanonicalDialogOpen) setIsEditCanonicalDialogOpen(open);
           }
         }}>
         <DialogContent className="sm:max-w-lg">
@@ -416,10 +431,13 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
                       '{productName}', 
                       currentCanonicalProduct?.name || 'product'
                     )
-                  : dictionary.adminCatalogPage.createCanonicalDialogDescription.replace(
-                      '{productName}', 
-                      currentSuggestion?.productName || 'product'
-                    )}
+                  : currentSuggestion 
+                    ? dictionary.adminCatalogPage.createCanonicalDialogDescription.replace(
+                        '{productName}', 
+                        currentSuggestion?.productName || 'product'
+                      )
+                    : dictionary.adminCatalogPage.addManuallyDialogDescription || "Enter the details for the new canonical product."
+                  }
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -501,6 +519,8 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
             <DialogFooter>
               <DialogClose asChild>
                 <Button type="button" variant="outline" onClick={() => {
+                    setIsCreateCanonicalDialogOpen(false);
+                    setIsEditCanonicalDialogOpen(false);
                     resetCanonicalForm();
                     setCurrentSuggestion(null);
                     setCurrentCanonicalProduct(null);
@@ -638,17 +658,23 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
         </CardContent>
       </Card>
 
-       {/* Placeholder for "Add New Canonical Product Manually" - To be implemented next */}
-        <Card className="shadow-lg opacity-50">
+       {/* Section for "Add New Canonical Product Manually" */}
+        <Card className="shadow-lg">
             <CardHeader>
                 <CardTitle className="flex items-center text-xl font-headline">
-                    <PlusCircle className="mr-2 h-6 w-6 text-primary" />
+                    <PackagePlus className="mr-2 h-6 w-6 text-primary" />
                     {dictionary.adminCatalogPage.addManuallyTitle}
                 </CardTitle>
                  <CardDescription>{dictionary.adminCatalogPage.addManuallyDescription}</CardDescription>
             </CardHeader>
-            <CardContent>
-                 <p className="text-muted-foreground text-center py-4">{dictionary.adminCatalogPage.toBeImplemented}</p>
+            <CardContent className="flex justify-center py-6">
+                 <Button 
+                    onClick={handleOpenCreateCanonicalDialogManually}
+                    disabled={createCanonicalProductMutation.isPending}
+                 >
+                    <PlusCircle className="mr-2 h-5 w-5" />
+                    {dictionary.adminCatalogPage.addManuallyButton || "Add New Product"}
+                 </Button>
             </CardContent>
         </Card>
 
