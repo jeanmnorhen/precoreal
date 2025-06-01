@@ -1,7 +1,8 @@
+
 'use client';
 
 import Link from 'next/link';
-import { Home, Camera, Store, LogOut, UserPlus, LogIn, ShoppingBag, LineChart as LineChartIcon } from 'lucide-react';
+import { Home, Camera, Store, LogOut, UserPlus, LogIn, ShoppingBag, LineChart as LineChartIcon, UserCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import React from 'react';
@@ -72,10 +73,18 @@ export default function Navbar({ lang, dictionary, localeSwitcherDictionary, aut
         </Button>
       ))}
       {loading ? null : user ? (
-        <Button variant="ghost" onClick={handleSignOut} className="text-sm">
-          <LogOut className="mr-2 h-5 w-5" />
-          {authDictionary.signOutLink}
-        </Button>
+        <>
+          <Button variant="ghost" asChild className="text-sm">
+            <Link href={`/${lang}/profile`}>
+              <UserCircle className="mr-2 h-5 w-5" />
+              {dictionary.profileLink || "My Profile"}
+            </Link>
+          </Button>
+          <Button variant="ghost" onClick={handleSignOut} className="text-sm">
+            <LogOut className="mr-2 h-5 w-5" />
+            {authDictionary.signOutLink}
+          </Button>
+        </>
       ) : (
         <>
           <Button variant="ghost" asChild className="text-sm">

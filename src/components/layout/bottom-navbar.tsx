@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -54,15 +55,13 @@ export default function BottomNavbar({ lang, dictionary, authDictionary }: Botto
     { href: `/${lang}/monitoring`, label: dictionary.monitoring || "Monitor", icon: LineChartIcon, key: 'monitoring' },
   ];
 
-  // "Stores" or "My Account/Sign Out"
   let accountOrStoreItems = [];
   if (loading) {
     // Optionally show a loading indicator or just an empty space
   } else if (user) {
     accountOrStoreItems = [
       { href: `/${lang}/stores/products`, label: authDictionary.myProductsLinkShort || "Store", icon: Store, key: 'my-store-products' },
-      // The SignOut is now a button, not a Link-like item for the nav structure
-      // We'll render it separately
+      { href: `/${lang}/profile`, label: dictionary.profile || "Profile", icon: UserCircle, key: 'profile' },
     ];
   } else {
      accountOrStoreItems = [
