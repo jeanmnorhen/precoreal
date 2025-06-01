@@ -46,7 +46,13 @@
     "productInCatalogButNoOffers": "No current offers for \"{searchTerm}\", but this product is in our catalog! Keep an eye out for future listings.",
     "suggestionLoggedToastTitle": "Thanks for the Tip!",
     "suggestionLoggedToastDesc": "\"{productName}\" will be reviewed for our catalog. This helps us grow!",
-    "suggestionErrorToastTitle": "Suggestion Error"
+    "suggestionErrorToastTitle": "Suggestion Error",
+    "offerDetailsDialog": {
+      "descriptionLabel": "Description",
+      "storeLabel": "Store",
+      "distanceLabel": "Distance",
+      "closeButton": "Close"
+    }
   },
   "productCategoryNames": {
     "electronics": "Electronics",
@@ -332,5 +338,3 @@
     "toastCanonicalDeletedDesc": "Product '{productName}' has been successfully deleted from the catalog."
   }
 }
-
-    
