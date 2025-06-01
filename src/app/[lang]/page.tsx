@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import OfferCard from '@/components/offer-card';
 import CategoryFilter from '@/components/category-filter';
 import { productCategories } from '@/lib/mock-data';
-import type { Offer, ListedProduct, Store, PriceHistoryEntry, ProductCategory, CanonicalProduct, SuggestedNewProduct } from '@/types';
+import type { Offer, ListedProduct, Store, PriceHistoryEntry, ProductCategory, CanonicalProduct, SuggestedNewProduct, PreferredLocation } from '@/types';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, MapPin, Tag, LocateFixed, AlertTriangle, CheckCircle, Info } from 'lucide-react';
@@ -29,6 +29,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/components/providers/auth-provider';
 
 
 interface HomePageProps {
@@ -56,7 +57,7 @@ const checkAndSuggestProductFromSearch = async (
 
   const normalizedName = normalizeProductName(productName);
   const canonicalProductsRef = ref(db, 'canonicalProducts');
-  const q = firebaseQuery(canonicalProductsRef, orderByChild('normalizedName'), equalTo(normalizedName)); // Query by normalizedName
+  const q = firebaseQuery(canonicalProductsRef, orderByChild('normalizedName'), equalTo(normalizedName)); 
 
   try {
     const snapshot = await get(q);
@@ -64,7 +65,7 @@ const checkAndSuggestProductFromSearch = async (
     if (snapshot.exists()) {
        snapshot.forEach((childSnapshot) => {
         const product = childSnapshot.val() as CanonicalProduct;
-        if (normalizeProductName(product.name) === normalizedName) { // Double check actual name if needed
+        if (normalizeProductName(product.name) === normalizedName) { 
           productExistsInCanonical = true;
         }
       });
@@ -74,7 +75,6 @@ const checkAndSuggestProductFromSearch = async (
       return { existsInCanonical: true, suggested: false };
     }
 
-    // If not in canonical, suggest it
     const suggestedProductsRef = ref(db, 'suggestedNewProducts');
     const newSuggestionRef = push(suggestedProductsRef);
     const newSuggestion: Omit<SuggestedNewProduct, 'id'> = {
@@ -154,7 +154,7 @@ const fetchAdvertisementsAndStores = async (): Promise<{ advertisements: ListedP
 const archiveExpiredAds = async ({ advertisements, storesMap }: { advertisements: ListedProduct[], storesMap: Record<string, Store> }) => {
   const now = Date.now();
   const updates: Record<string, any> = {};
-  const historyEntries: Record<string, Omit<PriceHistoryEntry, 'id'>> = {};
+  // const historyEntries: Record<string, Omit<PriceHistoryEntry, 'id'>> = {}; // Not used in this mutation logic
   const activeAds: ListedProduct[] = [];
 
   for (const ad of advertisements) {
@@ -186,12 +186,23 @@ const archiveExpiredAds = async ({ advertisements, storesMap }: { advertisements
   return activeAds;
 };
 
+const fetchUserPreferredLocation = async (userId: string | undefined): Promise<PreferredLocation | null> => {
+  if (!userId) return null;
+  const locationRef = ref(db, `userSettings/${userId}/preferredLocation`);
+  const snapshot = await get(locationRef);
+  if (snapshot.exists()) {
+    return snapshot.val() as PreferredLocation;
+  }
+  return null;
+};
+
 
 export default function HomePage(props: HomePageProps) {
   const { lang } = use(props.params);
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -202,7 +213,7 @@ export default function HomePage(props: HomePageProps) {
   const [locationError, setLocationError] = useState<LocationError>(null);
   const [isRequestingLocation, setIsRequestingLocation] = useState(false);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
-  const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
+  const [hasRequestedLocationThisSession, setHasRequestedLocationThisSession] = useState(false); // Track if GPS was requested in this session
   
   const [lastCheckedSearchTerm, setLastCheckedSearchTerm] = useState<string | null>(null);
   const [searchProductStatus, setSearchProductStatus] = useState<{term: string; existsInCanonical: boolean; suggested: boolean} | null>(null);
@@ -253,6 +264,25 @@ export default function HomePage(props: HomePageProps) {
     enabled: !!fetchedData,
   });
 
+  const { data: preferredLocation, isLoading: isLoadingPreferredLocation } = useQuery<PreferredLocation | null>({
+    queryKey: ['userPreferredLocation', user?.uid],
+    queryFn: () => fetchUserPreferredLocation(user?.uid),
+    enabled: !!user && !authLoading,
+  });
+
+  useEffect(() => {
+    // Only set from preferred location if GPS hasn't been tried yet in this session and preferred location is available
+    if (user && !authLoading && preferredLocation && !userLocation && !hasRequestedLocationThisSession && !isRequestingLocation) {
+      if (preferredLocation.latitude && preferredLocation.longitude) {
+        setUserLocation({
+          latitude: preferredLocation.latitude,
+          longitude: preferredLocation.longitude,
+        });
+      }
+    }
+  }, [user, authLoading, preferredLocation, userLocation, hasRequestedLocationThisSession, isRequestingLocation]);
+
+
   const requestUserLocation = () => {
     if (!navigator.geolocation) {
       setLocationError('POSITION_UNAVAILABLE'); 
@@ -260,6 +290,7 @@ export default function HomePage(props: HomePageProps) {
       return;
     }
     setIsRequestingLocation(true);
+    setHasRequestedLocationThisSession(true); // Mark that GPS has been attempted
     setLocationError(null);
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -291,7 +322,9 @@ export default function HomePage(props: HomePageProps) {
   };
 
   const handleLocationRequest = () => {
-    if (!hasRequestedLocation && !userLocation) {
+    // If user location is already set (either by GPS or preferred), this will re-fetch via GPS.
+    // If no location is set, and it's the first time in the session, show dialog.
+    if (!hasRequestedLocationThisSession && !userLocation && !preferredLocation) {
       setShowLocationDialog(true);
     } else {
       requestUserLocation();
@@ -299,14 +332,13 @@ export default function HomePage(props: HomePageProps) {
   };
 
   const proceedWithLocation = () => {
-    setHasRequestedLocation(true);
     setShowLocationDialog(false);
     requestUserLocation();
   };
 
   const cancelLocationDialog = () => {
     setShowLocationDialog(false);
-    setHasRequestedLocation(true); 
+    setHasRequestedLocationThisSession(true); // User explicitly cancelled, don't ask again this session via dialog
   };
 
   const displayedOffers = useMemo(() => {
@@ -323,7 +355,7 @@ export default function HomePage(props: HomePageProps) {
         price: ad.price,
         storeId: ad.storeId,
         storeName: storeInfo?.name || `Lojista ID: ${ad.storeId.substring(0,6)}...`,
-        distance: null,
+        distance: null, // Will be calculated in filteredAndSortedOffers
         category: ad.category,
         description: ad.description,
       };
@@ -382,21 +414,22 @@ export default function HomePage(props: HomePageProps) {
   // Effect for checking canonical product when search yields no offers
   useEffect(() => {
     if (searchTerm && filteredAndSortedOffers.length === 0 && !isLoadingData && !dataError && dictionary && searchTerm !== lastCheckedSearchTerm) {
-      setLastCheckedSearchTerm(searchTerm); // Mark as checked for current term
-      setSearchProductStatus(null); // Reset previous status
+      setLastCheckedSearchTerm(searchTerm); 
+      setSearchProductStatus(null); 
 
       checkAndSuggestProductFromSearch(searchTerm, lang, toast, dictionary.homePage)
         .then(status => {
           setSearchProductStatus({ term: searchTerm, ...status });
         });
     } else if (!searchTerm) {
-      setLastCheckedSearchTerm(null); // Reset if search term is cleared
+      setLastCheckedSearchTerm(null); 
       setSearchProductStatus(null);
     }
   }, [searchTerm, filteredAndSortedOffers.length, isLoadingData, dataError, lang, dictionary, toast, lastCheckedSearchTerm]);
 
+  const totalLoading = !dictionary || isLoadingData || authLoading || (!!user && isLoadingPreferredLocation);
 
-  if (!dictionary || isLoadingData) {
+  if (totalLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <LoadingSpinner size={48} />
@@ -528,3 +561,5 @@ export default function HomePage(props: HomePageProps) {
     </div>
   );
 }
+
+    

@@ -50,7 +50,7 @@ Registrar anúncios/ofertas de produtos feitos por lojistas, incluindo preço, v
 
 Rastrear o histórico de preços dos produtos, alimentado pelos anúncios expirados. (UC5 - Concluído, dados salvos em /priceHistory, anúncios originais marcados como arquivados.)
 
-Manter perfis de usuário (consumidores) com preferences e dados como localização. (Autenticação de Lojistas implementada. Iniciada implementação de perfis de consumidor com salvamento de localização preferencial.)
+Manter perfis de usuário (consumidores) com preferences e dados como localização. (Autenticação de Lojistas implementada. Iniciada implementação de perfis de consumidor com salvamento de localização preferencial. **Em Progresso:** Integração da localização preferida na HomePage.)
 
 Fornecer uma página de monitoramento para visualizar dados agregados (ex: valor médio de um produto por região/país, tendências de preço). (UC13 - Concluído - Exibe histórico de preços de produtos selecionados com tabela e gráfico de tendência.)
 
@@ -67,7 +67,7 @@ Busca ativa por produtos para registrar no catálogo canônico: A identificaçã
 UC1 (Principal): Descoberta de Ofertas Próximas (Feed Geolocalizado):
 
 O usuário (consumidor) abre o aplicativo Preço Real.
-O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil e permitir. (Concluído - Usuário pode fornecer localização via botão; cálculo de distância agora é real se coordenadas estiverem disponíveis. UX da permissão de localização do usuário funcional.)
+O aplicativo solicita e utiliza a localização GPS do usuário se o usuário não tiver uma localização salva no perfil e permitir. (Concluído - Usuário pode fornecer localização via botão; cálculo de distância agora é real se coordenadas estiverem disponíveis. UX da permissão de localização do usuário funcional. **Em Progresso:** Integração da localização preferida salva pelo usuário.)
 O sistema exibe um feed de produtos/ofertas que estão sendo anunciados por lojas próximas ao usuário. (Concluído - Busca dados de /advertisements, filtra expirados e arquivados. Nome real da loja buscado de /stores. Distância real calculada se localizações disponíveis.)
 Os anúncios são apresentados com informações como nome do produto, preço, nome da loja e distância.
 O usuário pode rolar o feed para ver mais ofertas.
@@ -129,7 +129,7 @@ Se uma busca na `HomePage` não encontrar ofertas ativas:
 UC11: Gerenciamento de Dados de Produtos e Perfis de Consumidor (com Autenticação):
 Implementada autenticação para lojistas (cadastro, login, logout). As lojas são vinculadas aos UIDs dos lojistas.
 Administradores do Preço Real poderão gerenciar o catálogo de produtos canônicos, categorias, etc. (Estrutura para `suggestedNewProducts` definida. Interface de admin para gerenciar sugestões e criar/editar/excluir/adicionar manualmente produtos canônicos a partir de sugestões ou manualmente implementada: exibição de sugestões pendentes e revisadas, ação de dispensar, criação de produto canônico a partir de sugestão, exibição de produtos canônicos existentes, edição, exclusão e adição manual de produtos canônicos funcional. Responsividade da tabela de ações melhorada.)
-Iniciada a implementação de perfis de usuário: criada página `/profile` e formulário para usuários logados salvarem uma localização preferencial em `/userSettings/{userId}/preferredLocation`.
+Iniciada a implementação de perfis de usuário: criada página `/profile` e formulário para usuários logados salvarem uma localização preferencial em `/userSettings/{userId}/preferredLocation`. **Em Progresso:** Integração da localização preferida na `HomePage`.
 
 UC12: Definição de Idioma da Interface: (Implementado)
 O sistema pode tentar detectar o idioma preferido do usuário através das configurações do navegador.
@@ -166,13 +166,13 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Melhorar UX do cadastro de localização da loja e da solicitação de permissão de localização do usuário. (Concluído - Adicionadas dicas, AlertDialog para permissão, e botão "Ajudar a encontrar coordenadas" no formulário de cadastro de loja.)
 - Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Concluído - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões, criar/editar/excluir e adicionar manualmente produtos canônicos a partir de sugestões ou manualmente implementada.)
 - Paleta de cores atualizada para Laranja Vibrante (Primária), Verde Calmante (Secundária) e Cinza Escuro (Acento), conforme PRD. (Concluído)
-- **Em Progresso:** Implementar perfis de usuário consumidor (UC11): Iniciada a criação da página de perfil e formulário para salvar localização preferida.
+- Implementar perfis de usuário consumidor (UC11): Criada página de perfil e formulário para salvar localização preferida. **Em Progresso:** Integração da localização preferida salva pelo usuário (de `/userSettings/{userId}/preferredLocation`) na lógica de exibição e ordenação de ofertas na `HomePage`.
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
 - Layout responsivo com navegação superior para desktop e inferior para mobile. Rodapé removido. (Concluído)
 - **Prioridade Alta:** Garantir excelente responsividade e usabilidade em dispositivos smartphone. (Melhorias na tabela de ações da página de admin.)
-- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização (com diálogo de confirmação) e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados. Símbolo de moeda ajustado para R$. Botão "Ver Oferta" funcional com diálogo de detalhes.
+- Página de feed de ofertas (UC1) buscando dados do Firebase Realtime Database (`/advertisements` e `/stores`). Nomes reais das lojas são exibidos. Distância real calculada e utilizada para ordenação se o usuário permitir acesso à localização (com diálogo de confirmação) e as lojas tiverem coordenadas. Anúncios expirados e arquivados são filtrados. Símbolo de moeda ajustado para R$. Botão "Ver Oferta" funcional com diálogo de detalhes. **Em Progresso:** Utilização da localização preferida salva do perfil do usuário.
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca. Se o produto não estiver no catálogo canônico, uma sugestão é registrada.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude` (com dicas de UX melhoradas e botão para auxiliar na busca de coordenadas). Produtos são listados sob o `storeId` da loja do usuário.
 - `QueryClientProvider` e `AuthProvider` configurados. Tipo do AuthProvider refinado.
@@ -189,10 +189,9 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
     - Funcionalidade de "Adicionar Novo Produto Canônico Manualmente" implementada.
     - Melhorada responsividade dos botões de ação nas tabelas para dispositivos móveis.
 - Paleta de cores do aplicativo atualizada em `src/app/globals.css` para Laranja Vibrante (#FFA500) como primária, Verde Calmante (#32CD32) como secundária e Cinza Escuro (#4A4A4A) como acento, conforme definido no PRD.
-- **Novo:** Página de Perfil do Usuário (`/profile`) criada, permitindo que usuários logados salvem uma localização preferida (endereço, lat, lon) em `/userSettings/{userId}/preferredLocation`.
+- Página de Perfil do Usuário (`/profile`) criada, permitindo que usuários logados salvem uma localização preferida (endereço, lat, lon) em `/userSettings/{userId}/preferredLocation`. **Em Progresso:** A localização preferida agora é buscada e pode ser usada na `HomePage` se nenhuma localização GPS tiver sido solicitada na sessão.
 
 5. Planejamento para próximas versões
-- **Próximo:** Integrar a localização preferida salva pelo usuário (de `/userSettings/{userId}/preferredLocation`) na lógica de exibição e ordenação de ofertas na `HomePage`.
 - **Próximo:** Adicionar links de navegação para a página `/profile` na Navbar e BottomNavbar para usuários logados.
 - Considerar fluxo para lojista editar informações da loja e produtos.
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
@@ -213,3 +212,4 @@ Sempre que receber um prompt que contenha dois pontos finais “..” Revise o a
 - Secondary Color: `#32CD32` (Calming Green - HSL 120 61% 50%)
 - Accent Color: `#4A4A4A` (Dark Gray - HSL 0 0% 29%)
     
+
