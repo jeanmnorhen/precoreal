@@ -1,9 +1,10 @@
+
 'use client';
 
 import ProductListingForm from '@/components/product-listing-form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Info, LogIn, PackagePlus, ShoppingBag, UserPlus, Edit, List, AlertTriangle } from 'lucide-react';
+import { Info, LogIn, PackagePlus, ShoppingBag, UserPlus, Edit, List, AlertTriangle, Edit3 } from 'lucide-react';
 import type { Locale } from '@/i18n-config';
 import { getDictionary, type Dictionary } from '@/lib/get-dictionary';
 import { useAuth } from '@/components/providers/auth-provider';
@@ -51,7 +52,7 @@ const fetchStoreAdvertisements = async (storeId: string | undefined): Promise<Li
       }))
       .filter(ad => !ad.archived); // Filter out archived ads
   }
-  return advertisements.sort((a, b) => b.createdAt - a.createdAt); // Sort by newest first
+  return advertisements.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); // Sort by newest first
 };
 
 
@@ -86,6 +87,12 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
     fetchDict();
   }, [lang]);
 
+
+  const handleEditProduct = (productId: string) => {
+    console.log("Attempting to edit product:", productId);
+    // Here we will open a dialog or navigate to an edit page for the product
+    // For now, just a log.
+  };
 
   const totalLoading = isLoadingPage || authLoading || (!!user && isLoadingUserStore) || !dictionary;
 
@@ -205,7 +212,7 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>{dictionary.productListingPage.errorLoadingProductsTitle || "Error Loading Products"}</AlertTitle>
-              <AlertDescription>{dictionary.productListingPage.errorLoadingProductsMessage || "Could not fetch your advertised products."} {(advertisementsError as Error).message}</AlertDescription>
+              <AlertDescription>{(dictionary.productListingPage.errorLoadingProductsMessage || "Could not fetch your advertised products.") + ' ' + (advertisementsError as Error).message}</AlertDescription>
             </Alert>
           )}
           {!isLoadingAdvertisements && !advertisementsError && storeAdvertisements && storeAdvertisements.length > 0 && (
@@ -216,7 +223,7 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
                   <TableHead>{dictionary.productListingPage.priceColumn || "Price"}</TableHead>
                   <TableHead>{dictionary.productListingPage.categoryColumn || "Category"}</TableHead>
                   <TableHead>{dictionary.productListingPage.validUntilColumn || "Valid Until"}</TableHead>
-                  {/* <TableHead>{dictionary.productListingPage.actionsColumn || "Actions"}</TableHead> */}
+                  <TableHead>{dictionary.productListingPage.actionsColumn || "Actions"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -226,13 +233,16 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
                     <TableCell>R${ad.price.toFixed(2)}</TableCell>
                     <TableCell>{dictionary.productCategoryNames[ad.category as keyof typeof dictionary.productCategoryNames] || ad.category}</TableCell>
                     <TableCell>{format(new Date(ad.validUntil), 'dd/MM/yyyy')}</TableCell>
-                    {/* 
                     <TableCell>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleEditProduct(ad.id)}
+                      >
+                        <Edit3 className="mr-1 h-4 w-4" />
                         {dictionary.productListingPage.editProductButton || "Edit"}
                       </Button>
                     </TableCell>
-                    */}
                   </TableRow>
                 ))}
               </TableBody>
@@ -248,3 +258,5 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
     </div>
   );
 }
+
+    

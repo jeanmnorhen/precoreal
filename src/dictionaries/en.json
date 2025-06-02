@@ -1,3 +1,4 @@
+
 {
   "appTitle": "RealPrice Finder",
   "appDescription": "Find the best local prices for products and services.",
@@ -401,3 +402,5 @@
     "fillAddressFirstMessage": "Please enter an address first to use the map helper."
   }
 }
+
+    
