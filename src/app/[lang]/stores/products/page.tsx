@@ -1,10 +1,9 @@
-
 'use client';
 
 import ProductListingForm from '@/components/product-listing-form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Info, LogIn, PackagePlus, ShoppingBag, UserPlus, Edit } from 'lucide-react'; // Added Edit icon
+import { Info, LogIn, PackagePlus, ShoppingBag, UserPlus, Edit, List, AlertTriangle } from 'lucide-react';
 import type { Locale } from '@/i18n-config';
 import { getDictionary, type Dictionary } from '@/lib/get-dictionary';
 import { useAuth } from '@/components/providers/auth-provider';
@@ -14,9 +13,10 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { db } from '@/lib/firebase';
 import { ref, query, orderByChild, equalTo, get } from 'firebase/database';
-import type { Store } from '@/types';
+import type { Store, ListedProduct } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { format } from 'date-fns';
 
 const fetchUserStore = async (userId: string | undefined): Promise<Store | null> => {
   if (!userId) return null;
@@ -26,7 +26,6 @@ const fetchUserStore = async (userId: string | undefined): Promise<Store | null>
   const snapshot = await get(userStoreQuery);
   if (snapshot.exists()) {
     const storesData = snapshot.val();
-    // Assuming one store per user for now, take the first one
     const storeId = Object.keys(storesData)[0];
     if (storeId) {
         const store = storesData[storeId] as Omit<Store, 'id'>;
@@ -34,6 +33,25 @@ const fetchUserStore = async (userId: string | undefined): Promise<Store | null>
     }
   }
   return null;
+};
+
+const fetchStoreAdvertisements = async (storeId: string | undefined): Promise<ListedProduct[]> => {
+  if (!storeId) return [];
+  const adsRef = ref(db, 'advertisements');
+  const storeAdsQuery = query(adsRef, orderByChild('storeId'), equalTo(storeId));
+  
+  const snapshot = await get(storeAdsQuery);
+  let advertisements: ListedProduct[] = [];
+  if (snapshot.exists()) {
+    const adsData = snapshot.val();
+    advertisements = Object.entries(adsData)
+      .map(([id, ad]) => ({
+        id,
+        ...(ad as Omit<ListedProduct, 'id'>),
+      }))
+      .filter(ad => !ad.archived); // Filter out archived ads
+  }
+  return advertisements.sort((a, b) => b.createdAt - a.createdAt); // Sort by newest first
 };
 
 
@@ -45,7 +63,13 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
   const { data: userStore, isLoading: isLoadingUserStore, error: userStoreError } = useQuery<Store | null>({
     queryKey: ['userStore', user?.uid],
     queryFn: () => fetchUserStore(user?.uid),
-    enabled: !!user && !authLoading, // Only run query if user is loaded and available
+    enabled: !!user && !authLoading,
+  });
+
+  const { data: storeAdvertisements, isLoading: isLoadingAdvertisements, error: advertisementsError } = useQuery<ListedProduct[]>({
+    queryKey: ['storeAdvertisements', userStore?.id],
+    queryFn: () => fetchStoreAdvertisements(userStore?.id),
+    enabled: !!userStore,
   });
 
   useEffect(() => {
@@ -144,7 +168,7 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
                   {dictionary.productListingForm.formTitle}
               </CardTitle>
               <CardDescription>
-                  {dictionary.productListingForm.formDescription.replace('{storeId}', userStore.name || userStore.id.substring(0,8))}
+                  {dictionary.productListingForm.formDescription.replace('{storeName}', userStore.name || userStore.id.substring(0,8))}
               </CardDescription>
             </div>
             <Button asChild variant="outline">
@@ -160,26 +184,67 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
         </CardContent>
       </Card>
       
-      {/* Placeholder for listing existing products for the store - Future Feature */}
-      {/* 
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center text-xl font-headline">
-            <ShoppingBag className="mr-2 h-6 w-6 text-primary" />
-            {dictionary.productListingPage.manageProductsTitle || "Manage Your Advertised Products"}
+            <List className="mr-2 h-6 w-6 text-primary" />
+            {dictionary.productListingPage.currentAdvertisementsTitle || "Your Current Advertisements"}
           </CardTitle>
           <CardDescription>
-            {dictionary.productListingPage.manageProductsDescription || "View, edit, or remove your current product advertisements."}
+            {dictionary.productListingPage.currentAdvertisementsDescription || "View your products currently advertised on RealPrice Finder."}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-center py-4">
-            {dictionary.productListingPage.featureComingSoon || "Listing existing products for management is coming soon!"}
-          </p>
+          {isLoadingAdvertisements && (
+            <div className="flex items-center justify-center py-8">
+              <LoadingSpinner size={32} />
+              <p className="ml-2">{dictionary.productListingPage.loadingProductsText || "Loading your products..."}</p>
+            </div>
+          )}
+          {advertisementsError && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>{dictionary.productListingPage.errorLoadingProductsTitle || "Error Loading Products"}</AlertTitle>
+              <AlertDescription>{dictionary.productListingPage.errorLoadingProductsMessage || "Could not fetch your advertised products."} {(advertisementsError as Error).message}</AlertDescription>
+            </Alert>
+          )}
+          {!isLoadingAdvertisements && !advertisementsError && storeAdvertisements && storeAdvertisements.length > 0 && (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{dictionary.productListingPage.productNameColumn || "Product Name"}</TableHead>
+                  <TableHead>{dictionary.productListingPage.priceColumn || "Price"}</TableHead>
+                  <TableHead>{dictionary.productListingPage.categoryColumn || "Category"}</TableHead>
+                  <TableHead>{dictionary.productListingPage.validUntilColumn || "Valid Until"}</TableHead>
+                  {/* <TableHead>{dictionary.productListingPage.actionsColumn || "Actions"}</TableHead> */}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {storeAdvertisements.map((ad) => (
+                  <TableRow key={ad.id}>
+                    <TableCell className="font-medium">{ad.name}</TableCell>
+                    <TableCell>R${ad.price.toFixed(2)}</TableCell>
+                    <TableCell>{dictionary.productCategoryNames[ad.category as keyof typeof dictionary.productCategoryNames] || ad.category}</TableCell>
+                    <TableCell>{format(new Date(ad.validUntil), 'dd/MM/yyyy')}</TableCell>
+                    {/* 
+                    <TableCell>
+                      <Button variant="outline" size="sm">
+                        {dictionary.productListingPage.editProductButton || "Edit"}
+                      </Button>
+                    </TableCell>
+                    */}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+          {!isLoadingAdvertisements && !advertisementsError && (!storeAdvertisements || storeAdvertisements.length === 0) && (
+            <p className="text-muted-foreground text-center py-8">
+              {dictionary.productListingPage.noProductsAdvertised || "You have not advertised any products yet."}
+            </p>
+          )}
         </CardContent>
       </Card>
-      */}
     </div>
   );
 }
-

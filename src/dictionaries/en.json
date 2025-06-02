@@ -1,4 +1,3 @@
-
 {
   "appTitle": "RealPrice Finder",
   "appDescription": "Find the best local prices for products and services.",
@@ -62,7 +61,11 @@
     "home-kitchen": "Home & Kitchen",
     "books": "Books",
     "groceries": "Groceries",
-    "other": "Other"
+    "other": "Other",
+    "Restaurant": "Restaurant",
+    "Retail": "Retail",
+    "Services": "Services",
+    "Other": "Other"
   },
   "localeSwitcher": {
     "label": "Change language:",
@@ -237,13 +240,22 @@
     "noStoreFoundMessage": "It looks like you haven't registered a store yet. Please register your store to list products.",
     "registerStoreButton": "Register My Store",
     "editStoreButton": "Edit Store Details",
-    "manageProductsTitle": "Manage Your Advertised Products",
-    "manageProductsDescription": "View, edit, or remove your current product advertisements.",
-    "featureComingSoon": "Listing existing products for management is coming soon!"
+    "currentAdvertisementsTitle": "Your Current Advertisements",
+    "currentAdvertisementsDescription": "View your products currently advertised on RealPrice Finder.",
+    "productNameColumn": "Product Name",
+    "priceColumn": "Price",
+    "categoryColumn": "Category",
+    "validUntilColumn": "Valid Until",
+    "actionsColumn": "Actions",
+    "editProductButton": "Edit",
+    "noProductsAdvertised": "You have not advertised any products yet.",
+    "loadingProductsText": "Loading your products...",
+    "errorLoadingProductsTitle": "Error Loading Products",
+    "errorLoadingProductsMessage": "Could not fetch your advertised products. Please try again."
   },
   "productListingForm": {
     "formTitle": "Advertise New Product",
-    "formDescription": "Add products to your store's ({storeName}) advertisements on RealPrice Finder.",
+    "formDescription": "Add products to your store ({storeName}) advertisements on RealPrice Finder.",
     "productNameLabel": "Product Name",
     "productNamePlaceholder": "e.g., Handcrafted Leather Wallet",
     "productNameMinLengthError": "Product name must be at least {length} characters.",
@@ -389,4 +401,3 @@
     "fillAddressFirstMessage": "Please enter an address first to use the map helper."
   }
 }
-
