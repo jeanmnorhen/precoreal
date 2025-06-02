@@ -166,7 +166,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Paleta de cores atualizada para Laranja Vibrante (Primária), Verde Calmante (Secundária) e Cinza Escuro (Acento), conforme PRD. (Concluído)
 - Implementar perfis de usuário consumidor (UC11): Criada página de perfil e formulário para salvar localização preferida. Localização preferida integrada na `HomePage`. Links de navegação para `/profile` adicionados. (Concluído)
 - Implementar fluxo para lojista editar informações da sua loja (UC3). (Concluído - Formulário adaptado, página de edição criada e funcional, navegação para a página de edição adicionada à página de listagem de produtos.)
-- Implementar exibição dos produtos já anunciados pelo lojista na página `stores/products/page.tsx`. (Em progresso - Lista de produtos exibida.)
+- Implementar exibição dos produtos já anunciados pelo lojista na página `stores/products/page.tsx`. (Em progresso - Lista de produtos exibida. Adicionado botão para editar detalhes da loja.)
 
 4. Estado Atual
 - Estrutura básica do Next.js com internacionalização (i18n) configurada (incluindo ru, zh-CN, es-CL, es-MX como placeholders). Nomes das categorias no filtro internacionalizados.
@@ -176,7 +176,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca. Se o produto não estiver no catálogo canônico, uma sugestão é registrada.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude` (com dicas de UX melhoradas e botão para auxiliar na busca de coordenadas). Produtos são listados sob o `storeId` da loja do usuário.
 - `StoreRegistrationForm` adaptado para modo de edição. Página `/stores/edit` criada para permitir que lojistas editem os dados da sua loja. Navegação para `/stores/edit` adicionada na página `stores/products/page.tsx`. (Concluído)
-- Na página `stores/products/page.tsx`, os produtos já anunciados pelo lojista (não arquivados) são agora exibidos em uma tabela abaixo do formulário de adição de novos produtos. (Em progresso)
+- Na página `stores/products/page.tsx`, os produtos já anunciados pelo lojista (não arquivados) são agora exibidos em uma tabela abaixo do formulário de adição de novos produtos. O botão "Edit Store Details" foi adicionado e direciona para a página de edição da loja.
 - `QueryClientProvider` e `AuthProvider` configurados. Tipo do AuthProvider refinado.
 - Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
 - Sistema de histórico de preços (UC5) implementado: anúncios expirados são arquivados e movidos para `/priceHistory` e marcados como `archived: true` em `/advertisements`.
@@ -205,7 +205,3 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 Sempre que receber um prompt que contenha apenas ponto final “.” Revise o arquivo memo.md.
 
 Sempre que receber um prompt que contenha apenas dois pontos finais “..” continue implementando.
-
-    
-
-```
