@@ -202,16 +202,10 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 
 6. Rotinas de manutenção 
 
-Sempre que receber um prompt que contenha ponto final “.” Revise o arquivo memo.md.
+Sempre que receber um prompt que contenha apenas ponto final “.” Revise o arquivo memo.md.
 
-Sempre que receber um prompt que contenha dois pontos finais “..” Revise o arquivo memo.md. e continue implementando.
+Sempre que receber um prompt que contenha apenas dois pontos finais “..” continue implementando.
 
-7. Definição de Cores Atual (Conforme PRD e implementado em `src/app/globals.css`)
-- Background: `#FFFFFF` (White)
-- Foreground: `#333333` (Dark Gray - HSL 0 0% 20%)
-- Primary Color: `#FFA500` (Vibrant Orange - HSL 39 100% 50%)
-- Secondary Color: `#32CD32` (Calming Green - HSL 120 61% 50%)
-- Accent Color: `#4A4A4A` (Dark Gray - HSL 0 0% 29%)
-    
+
 
 ```
