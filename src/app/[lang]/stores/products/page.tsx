@@ -4,7 +4,7 @@
 import ProductListingForm from '@/components/product-listing-form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Info, LogIn, PackagePlus, ShoppingBag, UserPlus } from 'lucide-react';
+import { Info, LogIn, PackagePlus, ShoppingBag, UserPlus, Edit } from 'lucide-react'; // Added Edit icon
 import type { Locale } from '@/i18n-config';
 import { getDictionary, type Dictionary } from '@/lib/get-dictionary';
 import { useAuth } from '@/components/providers/auth-provider';
@@ -15,6 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { db } from '@/lib/firebase';
 import { ref, query, orderByChild, equalTo, get } from 'firebase/database';
 import type { Store } from '@/types';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 
 const fetchUserStore = async (userId: string | undefined): Promise<Store | null> => {
@@ -133,8 +134,52 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
   }
   
   return (
-    <div className="animate-fadeIn">
-      <ProductListingForm storeId={userStore.id} dictionary={dictionary.productListingForm} lang={lang} />
+    <div className="animate-fadeIn space-y-8 py-8">
+      <Card className="shadow-lg">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <CardTitle className="flex items-center text-2xl font-headline">
+                  <PackagePlus className="mr-2 h-7 w-7 text-primary" />
+                  {dictionary.productListingForm.formTitle}
+              </CardTitle>
+              <CardDescription>
+                  {dictionary.productListingForm.formDescription.replace('{storeId}', userStore.name || userStore.id.substring(0,8))}
+              </CardDescription>
+            </div>
+            <Button asChild variant="outline">
+              <Link href={`/${lang}/stores/edit`}>
+                <Edit className="mr-2 h-4 w-4" />
+                {dictionary.productListingPage.editStoreButton || "Edit Store Details"}
+              </Link>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ProductListingForm storeId={userStore.id} dictionary={dictionary.productListingForm} lang={lang} />
+        </CardContent>
+      </Card>
+      
+      {/* Placeholder for listing existing products for the store - Future Feature */}
+      {/* 
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center text-xl font-headline">
+            <ShoppingBag className="mr-2 h-6 w-6 text-primary" />
+            {dictionary.productListingPage.manageProductsTitle || "Manage Your Advertised Products"}
+          </CardTitle>
+          <CardDescription>
+            {dictionary.productListingPage.manageProductsDescription || "View, edit, or remove your current product advertisements."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground text-center py-4">
+            {dictionary.productListingPage.featureComingSoon || "Listing existing products for management is coming soon!"}
+          </p>
+        </CardContent>
+      </Card>
+      */}
     </div>
   );
 }
+

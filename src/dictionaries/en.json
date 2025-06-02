@@ -235,11 +235,15 @@
     "errorFetchingStoreMessage": "Could not load your store data. Please try again. Error: ",
     "noStoreFoundTitle": "No Store Found",
     "noStoreFoundMessage": "It looks like you haven't registered a store yet. Please register your store to list products.",
-    "registerStoreButton": "Register My Store"
+    "registerStoreButton": "Register My Store",
+    "editStoreButton": "Edit Store Details",
+    "manageProductsTitle": "Manage Your Advertised Products",
+    "manageProductsDescription": "View, edit, or remove your current product advertisements.",
+    "featureComingSoon": "Listing existing products for management is coming soon!"
   },
   "productListingForm": {
     "formTitle": "Advertise New Product",
-    "formDescription": "Add products to your store's (ID: {storeId}) advertisements on RealPrice Finder.",
+    "formDescription": "Add products to your store's ({storeName}) advertisements on RealPrice Finder.",
     "productNameLabel": "Product Name",
     "productNamePlaceholder": "e.g., Handcrafted Leather Wallet",
     "productNameMinLengthError": "Product name must be at least {length} characters.",
@@ -385,3 +389,4 @@
     "fillAddressFirstMessage": "Please enter an address first to use the map helper."
   }
 }
+
