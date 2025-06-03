@@ -251,6 +251,7 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Implementar UC14 (Superagente de Análise via Chat).
 
 
+<<<<<<< HEAD
 6. Rotinas de manutenção
 
 
@@ -265,4 +266,11 @@ Sempre que receber um prompt que contenha apenas dois pontos finais “..” con
 
    
 
+=======
+Sempre que receber um prompt que contenha apenas ponto final “.” Revise o arquivo memo.md.
+
+Sempre que receber um prompt que contenha apenas dois pontos finais “..” continue implementando.
+
+
+>>>>>>> 02b00718252109d9a584d2f0e13ee5075fa3bc14
 
