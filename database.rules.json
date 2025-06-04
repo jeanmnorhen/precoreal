@@ -3,9 +3,6 @@
   "rules": {
     "Admins": {
       "$uid": {
-        // Qualquer administrador existente pode adicionar outro.
-        // O primeiro administrador precisa ser adicionado manualmente pelo console do Firebase.
-        // Ex: /Admins/SEU_ADMIN_UID_REAL: true
         ".write": "(auth != null && root.child('Admins').child(auth.uid).exists()) || (!data.parent().exists() && newData.val() === true)",
         ".read": "auth != null && root.child('Admins').child(auth.uid).exists()"
       }
@@ -13,14 +10,11 @@
     "canonicalProducts": {
       ".indexOn": ["normalizedName"],
       ".read": "true",
-      // Apenas administradores podem escrever/editar/excluir produtos canônicos
       ".write": "auth != null && root.child('Admins').child(auth.uid).exists()"
     },
     "advertisements": {
       ".read": "true",
       "$adId": {
-        // Lojistas podem escrever/editar/excluir seus próprios anúncios.
-        // Administradores também podem.
         ".write": "auth != null && ( (newData.exists() && root.child('stores').child(newData.child('storeId').val()).child('ownerId').val() === auth.uid) || (!newData.exists() && data.exists() && root.child('stores').child(data.child('storeId').val()).child('ownerId').val() === auth.uid) || root.child('Admins').child(auth.uid).exists() )",
         ".validate": "newData.hasChildren(['storeId', 'name', 'price', 'category', 'createdAt', 'validUntil']) && newData.child('name').isString() && newData.child('price').isNumber() && newData.child('category').isString() && newData.child('createdAt').isNumber() && newData.child('validUntil').isNumber() && newData.child('storeId').isString()"
       }
@@ -28,18 +22,13 @@
     "stores": {
       ".read": "true",
       "$storeId": {
-        // Um usuário autenticado pode criar uma loja se definir ownerId como seu próprio auth.uid.
-        // Apenas o ownerId original ou um admin pode atualizar.
         ".write": "auth != null && ( ((!data.exists() && newData.child('ownerId').val() === auth.uid) || (data.exists() && data.child('ownerId').val() === auth.uid)) || root.child('Admins').child(auth.uid).exists() )",
         ".validate": "newData.hasChildren(['ownerId', 'name', 'address', 'city', 'state', 'zipCode', 'email', 'phone', 'category']) && newData.child('ownerId').isString() && newData.child('name').isString() && newData.child('address').isString() && newData.child('city').isString() && newData.child('state').isString() && newData.child('zipCode').isString() && newData.child('email').isString() && newData.child('phone').isString() && newData.child('category').isString()"
       }
     },
     "suggestedNewProducts": {
-      // Apenas administradores podem ler a lista completa de sugestões
       ".read": "auth != null && root.child('Admins').child(auth.uid).exists()",
       "$suggestionId": {
-        // Qualquer usuário autenticado pode criar uma nova sugestão (que deve ter status 'pending')
-        // Apenas administradores podem modificar sugestões existentes (ex: mudar status)
         ".write": "auth != null && ((!data.exists() && newData.child('status').val() === 'pending') || (data.exists() && root.child('Admins').child(auth.uid).exists()))",
         ".validate": "newData.hasChildren(['productName', 'source', 'timestamp', 'status']) && newData.child('productName').isString() && newData.child('source').isString() && newData.child('timestamp').isNumber() && newData.child('status').isString()"
       }
@@ -52,8 +41,7 @@
       }
     },
     "priceHistory": {
-      ".read": "true", // Leitura pública para o histórico de preços
-      // Apenas administradores podem escrever no histórico (assumindo que é um processo de arquivamento)
+      ".read": "true",
       ".write": "auth != null && root.child('Admins').child(auth.uid).exists()",
       ".validate": "newData.hasChildren(['advertisementId', 'productName', 'price', 'storeId', 'storeName', 'archivedAt', 'originalValidUntil', 'category'])"
     }
