@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, use } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { db } from '@/lib/firebase';
 import { ref, get, update, push, set, serverTimestamp, remove } from 'firebase/database';
@@ -84,8 +84,14 @@ const normalizeProductName = (name: string): string => {
   return name.trim().toLowerCase();
 };
 
+interface AdminCatalogManagementPageProps {
+  params: Promise<{ lang: Locale }>; // The 'params' prop is a Promise
+}
 
-export default function AdminCatalogManagementPage({ params: { lang } }: { params: { lang: Locale } }) {
+export default function AdminCatalogManagementPage({ params: paramsPromise }: AdminCatalogManagementPageProps) {
+  const actualParams = use(paramsPromise); // Unwrap the promise to get the params object
+  const lang = actualParams.lang; // Access lang from the unwrapped object
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [dictionary, setDictionary] = useState<Dictionary | null>(null);
@@ -101,11 +107,13 @@ export default function AdminCatalogManagementPage({ params: { lang } }: { param
 
 
   useEffect(() => {
-    const fetchDict = async () => {
-      const d = await getDictionary(lang);
-      setDictionary(d);
-    };
-    fetchDict();
+    if (lang) { // Ensure lang is available after promise resolution
+      const fetchDict = async () => {
+        const d = await getDictionary(lang);
+        setDictionary(d);
+      };
+      fetchDict();
+    }
   }, [lang]);
 
   const canonicalProductFormSchema = useMemo(() => {
