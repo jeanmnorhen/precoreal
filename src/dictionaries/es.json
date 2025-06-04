@@ -1,4 +1,3 @@
-
 {
   "appTitle": "Precio Real",
   "appDescription": "Encuentra los mejores precios locales para productos y servicios.",
@@ -8,13 +7,15 @@
     "forStores": "Para Tiendas",
     "appName": "Precio Real",
     "monitoring": "Monitoreo",
-    "adminCatalog": "Catálogo Admin"
+    "adminCatalog": "Catálogo Admin",
+    "profileLink": "Mi Perfil"
   },
   "bottomNavbar": {
     "offers": "Ofertas",
     "analyze": "Analizar",
     "stores": "Tiendas",
-    "monitoring": "Monitor"
+    "monitoring": "Monitor",
+    "profile": "Perfil"
   },
   "homePage": {
     "searchPlaceholder": "Buscar productos, tiendas o categorías...",
@@ -46,7 +47,13 @@
     "productInCatalogButNoOffers": "No hay ofertas actuales para \"{searchTerm}\", ¡pero está en nuestro catálogo! Mantente atento a futuras publicaciones.",
     "suggestionLoggedToastTitle": "¡Gracias por la Sugerencia!",
     "suggestionLoggedToastDesc": "\"{productName}\" será revisado para nuestro catálogo. ¡Esto nos ayuda a crecer!",
-    "suggestionErrorToastTitle": "Error en la Sugerencia"
+    "suggestionErrorToastTitle": "Error en la Sugerencia",
+    "offerDetailsDialog": {
+      "descriptionLabel": "Descripción",
+      "storeLabel": "Tienda",
+      "distanceLabel": "Distancia",
+      "closeButton": "Cerrar"
+    }
   },
   "productCategoryNames": {
     "electronics": "Electrónicos",
@@ -54,7 +61,11 @@
     "home-kitchen": "Hogar y Cocina",
     "books": "Libros",
     "groceries": "Alimentos",
-    "other": "Otros"
+    "other": "Otros",
+    "Restaurant": "Restaurante",
+    "Retail": "Minorista",
+    "Services": "Servicios",
+    "Other": "Otro"
   },
   "localeSwitcher": {
     "label": "Cambiar idioma:",
@@ -157,6 +168,8 @@
   "storeRegistrationForm": {
     "formTitle": "Registra Tu Tienda",
     "formDescription": "Únete a Precio Real para listar tus productos y llegar a más clientes.",
+    "editFormTitle": "Editar Detalles de la Tienda",
+    "editFormDescription": "Actualiza la información de tu tienda.",
     "storeNameLabel": "Nombre de la Tienda",
     "storeNamePlaceholder": "Ej: El Café de la Esquina",
     "storeNameMinLengthError": "El nombre de la tienda debe tener al menos {length} caracteres.",
@@ -185,6 +198,9 @@
     "latitudeInvalidError": "La latitud debe estar entre -90 y 90.",
     "longitudeInvalidError": "La longitud debe estar entre -180 y 180.",
     "coordinatesHint": "Opcional. Ayuda a los usuarios a encontrar tu tienda. Puedes usar Google Maps para encontrar la latitud y longitud de tu dirección.",
+    "findOnMapButton": "Ayudar a encontrar coordenadas",
+    "fillAddressFirstTitle": "Dirección Necesaria",
+    "fillAddressFirstMessage": "Por favor, rellena los campos de dirección, ciudad y estado primero para usar esta función.",
     "categoryLabel": "Categoría de la Tienda",
     "categoryPlaceholder": "Selecciona una categoría para tu tienda",
     "categoryRequiredError": "Por favor, selecciona una categoría para la tienda.",
@@ -199,11 +215,22 @@
     "descriptionHint": "Una breve descripción de tu tienda y lo que ofreces.",
     "submitButton": "Registrar Tienda",
     "submittingButton": "Registrando...",
+    "saveChangesButton": "Guardar Cambios",
+    "savingChangesButton": "Guardando...",
     "registrationSuccessTitle": "¡Registro Enviado!",
     "registrationSuccessMessage": "Gracias, {storeName}, por registrarte. Los datos de tu tienda han sido guardados.",
     "registrationErrorTitle": "Fallo en el Registro",
+    "editSuccessTitle": "¡Tienda Actualizada!",
+    "editSuccessMessage": "Los detalles de la tienda {storeName} han sido actualizados correctamente.",
+    "editErrorTitle": "Error al Actualizar",
     "genericError": "Ocurrió un error. Por favor, inténtalo de nuevo.",
-    "formLoadingText": "Cargando formulario..."
+    "formLoadingText": "Cargando formulario...",
+    "loadingEditText": "Cargando detalles de la tienda...",
+    "errorFetchingStoreTitle": "Error al Obtener Tienda",
+    "errorFetchingStoreMessage": "No se pudieron cargar los datos de tu tienda.",
+    "noStoreFoundTitle": "No se Encontró Tienda",
+    "noStoreFoundMessage": "Parece que no tienes una tienda registrada. Por favor, registra una para editarla.",
+    "registerStoreButtonText": "Registrar una Tienda"
   },
   "productListingPage": {
     "loadingProductPageText": "Cargando...",
@@ -211,11 +238,26 @@
     "errorFetchingStoreMessage": "No se pudieron cargar los datos de tu tienda. Inténtalo de nuevo. Error: ",
     "noStoreFoundTitle": "No se Encontró Ninguna Tienda",
     "noStoreFoundMessage": "Parece que aún no has registrado una tienda. Por favor, registra tu tienda para poder listar productos.",
-    "registerStoreButton": "Registrar Mi Tienda"
+    "registerStoreButton": "Registrar Mi Tienda",
+    "editStoreButton": "Editar Detalles de Tienda",
+    "currentAdvertisementsTitle": "Tus Anuncios Actuales",
+    "currentAdvertisementsDescription": "Ve tus productos actualmente anunciados en Precio Real.",
+    "productNameColumn": "Nombre del Producto",
+    "priceColumn": "Precio",
+    "categoryColumn": "Categoría",
+    "validUntilColumn": "Válido Hasta",
+    "actionsColumn": "Acciones",
+    "editProductButton": "Editar",
+    "noProductsAdvertised": "Aún no has anunciado ningún producto.",
+    "loadingProductsText": "Cargando tus productos...",
+    "errorLoadingProductsTitle": "Error al Cargar Productos",
+    "errorLoadingProductsMessage": "No se pudieron obtener tus productos anunciados."
   },
   "productListingForm": {
     "formTitle": "Anunciar Nuevo Producto",
-    "formDescription": "Añade productos a los anuncios de tu tienda (ID: {storeId}) en Precio Real.",
+    "formDescription": "Añade productos a los anuncios de tu tienda ({storeName}) en Precio Real.",
+    "editFormTitle": "Editar Producto: {productName}",
+    "editFormDescription": "Actualiza los detalles de tu producto: {productName}.",
     "productNameLabel": "Nombre del Producto",
     "productNamePlaceholder": "Ej: Cartera de Cuero Artesanal",
     "productNameMinLengthError": "El nombre del producto debe tener al menos {length} caracteres.",
@@ -247,10 +289,15 @@
     "days": "días",
     "submitButton": "Anunciar Producto",
     "submittingButton": "Anunciando...",
+    "saveChangesButton": "Guardar Cambios",
+    "savingChangesButton": "Guardando Cambios...",
     "productAdvertisedTitle": "¡Producto Anunciado!",
     "productAdvertisedMessage": "{productName} ha sido anunciado con éxito.",
     "advertisingFailedTitle": "Error al Anunciar",
     "advertisingFailedMessage": "Hubo un error al publicar tu anuncio. Por favor, inténtalo de nuevo.",
+    "productEditedTitle": "¡Producto Actualizado!",
+    "productEditedMessage": "{productName} ha sido actualizado correctamente.",
+    "editFailedTitle": "Error al Actualizar",
     "formLoadingText": "Cargando formulario..."
   },
    "monitoringPage": {
@@ -300,7 +347,7 @@
     "descriptionLabel": "Descripción",
     "descriptionPlaceholder": "Introduce la descripción del producto",
     "imageUrlFormLabel": "URL de Imagen Predeterminada (Opcional)",
-    "imageUrlLabel": "URL de Imagen",
+    "imageUrlLabel": "Image URL",
     "cancelButton": "Cancelar",
     "saveCanonicalButton": "Guardar en Catálogo",
     "saveChangesButton": "Guardar Cambios",
@@ -309,9 +356,9 @@
     "productNameMinLengthError": "El nombre del producto debe tener al menos {length} caracteres.",
     "categoryRequiredError": "La categoría es obligatoria.",
     "imageUrlInvalidError": "Por favor, introduce una URL válida.",
-    "toastCanonicalCreatedTitle": "Producto Canónico Creado",
+    "toastCanonicalCreatedTitle": "Canonical Product Created",
     "toastCanonicalCreatedDesc": "\"{productName}\" ha sido agregado exitosamente al catálogo canónico.",
-    "toastCanonicalUpdatedTitle": "Producto Canónico Actualizado",
+    "toastCanonicalUpdatedTitle": "Canonical Product Updated",
     "toastCanonicalUpdatedDesc": "\"{productName}\" ha sido actualizado exitosamente.",
     "reviewedSuggestionsTitle": "Sugerencias Revisadas",
     "reviewedSuggestionsDescription": "Historial de sugerencias que han sido procesadas o rechazadas.",
@@ -327,7 +374,37 @@
     "confirmDeleteButton": "Confirmar Eliminación",
     "toastCanonicalDeletedTitle": "Producto Eliminado",
     "toastCanonicalDeletedDesc": "El producto '{productName}' ha sido eliminado exitosamente del catálogo."
+  },
+  "profilePage": {
+    "loadingText": "Cargando perfil...",
+    "title": "Mi Perfil",
+    "description": "Gestiona la configuración y preferencias de tu cuenta.",
+    "mustBeLoggedInTitle": "Acceso Restringido",
+    "mustBeLoggedInMessage": "Debes iniciar sesión para ver tu perfil. Por favor, inicia sesión o regístrate."
+  },
+  "preferredLocationForm": {
+    "formTitle": "Ubicación Preferida",
+    "formDescription": "Establece una ubicación predeterminada para ver ofertas relevantes sin usar el GPS cada vez.",
+    "addressLabel": "Dirección Completa",
+    "addressPlaceholder": "Ej: Calle Falsa 123, Springfield",
+    "addressHint": "Introduce tu dirección preferida para la búsqueda de ofertas.",
+    "addressMinLengthError": "La dirección debe tener al menos {length} caracteres.",
+    "findOnMapButton": "Ayudar a encontrar coordenadas",
+    "coordinatesHint": "Opcional. Introduce latitud y longitud si las conoces, o usa el botón de arriba después de rellenar la dirección.",
+    "latitudeLabel": "Latitud",
+    "latitudePlaceholder": "Ej: 34.0522",
+    "longitudeLabel": "Longitud",
+    "longitudePlaceholder": "Ej: -118.2437",
+    "latitudeInvalidError": "La latitud debe estar entre -90 y 90.",
+    "longitudeInvalidError": "La longitud debe estar entre -180 y 180.",
+    "saveButton": "Guardar Ubicación Preferida",
+    "savingButton": "Guardando...",
+    "saveSuccessTitle": "Ubicación Guardada",
+    "saveSuccessMessage": "Tu ubicación preferida ha sido actualizada.",
+    "saveErrorTitle": "Error al Guardar Ubicación",
+    "genericError": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+    "loadingLocationText": "Cargando tu ubicación guardada...",
+    "fillAddressFirstTitle": "Dirección Requerida",
+    "fillAddressFirstMessage": "Por favor, introduce una dirección primero para usar el ayudante de mapa."
   }
 }
-
-    

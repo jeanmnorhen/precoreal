@@ -1,4 +1,3 @@
-
 {
   "appTitle": "RealPrice Finder",
   "appDescription": "Find the best local prices for products and services.",
@@ -257,6 +256,8 @@
   "productListingForm": {
     "formTitle": "Advertise New Product",
     "formDescription": "Add products to your store ({storeName}) advertisements on RealPrice Finder.",
+    "editFormTitle": "Edit Product: {productName}",
+    "editFormDescription": "Update the details for your product: {productName}.",
     "productNameLabel": "Product Name",
     "productNamePlaceholder": "e.g., Handcrafted Leather Wallet",
     "productNameMinLengthError": "Product name must be at least {length} characters.",
@@ -288,10 +289,15 @@
     "days": "days",
     "submitButton": "Advertise Product",
     "submittingButton": "Advertising...",
+    "saveChangesButton": "Save Changes",
+    "savingChangesButton": "Saving Changes...",
     "productAdvertisedTitle": "Product Advertised!",
     "productAdvertisedMessage": "{productName} has been successfully advertised.",
     "advertisingFailedTitle": "Advertising Failed",
     "advertisingFailedMessage": "There was an error posting your advertisement. Please try again.",
+    "productEditedTitle": "Product Updated!",
+    "productEditedMessage": "{productName} has been successfully updated.",
+    "editFailedTitle": "Update Failed",
     "formLoadingText": "Form loading..."
   },
   "monitoringPage": {
@@ -402,5 +408,3 @@
     "fillAddressFirstMessage": "Please enter an address first to use the map helper."
   }
 }
-
-    

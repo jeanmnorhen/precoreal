@@ -215,7 +215,8 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Implementar catálogo de produtos canônicos e a funcionalidade de registro proativo. (Concluído - Tipos definidos. Lógica de verificação e sugestão implementada na Análise de Imagem e Busca da HomePage. Interface de admin para gerenciar sugestões, criar/editar/excluir e adicionar manualmente produtos canônicos a partir de sugestões ou manualmente implementada.)
 - Implementar perfis de usuário consumidor (UC11): Criada página de perfil e formulário para salvar localização preferida. Localização preferida integrada na `HomePage`. Links de navegação para `/profile` adicionados. (Concluído)
 - Implementar fluxo para lojista editar informações da sua loja (UC3). (Concluído - Formulário adaptado, página de edição criada e funcional, navegação para a página de edição adicionada à página de listagem de produtos.)
-- Implementar exibição dos produtos já anunciados pelo lojista na página `stores/products/page.tsx`. (Concluído - Lista de produtos exibida. Adicionado botão para editar detalhes da loja. Adicionado botão "Editar" para cada produto na lista - lógica de edição do produto pendente.)
+- Implementar exibição dos produtos já anunciados pelo lojista na página `stores/products/page.tsx`. (Concluído - Lista de produtos exibida. Adicionado botão para editar detalhes da loja. Adicionado botão "Editar" para cada produto na lista.)
+- **Implementar o formulário/lógica de edição para os produtos anunciados pelo lojista.** (Concluído - `ProductListingForm` adaptado para modo de edição, `EditProductDialog` criado e integrado na página de produtos do lojista. Funcionalidade de atualização no Firebase implementada. Validade do anúncio não é editável por enquanto.)
 
 
 4. Estado Atual
@@ -226,7 +227,10 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 - Página de análise de imagem (UC6) com upload de arquivo, funcionalidade de câmera (UC15) e integração com Genkit para identificação do produto. Após identificação, redireciona para o feed de ofertas com o produto como termo de busca. Se o produto não estiver no catálogo canônico, uma sugestão é registrada.
 - Formulários de cadastro de loja (UC3) e listagem de produtos (UC4) salvando no Firebase RTDB e protegidos por autenticação. Lojas são vinculadas ao `ownerId` e podem ter `latitude`/`longitude` (com dicas de UX melhoradas e botão para auxiliar na busca de coordenadas). Produtos são listados sob o `storeId` da loja do usuário.
 - `StoreRegistrationForm` adaptado para modo de edição. Página `/stores/edit` criada para permitir que lojistas editem os dados da sua loja. Navegação para `/stores/edit` adicionada na página `stores/products/page.tsx`. (Concluído)
-- Na página `stores/products/page.tsx`, os produtos já anunciados pelo lojista (não arquivados) são agora exibidos em uma tabela abaixo do formulário de adição de novos produtos. O botão "Edit Store Details" foi adicionado e direciona para a página de edição da loja. Um botão "Edit" foi adicionado a cada linha de produto na tabela (a funcionalidade de edição em si ainda será implementada).
+- Na página `stores/products/page.tsx`:
+    - Os produtos já anunciados pelo lojista (não arquivados) são exibidos em uma tabela.
+    - O botão "Edit Store Details" direciona para a página de edição da loja.
+    - O botão "Edit" para cada produto na tabela abre um diálogo (`EditProductDialog`) com o `ProductListingForm` em modo de edição, permitindo atualizar os detalhes do produto (exceto a validade). (Concluído)
 - `QueryClientProvider` e `AuthProvider` configurados. Tipo do AuthProvider refinado.
 - Autenticação de lojistas (Email/Senha) implementada com páginas de cadastro, login e funcionalidade de logout.
 - Sistema de histórico de preços (UC5) implementado: anúncios expirados são arquivados e movidos para `/priceHistory` e marcados como `archived: true` em `/advertisements`.
@@ -244,11 +248,11 @@ O sistema busca e exibe uma lista de lojas que anunciam "hot dogs", ordenadas po
 
 
 5. Planejamento para próximas versões
-- **Implementar o formulário/lógica de edição para os produtos anunciados pelo lojista.** (Botão "Edit" adicionado à lista, próximo passo é o formulário/diálogo de edição).
 - Permitir que lojistas tenham múltiplas lojas (se necessário).
 - Integrar fluxos de IA para enriquecimento e adição automática de produtos ao catálogo (implementar UC7 e UC8).
 - Implementar mais funcionalidades para perfis de usuário consumidor (além da localização salva, ex: preferências de categoria).
 - Implementar UC14 (Superagente de Análise via Chat).
+- (Opcional) Considerar se a validade do anúncio deve ser editável ou se o lojista deve criar um novo anúncio para estender a validade.
 
 
 <<<<<<< HEAD
@@ -274,3 +278,5 @@ Sempre que receber um prompt que contenha apenas dois pontos finais “..” con
 
 >>>>>>> 02b00718252109d9a584d2f0e13ee5075fa3bc14
 
+
+```

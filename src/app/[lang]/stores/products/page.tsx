@@ -1,7 +1,7 @@
-
 'use client';
 
 import ProductListingForm from '@/components/product-listing-form';
+import EditProductDialog from '@/components/product-edit-dialog'; // New import
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Info, LogIn, PackagePlus, ShoppingBag, UserPlus, Edit, List, AlertTriangle, Edit3 } from 'lucide-react';
@@ -11,7 +11,7 @@ import { useAuth } from '@/components/providers/auth-provider';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/loading-spinner';
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query'; // Added useQueryClient
 import { db } from '@/lib/firebase';
 import { ref, query, orderByChild, equalTo, get } from 'firebase/database';
 import type { Store, ListedProduct } from '@/types';
@@ -50,16 +50,20 @@ const fetchStoreAdvertisements = async (storeId: string | undefined): Promise<Li
         id,
         ...(ad as Omit<ListedProduct, 'id'>),
       }))
-      .filter(ad => !ad.archived); // Filter out archived ads
+      .filter(ad => !ad.archived); 
   }
-  return advertisements.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); // Sort by newest first
+  return advertisements.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); 
 };
 
 
 export default function StoreProductsPage({ params: { lang } }: { params: { lang: Locale } }) {
   const { user, loading: authLoading } = useAuth();
+  const queryClient = useQueryClient(); // Initialize queryClient
   const [dictionary, setDictionary] = useState<Dictionary | null>(null);
   const [isLoadingPage, setIsLoadingPage] = useState(true);
+
+  const [editingProduct, setEditingProduct] = useState<ListedProduct | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const { data: userStore, isLoading: isLoadingUserStore, error: userStoreError } = useQuery<Store | null>({
     queryKey: ['userStore', user?.uid],
@@ -88,11 +92,25 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
   }, [lang]);
 
 
-  const handleEditProduct = (productId: string) => {
-    console.log("Attempting to edit product:", productId);
-    // Here we will open a dialog or navigate to an edit page for the product
-    // For now, just a log.
+  const handleEditProductClick = (product: ListedProduct) => {
+    setEditingProduct(product);
+    setIsEditDialogOpen(true);
   };
+
+  const handleEditDialogClose = () => {
+    setIsEditDialogOpen(false);
+    setEditingProduct(null); // Clear editing product on dialog close
+  }
+
+  const handleSuccessfulEdit = () => {
+    queryClient.invalidateQueries({ queryKey: ['storeAdvertisements', userStore?.id] });
+    // Dialog will be closed by its own onFormSubmitted logic via onOpenChange
+  };
+  
+  const handleFormSubmitted = () => {
+    queryClient.invalidateQueries({ queryKey: ['storeAdvertisements', userStore?.id] });
+  }
+
 
   const totalLoading = isLoadingPage || authLoading || (!!user && isLoadingUserStore) || !dictionary;
 
@@ -187,7 +205,13 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
           </div>
         </CardHeader>
         <CardContent>
-          <ProductListingForm storeId={userStore.id} dictionary={dictionary.productListingForm} lang={lang} />
+          <ProductListingForm 
+            storeId={userStore.id} 
+            dictionary={dictionary.productListingForm} 
+            lang={lang} 
+            mode="create"
+            onFormSubmitted={handleFormSubmitted}
+          />
         </CardContent>
       </Card>
       
@@ -237,7 +261,7 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => handleEditProduct(ad.id)}
+                        onClick={() => handleEditProductClick(ad)}
                       >
                         <Edit3 className="mr-1 h-4 w-4" />
                         {dictionary.productListingPage.editProductButton || "Edit"}
@@ -255,8 +279,21 @@ export default function StoreProductsPage({ params: { lang } }: { params: { lang
           )}
         </CardContent>
       </Card>
+
+      {userStore && editingProduct && (
+        <EditProductDialog
+          isOpen={isEditDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) handleEditDialogClose(); // Ensure state is cleared if dialog is closed by other means
+            else setIsEditDialogOpen(true);
+          }}
+          productToEdit={editingProduct}
+          storeId={userStore.id}
+          dictionary={dictionary.productListingForm}
+          lang={lang}
+          onSuccessfulEdit={handleSuccessfulEdit}
+        />
+      )}
     </div>
   );
 }
-
-    
