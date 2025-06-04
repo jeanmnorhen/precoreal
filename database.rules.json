@@ -1,61 +1,38 @@
 
 {
   "rules": {
-    // Node for administrators
-    // IMPORTANTE: Para adicionar o primeiro administrador, adicione manualmente o UID dele
-    // no Firebase Console em /admins/<seu_admin_uid> com o valor true.
-    // Depois disso, apenas administradores existentes poderão adicionar outros.
-    "admins": {
+    "Admins": {
       "$uid": {
-        ".write": "(auth != null && root.child('admins').child(auth.uid).exists()) || (!data.parent().exists() && newData.val() === true)",
-        ".read": "auth != null && root.child('admins').child(auth.uid).exists()"
+        ".write": "(auth != null && root.child('Admins').child(auth.uid).exists()) || (!data.parent().exists() && newData.val() === true)",
+        ".read": "auth != null && root.child('Admins').child(auth.uid).exists()"
       }
     },
-
     "canonicalProducts": {
       ".indexOn": ["normalizedName"],
       ".read": "true",
-      // Only admins can write to canonicalProducts
-      ".write": "auth != null && root.child('admins').child(auth.uid).exists()"
+      ".write": "auth != null && root.child('Admins').child(auth.uid).exists()"
     },
-
     "advertisements": {
       ".read": "true",
       "$adId": {
-        // Write (create/update/delete) rules for advertisements:
-        // 1. User must be authenticated.
-        // 2. For create/update (newData.exists()): The 'storeId' in the new ad data must point to a store whose 'ownerId' is the current user.
-        // 3. For delete (!newData.exists() && data.exists()): The 'storeId' in the existing ad data must point to a store whose 'ownerId' is the current user.
-        // 4. Admins can override these conditions.
-        ".write": "auth != null && ( (newData.exists() && root.child('stores').child(newData.child('storeId').val()).child('ownerId').val() === auth.uid) || (!newData.exists() && data.exists() && root.child('stores').child(data.child('storeId').val()).child('ownerId').val() === auth.uid) || root.child('admins').child(auth.uid).exists() )",
-        // Validate required fields for new/updated ads
+        ".write": "auth != null && ( (newData.exists() && root.child('stores').child(newData.child('storeId').val()).child('ownerId').val() === auth.uid) || (!newData.exists() && data.exists() && root.child('stores').child(data.child('storeId').val()).child('ownerId').val() === auth.uid) || root.child('Admins').child(auth.uid).exists() )",
         ".validate": "newData.hasChildren(['storeId', 'name', 'price', 'category', 'createdAt', 'validUntil']) && newData.child('name').isString() && newData.child('price').isNumber() && newData.child('category').isString() && newData.child('createdAt').isNumber() && newData.child('validUntil').isNumber() && newData.child('storeId').isString()"
       }
     },
-
     "stores": {
       ".read": "true",
       "$storeId": {
-        // User can create a store if they set themselves as ownerId
-        // Only the owner can update their store details
-        // Admins can also write/update.
-        ".write": "auth != null && ( ((!data.exists() && newData.child('ownerId').val() === auth.uid) || (data.exists() && data.child('ownerId').val() === auth.uid)) || root.child('admins').child(auth.uid).exists() )",
-        // Validate required fields for new/updated stores
+        ".write": "auth != null && ( ((!data.exists() && newData.child('ownerId').val() === auth.uid) || (data.exists() && data.child('ownerId').val() === auth.uid)) || root.child('Admins').child(auth.uid).exists() )",
         ".validate": "newData.hasChildren(['ownerId', 'name', 'address', 'city', 'state', 'zipCode', 'email', 'phone', 'category']) && newData.child('ownerId').isString() && newData.child('name').isString() && newData.child('address').isString() && newData.child('city').isString() && newData.child('state').isString() && newData.child('zipCode').isString() && newData.child('email').isString() && newData.child('phone').isString() && newData.child('category').isString()"
       }
     },
-
     "suggestedNewProducts": {
-      // Only admins can read the list of suggestions
-      ".read": "auth != null && root.child('admins').child(auth.uid).exists()",
+      ".read": "auth != null && root.child('Admins').child(auth.uid).exists()",
       "$suggestionId": {
-        // Any authenticated user can create a new suggestion
-        // Only admins can update/delete existing suggestions
-        ".write": "auth != null && ((!data.exists() && newData.child('status').val() === 'pending') || (data.exists() && root.child('admins').child(auth.uid).exists()))",
+        ".write": "auth != null && ((!data.exists() && newData.child('status').val() === 'pending') || (data.exists() && root.child('Admins').child(auth.uid).exists()))",
         ".validate": "newData.hasChildren(['productName', 'source', 'timestamp', 'status']) && newData.child('productName').isString() && newData.child('source').isString() && newData.child('timestamp').isNumber() && newData.child('status').isString()"
       }
     },
-
     "userSettings": {
       "$uid": {
         ".read": "auth != null && $uid === auth.uid",
@@ -63,11 +40,9 @@
         ".validate": "newData.hasChildren(['preferredLocation']) && newData.child('preferredLocation').hasChildren(['address', 'latitude', 'longitude'])"
       }
     },
-
     "priceHistory": {
-      ".read": "true", // Publicly readable for monitoring
-      // Only admins (or a trusted server process with admin-like privileges) should write to priceHistory
-      ".write": "auth != null && root.child('admins').child(auth.uid).exists()",
+      ".read": "true",
+      ".write": "auth != null && root.child('Admins').child(auth.uid).exists()",
       ".validate": "newData.hasChildren(['advertisementId', 'productName', 'price', 'storeId', 'storeName', 'archivedAt', 'originalValidUntil', 'category'])"
     }
   }
