@@ -3,20 +3,20 @@
   "rules": {
     "canonicalProducts": {
       ".indexOn": ["normalizedName"],
-      ".read": "true", // Allows public read for checking against the catalog
-      ".write": "auth != null && auth.uid === 'YOUR_ADMIN_UID'" // Placeholder: Restrict writes to a specific admin UID. Replace 'YOUR_ADMIN_UID' or implement proper admin role check.
+      ".read": "true",
+      ".write": "auth != null"
     },
     "advertisements": {
-      ".read": "true", // Public can read advertisements
-      ".write": "auth != null" // Authenticated users (store owners) can write their ads (further rules for specific ad by ownerId should be in the component logic or more specific rules)
+      ".read": "true",
+      ".write": "auth != null"
     },
     "stores": {
-      ".read": "true", // Public can read store information
-      ".write": "auth != null" // Authenticated users (store owners) can write their store info
+      ".read": "true",
+      ".write": "auth != null"
     },
     "suggestedNewProducts": {
-      ".read": "auth != null && auth.uid === 'YOUR_ADMIN_UID'", // Placeholder: Admin read access
-      ".write": "auth != null" // Authenticated users can suggest new products
+      ".read": "auth != null",
+      ".write": "auth != null"
     },
     "userSettings": {
       "$uid": {
@@ -25,8 +25,8 @@
       }
     },
     "priceHistory": {
-      ".read": "true", // Public can read price history for monitoring
-      ".write": "auth != null && auth.uid === 'YOUR_ADMIN_UID'" // Placeholder: Typically written by a secured process or admin
+      ".read": "true",
+      ".write": "auth != null"
     }
   }
 }
