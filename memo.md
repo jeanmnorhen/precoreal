@@ -16,17 +16,6 @@ Facilitar a descoberta de ofertas locais através de um feed de produtos geoloca
 
 
 Usar firebase real time database.
-Minhas credenciais:
-NEXT_PUBLIC_FIREBASE_API_KEY="AIzaSyDfDN7WxXp7aO_GzMKtmHoRtlH47AA9aP4"
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="precoreal-1554a.firebaseapp.com"
-NEXT_PUBLIC_FIREBASE_DATABASE_URL="https://precoreal-1554a-default-rtdb.firebaseio.com"
-NEXT_PUBLIC_FIREBASE_PROJECT_ID="precoreal-1554a"
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="precoreal-1554a.firebasestorage.app"
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="510210246979"
-NEXT_PUBLIC_FIREBASE_APP_ID="1:510210246979:web:0baa092b62b422841287f6"
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="G-XXTGSVMQQE"
-GEMINI_API_KEY=AIzaSyByrggmNnonVbCBaqoXCEbB2Jb1JwIEz8M
-
 
 Permitir que usuários filtrem produtos por categoria.
 
