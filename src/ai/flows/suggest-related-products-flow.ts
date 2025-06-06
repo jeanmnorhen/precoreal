@@ -17,6 +17,11 @@ const SuggestRelatedProductsOutputSchema = z.object({
 });
 export type SuggestRelatedProductsOutput = z.infer<typeof SuggestRelatedProductsOutputSchema>;
 
+// Helper function to normalize product names for comparison
+const normalizeProductName = (name: string): string => {
+  return name.trim().toLowerCase();
+};
+
 // Função para buscar produtos canônicos (adaptada de catalog-management page)
 const getCanonicalProducts = async (): Promise<CanonicalProduct[]> => {
   try {
@@ -40,20 +45,6 @@ export async function suggestRelatedProducts(input: SuggestRelatedProductsInput)
   return suggestRelatedProductsFlow(input);
 }
 
-const suggestRelatedProductsPrompt = ai.definePrompt({
-  name: 'suggestRelatedProductsPrompt',
-  input: {schema: SuggestRelatedProductsInputSchema},
-  output: {schema: SuggestRelatedProductsOutputSchema},
-  prompt: `You are an expert in retail and product association.
-Given the product "{identifiedProductName}", suggest up to 5 commercially relevant products that a user might also be interested in purchasing.
-These could be complementary products, accessories, or popular alternatives.
-Focus on suggesting products that are likely to be in a retail catalog.
-Provide only a list of product names. The names should be in English and concise, suitable for use as search terms.
-Example Output: If the input is "smartphone", a good output might be ["screen protector", "phone case", "wireless earbuds", "power bank", "smartwatch"].
-Identified Product: {{{identifiedProductName}}}
-`,
-});
-
 const suggestRelatedProductsFlow = ai.defineFlow(
   {
     name: 'suggestRelatedProductsFlow',
@@ -63,34 +54,52 @@ const suggestRelatedProductsFlow = ai.defineFlow(
   async (input) => {
     // Buscar o catálogo de produtos
     const canonicalProducts = await getCanonicalProducts();
-    const productNames = canonicalProducts.map(p => p.name);
+    const identifiedProductNameNormalized = normalizeProductName(input.identifiedProductName);
 
-    // Modificar o prompt para incluir a lista de produtos (opcional, pode ser refinado)
-    // ou usar a lista para filtrar/validar as sugestões da IA
-    const promptWithContext = `You are an expert in retail and product association.
-Given the product "${input.identifiedProductName}", suggest up to 5 commercially relevant products that a user might also be interested in purchasing.
+    // Tentar encontrar o produto identificado no catálogo
+    const identifiedProductInCatalog = canonicalProducts.find(
+      (product) => normalizeProductName(product.name) === identifiedProductNameNormalized
+    );
+
+    let basePrompt = `You are an expert in retail and product association.
+Given the product "${input.identifiedProductName}", suggest up to 5 commercially relevant products that a user might also be interested in purchasing.`;
+
+    if (identifiedProductInCatalog) {
+      basePrompt += `
+This product is in our catalog, categorized as "${identifiedProductInCatalog.category}". Suggest products related to this category or complementary items.`;
+    }
+
+    const productNames = canonicalProducts.map(p => p.name);
+    if (productNames.length > 0) {
+        basePrompt += `
+Consider the following known products from the catalog (use them as inspiration, but don't be limited to them): ${productNames.join(', ')}`;
+    }
+
+    basePrompt += `
 These could be complementary products, accessories, or popular alternatives.
 Focus on suggesting products that are likely to be in a retail catalog.
-Consider the following known products from the catalog (use them as inspiration, but don't be limited to them): ${productNames.join(', ')}
 Provide only a list of product names. The names should be in English and concise, suitable for use as search terms.
 Example Output: If the input is "smartphone", a good output might be ["screen protector", "phone case", "wireless earbuds", "power bank", "smartwatch"].
 Identified Product: ${input.identifiedProductName}
 `;
 
-    const {output} = await ai.generate({ // Usar ai.generate diretamente
+    const {output} = await ai.generate({ 
       model: ai.getModel('gemini-1.5-flash'), // Especificar o modelo, ajustar se necessário
-      prompt: promptWithContext,
+      prompt: basePrompt,
       output: {schema: SuggestRelatedProductsOutputSchema},
     });
 
-    // Opcional: Adicionar lógica para filtrar sugestões da IA com base no catálogo real
+    // Adicionar lógica para filtrar sugestões da IA com base no catálogo real
     const filteredRelatedProductNames = output!.relatedProductNames.filter(suggestedName => 
         canonicalProducts.some(product => 
-            product.name.toLowerCase() === suggestedName.toLowerCase()
+            normalizeProductName(product.name) === normalizeProductName(suggestedName)
         )
     );
 
     // Retornar sugestões filtradas ou as originais da IA se o filtro for muito restritivo
-    return { relatedProductNames: filteredRelatedProductNames.length > 0 ? filteredRelatedProductNames : output!.relatedProductNames };
+    // Retorna apenas nomes únicos e limita a 5
+    const uniqueFilteredNames = Array.from(new Set(filteredRelatedProductNames));
+    
+    return { relatedProductNames: uniqueFilteredNames.slice(0, 5) };
   }
 );
