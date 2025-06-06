@@ -24,10 +24,12 @@ export default async function StoreProductsPage({ params: { lang } }: { params: 
     );
   }
 
+  const dictionary = await getDictionary(lang);
+
   return (
     <div className="animate-fadeIn">
       {/* Here you could also list existing products/advertisements for management */}
-      <ProductListingForm storeId={mockStoreId} />
+      <ProductListingForm storeId={mockStoreId} dictionary={dictionary.productListingForm} lang={lang} />
     </div>
   );
 }
