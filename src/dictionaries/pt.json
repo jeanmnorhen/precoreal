@@ -21,7 +21,7 @@
     "searchPlaceholder": "Buscar produtos, lojas ou categorias...",
     "sortBy": "Ordenar por:",
     "proximity": "Proximidade",
-    "price": "Preço",
+    "price": "Preço", 
     "allCategories": "Todas",
     "noOffersFound": "Nenhuma Oferta Encontrada",
     "noOffersFoundForSearch": "Nenhuma oferta encontrada para "{searchTerm}". Tente palavras-chave diferentes ou limpe a busca.",
