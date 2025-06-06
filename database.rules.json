@@ -1,7 +1,18 @@
-
 {
-  "rules": {
-    ".read": "true",
-    ".write": "true"
+    "rules": {
+        "Admins": {
+              "1BOel1YNOAPZjFRFBta8D6ilVOa2": {
+              				".read": "true", 
+                          		".write": "true" 
+                                },      
+              "QKHWNM9htkXTmlkAUZi9rHcKnjS2": {
+                                    				".read": "true", 
+                                                		".write": "true"
+                                                      },      
+                                                          "jnrqC97lk4MJiCjG72sSXXehzsf1": {
+                                                          				".read": "true", 
+                                                                      		".write": "true"
+                                                                            }
+                    }
+               }
   }
-}
