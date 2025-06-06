@@ -3,25 +3,25 @@
             ".read": "auth != null", 
             ".write": "auth != null",
             ".indexOn": "normalizedName",
-    "admins": {
-            ".read": "auth != null", 
-            ".write": "auth != null",
-            ".indexOn": "normalizedName"
-    },
-    "stores": {
-            ".read": "auth != null", 
-            ".write": "auth != null",
-            ".indexOn": "ownerId"
-    },
-    "en": {
-            ".read": "auth != null", 
-            ".write": "auth != null",
-            ".indexOn": "normalizedName"
-    },
-    "canonicalProducts": {
-            ".read": "auth != null", 
-            ".write": "auth != null",
-            ".indexOn": "normalizedName"
-    } 
-          }
+                        "admins": {
+                                ".read": "auth != null", 
+                                ".write": "auth != null",
+                                ".indexOn": "normalizedName"
+                                },
+                        "stores": {
+                                ".read": "auth != null", 
+                                ".write": "auth != null",
+                                ".indexOn": "ownerId"
+                                },
+                        "en": {
+                                ".read": "auth != null", 
+                                ".write": "auth != null",
+                                ".indexOn": "normalizedName"
+                                  },
+                        "canonicalProducts": {
+                                ".read": "auth != null", 
+                                ".write": "auth != null",
+                                ".indexOn": "normalizedName"
+                                          } 
+        }
 }
