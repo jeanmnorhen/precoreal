@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { Locale } from '@/i18n-config';
 import { analyzeImageOffers, type AnalyzeImageOffersOutput } from '@/ai/flows/analyze-image-offers';
+import { suggestRelatedProducts } from '@/ai/flows/suggest-related-products-flow'; // Importando UC7 flow
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -110,6 +111,11 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Estado para sugestões de produtos relacionados (UC7)
+  const [suggestedRelatedProducts, setSuggestedRelatedProducts] = useState<string[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+
+
   useEffect(() => {
     return () => {
       if (stream) {
@@ -198,6 +204,7 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
       }
       closeCamera();
       setAnalysisResult(null);
+      setSuggestedRelatedProducts([]); // Limpar sugestões anteriores
     }
   };
   
@@ -206,6 +213,7 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
     setImageDataUri(null);
     setAnalysisResult(null);
     setError(null);
+    setSuggestedRelatedProducts([]); // Limpar sugestões
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -222,6 +230,7 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
     setIsLoading(true);
     setError(null);
     setAnalysisResult(null);
+    setSuggestedRelatedProducts([]); // Limpar sugestões antes de uma nova análise
 
     try {
       const result = await analyzeImageOffers({ photoDataUri: imageDataUri });
@@ -230,9 +239,24 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
         title: dictionary.analysisCompleteToastTitle,
         description: dictionary.analysisCompleteToastDesc.replace('{productIdentification}', result.productIdentification),
       });
-      // After successful analysis, check/suggest product
+      
+      // After successful analysis, check/suggest product (UC6 related)
       if (result.productIdentification) {
         await checkAndSuggestProduct(result.productIdentification, 'image-analysis', lang, toast, dictionary);
+
+        // --- Início da integração UC7 ---
+        setIsLoadingSuggestions(true);
+        try {
+          const relatedProductsResult = await suggestRelatedProducts({ identifiedProductName: result.productIdentification });
+          setSuggestedRelatedProducts(relatedProductsResult.relatedProductNames);
+        } catch (suggestError) {
+          console.error('Error suggesting related products:', suggestError);
+          // Optionally show a toast for suggestion errors
+        } finally {
+          setIsLoadingSuggestions(false);
+        }
+        // --- Fim da integração UC7 ---
+
       }
 
     } catch (err) {
@@ -248,10 +272,10 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
     }
   };
 
-  const handleSearchOffers = () => {
-    if (analysisResult?.productIdentification) {
-      const searchTerm = encodeURIComponent(analysisResult.productIdentification);
-      router.push(`/${lang}/?search=${searchTerm}`);
+  const handleSearchOffers = (searchTerm: string) => {
+    if (searchTerm) {
+      const encodedSearchTerm = encodeURIComponent(searchTerm);
+      router.push(`/${lang}/?search=${encodedSearchTerm}`);
     }
   };
 
@@ -371,7 +395,28 @@ export default function ImageAnalysisTool({ dictionary, lang }: ImageAnalysisToo
               </AlertDescription>
             </Alert>
             
-            <Button variant="outline" className="w-full" onClick={handleSearchOffers}>
+            {/* Seção para sugestões de produtos relacionados (UC7) */}
+            {isLoadingSuggestions && (
+               <div className="flex items-center justify-center space-x-2">
+                <LoadingSpinner size={20} />
+                <p className="text-muted-foreground">{dictionary.loadingSuggestionsText || "Loading suggestions..."}</p>
+              </div>
+            )}
+
+            {!isLoadingSuggestions && suggestedRelatedProducts.length > 0 && (
+              <div className="space-y-2">
+                 <p className="text-md font-semibold">{dictionary.suggestedProductsTitle || "Suggested Products:"}</p>
+                 <div className="flex flex-wrap gap-2">
+                    {suggestedRelatedProducts.map((productName, index) => (
+                       <Button key={index} variant="secondary" size="sm" onClick={() => handleSearchOffers(productName)}>
+                          <Search className="mr-1 h-4 w-4" /> {productName}
+                       </Button>
+                    ))}
+                 </div>
+              </div>
+            )}
+
+            <Button variant="outline" className="w-full" onClick={() => handleSearchOffers(analysisResult.productIdentification)}>
               <Search className="mr-2 h-5 w-5" />
               {dictionary.searchOffersFor.replace('{productIdentification}', analysisResult.productIdentification)}
             </Button>
