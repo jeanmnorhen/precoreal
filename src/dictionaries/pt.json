@@ -45,7 +45,7 @@
     "cancelLocationButton": "Cancelar",
     "productInCatalogTitle": "Informação do Produto", 
     "productInCatalogButNoOffers": "Nenhuma oferta atual para "{searchTerm}", mas este produto existe em nosso catálogo! Fique de olho para futuras listagens.",
-    \"suggestionLoggedToastTitle\": \"Obrigado pela Dica!\", 
+    "suggestionLoggedToastTitle": "Obrigado pela Dica!",
     \"suggestionLoggedToastDesc\": \"\\\"{productName}\\\" será revisado para nosso catálogo. Isso nos ajuda a crecer!\",
     "suggestionErrorToastTitle": "Erro na Sugestão",
     "offerDetailsDialog": {
