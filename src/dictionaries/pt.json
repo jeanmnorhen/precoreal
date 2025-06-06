@@ -24,7 +24,7 @@
     "price": "Preço", 
     "allCategories": "Todas",
     "noOffersFound": "Nenhuma Oferta Encontrada",
-    "noOffersFoundForSearch": "Nenhuma oferta encontrada para "{searchTerm}". Tente palavras-chave diferentes ou limpe a busca.",
+    "noOffersFoundForSearch": "Nenhuma oferta encontrada para \"{searchTerm}\". Tente palavras-chave diferentes ou limpe a busca.",
     "noOffersAdvice": "Tente ajustar sua busca ou filtros. Nenhum anúncio ativo disponível.",
     "loadingOffersText": "Carregando ofertas...",
     "errorLoadingOffersTitle": "Erro ao Carregar Ofertas",

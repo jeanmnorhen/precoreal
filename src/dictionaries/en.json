@@ -24,7 +24,7 @@
     "price": "Price",
     "allCategories": "All",
     "noOffersFound": "No Offers Found",
-    "noOffersFoundForSearch": "No offers found for "{searchTerm}". Try different keywords or clear the search.",
+    "noOffersFoundForSearch": "No offers found for \"{searchTerm}\". Try different keywords or clear the search.",
     "noOffersAdvice": "Try adjusting your search or filters. No active advertisements available.",
     "loadingOffersText": "Loading offers...",
     "errorLoadingOffersTitle": "Error Loading Offers",
@@ -106,7 +106,7 @@
     "productIdentifiedTitle": "Product Identified",
     "searchOffersFor": "Search offers for "{productIdentification}"",
     "suggestionLoggedToastTitle": "Thanks for the Tip!",
-    "suggestionLoggedToastDesc": ""{productName}" will be reviewed for our catalog. This helps us grow!",
+    "suggestionLoggedToastDesc": "\"{productName}\" will be reviewed for our catalog. This helps us grow!",
     "suggestionErrorToastTitle": "Suggestion Error",
     "loadingSuggestionsText": "Loading suggestions...",
     "suggestedProductsTitle": "Suggested Products:"
