@@ -1,9 +1,10 @@
 
 import ProductListingForm from '@/components/product-listing-form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { getDictionary } from '@/lib/get-dictionary';
 import { Info } from 'lucide-react';
 
-export default function StoreProductsPage() {
+export default async function StoreProductsPage({ params: { lang } }: { params: { lang: string } }) {
   // In a real app, you'd check if the user is a logged-in store owner
   // and fetch their storeId.
   const isStoreOwner = true; // Placeholder
